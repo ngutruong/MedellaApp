@@ -81,22 +81,9 @@ public class HomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        /*if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }*/
-
+        //DRAWER NAVIGATION IN HOME PAGE
         if (id == R.id.nav_amHome) {
-            //Will deal with this later
+            //Intent is not needed as the Home button leads to this page
 
         } else if (id == R.id.nav_amActivity) {
             Intent iHealth = new Intent(this, HealthActivity.class);
@@ -105,7 +92,8 @@ public class HomeActivity extends AppCompatActivity
             //ListActivity.class not available yet
 
         } else if (id == R.id.nav_amResults) {
-            //ResultsActivity.class not available yet
+            Intent iResults = new Intent(this, ResultsActivity.class);
+            startActivity(iResults);
 
         } else if (id == R.id.nav_amTrash) {
             //TrashActivity.class not available yet
