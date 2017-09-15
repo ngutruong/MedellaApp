@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="ca.mohawk.truongnguyen.appmedella.HealthActivity"
+    tools:showIn="@layout/activity_health">
+
+    <!--TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/text_margin"
+        android:text="@string/large_text" /-->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/healthFrame">
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:text="Title"
+            android:textStyle="bold"
+            android:layout_alignParentTop="true"
+            android:layout_alignStart="@+id/weightText" />
+
+        <TextView
+            android:id="@+id/weightText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Weight"
+            android:textStyle="bold"
+            android:layout_alignBaseline="@+id/txtWeight"
+            android:layout_alignBottom="@+id/txtWeight"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="16dp" />
+
+        <EditText
+            android:id="@+id/txtTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/titleText"
+            android:layout_alignBottom="@+id/titleText"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="11dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:textSize="12sp"
+            android:layout_toEndOf="@+id/hrateText" />
+
+        <EditText
+            android:id="@+id/txtWeight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/txtTitle"
+            android:layout_below="@+id/txtTitle"
+            android:ems="10"
+            android:hint="Add weight number here"
+            android:inputType="number"
+            android:textAlignment="center"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/pintText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="Pain Intensity"
+            android:layout_alignBottom="@+id/pintSpinner"
+            android:layout_alignStart="@+id/weightText" />
+
+        <Spinner
+            android:id="@+id/weightSpinner"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/txtWeight"
+            android:layout_alignStart="@+id/txtWeight"
+            android:layout_below="@+id/txtWeight"
+            android:entries="@array/weight_array"
+            android:textAlignment="textEnd" />
+
+        <TextView
+            android:id="@+id/medText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Medication"
+            android:textStyle="bold"
+            android:layout_alignBaseline="@+id/txtMedName"
+            android:layout_alignBottom="@+id/txtMedName"
+            android:layout_alignStart="@+id/pintText" />
+
+        <TextView
+            android:id="@+id/btempText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Body Temperature"
+            android:textStyle="bold"
+            android:layout_alignBaseline="@+id/txtTemperature"
+            android:layout_alignBottom="@+id/txtTemperature"
+            android:layout_alignStart="@+id/medText" />
+
+        <TextView
+            android:id="@+id/bpressureText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="55dp"
+            android:text="Blood Pressure"
+            android:textStyle="bold"
+            android:layout_below="@+id/btempText"
+            android:layout_alignStart="@+id/btempText" />
+
+        <TextView
+            android:id="@+id/hrateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Heart Rate"
+            android:textStyle="bold"
+            android:layout_alignBaseline="@+id/txtHrate"
+            android:layout_alignBottom="@+id/txtHrate"
+            android:layout_alignStart="@+id/bpressureText" />
+
+        <TextView
+            android:id="@+id/descText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="Medical Description"
+            android:textStyle="bold"
+            android:layout_below="@+id/txtHrate"
+            android:layout_alignStart="@+id/hrateText" />
+
+        <EditText
+            android:id="@+id/txtMedName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/pintSpinner"
+            android:layout_below="@+id/pintSpinner"
+            android:layout_marginTop="28dp"
+            android:ems="10"
+            android:hint="Name of medication"
+            android:inputType="textPersonName"
+            android:textAlignment="center"
+            android:textSize="12sp" />
+
+        <Spinner
+            android:id="@+id/doseSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/txtMedName"
+            android:layout_alignStart="@+id/txtMedName"
+            android:layout_below="@+id/txtDosage"
+            android:entries="@array/dosage_array"
+            android:textAlignment="textEnd" />
+
+        <EditText
+            android:id="@+id/txtDosage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/doseSpinner"
+            android:layout_below="@+id/txtMedName"
+            android:ems="10"
+            android:hint="Dosage amount"
+            android:inputType="number"
+            android:textAlignment="center"
+            android:textSize="12sp" />
+
+        <EditText
+            android:id="@+id/txtTemperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/doseSpinner"
+            android:layout_alignStart="@+id/txtSystolic"
+            android:layout_below="@+id/doseSpinner"
+            android:ems="10"
+            android:hint="Add temperature number here"
+            android:inputType="number"
+            android:textAlignment="center"
+            android:textSize="12sp" />
+
+        <Spinner
+            android:id="@+id/tempSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtTemperature"
+            android:entries="@array/btemp_array"
+            android:layout_alignEnd="@+id/doseSpinner"
+            android:layout_alignStart="@+id/txtTemperature"
+            android:textAlignment="textEnd" />
+
+        <EditText
+            android:id="@+id/txtSystolic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/bpressureText"
+            android:layout_toEndOf="@+id/descText"
+            android:ems="10"
+            android:inputType="number"
+            android:textAlignment="center"
+            android:textSize="12sp" />
+
+        <EditText
+            android:id="@+id/txtDiastolic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/txtSystolic"
+            android:layout_below="@+id/txtSystolic"
+            android:ems="10"
+            android:inputType="number"
+            android:textAlignment="center"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/systolicText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/txtSystolic"
+            android:layout_alignBottom="@+id/txtSystolic"
+            android:layout_alignStart="@+id/diastolicText"
+            android:text="Systolic" />
+
+        <TextView
+            android:id="@+id/diastolicText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Diastolic"
+            android:layout_alignBaseline="@+id/txtDiastolic"
+            android:layout_alignBottom="@+id/txtDiastolic"
+            android:layout_toEndOf="@+id/hrateText" />
+
+        <EditText
+            android:id="@+id/txtHrate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtDiastolic"
+            android:layout_marginTop="12dp"
+            android:ems="10"
+            android:inputType="number"
+            android:textAlignment="center"
+            android:textSize="12sp"
+            android:layout_alignStart="@+id/tempSpinner"
+            android:layout_toStartOf="@+id/bpmText" />
+
+        <TextView
+            android:id="@+id/bpmText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="bpm"
+            android:layout_alignBaseline="@+id/txtHrate"
+            android:layout_alignBottom="@+id/txtHrate"
+            android:layout_alignEnd="@+id/tempSpinner" />
+
+        <Button
+            android:id="@+id/btnHfinish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Finish"
+            android:layout_below="@+id/txtDesc"
+            android:layout_alignEnd="@+id/bpmText" />
+
+        <EditText
+            android:id="@+id/txtDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/btnHfinish"
+            android:layout_alignStart="@+id/descText"
+            android:layout_below="@+id/descText"
+            android:ems="10"
+            android:inputType="textMultiLine"
+            android:textSize="12sp" />
+
+        <Spinner
+            android:id="@+id/pintSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/weightSpinner"
+            android:layout_alignStart="@+id/txtSystolic"
+            android:layout_below="@+id/weightSpinner"
+            android:entries="@array/pint_array"
+            android:textAlignment="textEnd" />
+
+
+    </RelativeLayout>
+
+</android.support.v4.widget.NestedScrollView>

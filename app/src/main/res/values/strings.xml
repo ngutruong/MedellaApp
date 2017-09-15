@@ -1,0 +1,97 @@
+<resources>
+    <string name="app_name">AppMedella</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email Address</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Login</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="title_activity_health">Health Activity</string>
+    <string name="large_text">
+        "Material is the metaphor.\n\n"
+
+        "A material metaphor is the unifying theory of a rationalized space and a system of motion."
+        "The material is grounded in tactile reality, inspired by the study of paper and ink, yet "
+        "technologically advanced and open to imagination and magic.\n"
+    </string>
+    <string name="title_activity_profile">Profile</string>
+
+    <string-array name="sq1_array">
+        <item>What was the last name of your first grade teacher?</item>
+        <item>What is the maiden name of your mother?</item>
+        <item>What is the make of your first car?</item>
+        <item>Who was your childhood hero?</item>
+    </string-array>
+    <string-array name="sq2_array">
+        <item>What was your childhood nickname?</item>
+        <item>What was the name of your elementary school?</item>
+        <item>First name of the boy or girl you first kissed?</item>
+        <item>What is the first and last name of your oldest cousin?</item>
+    </string-array>
+    <string-array name="sq3_array">
+        <item>What was the name of your high school?</item>
+        <item>What was the name of your first pet?</item>
+        <item>What was the name of the hospital you were born in?</item>
+        <item>In what city does your nearest sibling live?</item>
+    </string-array>
+    <string-array name="height_array">
+        <item>cm</item>
+        <item>m</item>
+    </string-array>
+    <string-array name="weight_array">
+        <item>lbs</item>
+        <item>kg</item>
+    </string-array>
+    <string-array name="pint_array">
+        <item>1 - Not Painful</item>
+        <item>2 - Slightly Painful</item>
+        <item>3 - Marginally Painful</item>
+        <item>4 - Less Painful</item>
+        <item>5 - Average</item>
+        <item>6 - Painful</item>
+        <item>7 - Very Painful</item>
+        <item>8 - Mostly Painful</item>
+        <item>9 - Extremely Painful</item>
+        <item>10 - Most Painful</item>
+    </string-array>
+    <string-array name="dosage_array">
+        <item>c (Cup)</item>
+        <item>cc (Cubic centimeter)</item>
+        <item>cm (Centimeter)</item>
+        <item>dr (Dram)</item>
+        <item>fl (Fluid)</item>
+        <item>g (Gram)</item>
+        <item>gr (Grain)</item>
+        <item>gtt (Drop)</item>
+        <item>in (Inch)</item>
+        <item>kg (Kilogram)</item>
+        <item>L (Liter)</item>
+        <item>lb (Pound)</item>
+        <item>m (Meter)</item>
+        <item>mcg (Microgram)</item>
+        <item>mEq (Milliquivalent)</item>
+        <item>mg (Milligram)</item>
+        <item>mL (Milliliter)</item>
+        <item>mm (Millimeter)</item>
+        <item>oz (Ounce)</item>
+        <item>tbsp (Tablespoon)</item>
+        <item>tsp (Teaspoon)</item>
+    </string-array>
+    <string-array name="btemp_array">
+        <item>degrees Celsius</item> <!--need to find 'degrees' symbol-->
+        <item>degrees Fahrenheit</item> <!--need to find 'degrees' symbol-->
+    </string-array>
+</resources>

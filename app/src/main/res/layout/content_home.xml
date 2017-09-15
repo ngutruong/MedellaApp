@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/homeFrame"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="ca.mohawk.truongnguyen.appmedella.HomeActivity"
+    tools:showIn="@layout/app_bar_home">
+
+    <TextView
+        android:id="@+id/welcomeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="61dp"
+        android:text="Welcome to"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        app:srcCompat="@drawable/logo"
+        android:layout_below="@+id/welcomeText"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:onClick="goLogin"
+        android:layout_centerVertical="true"
+        android:layout_alignStart="@+id/btnCreateProfile"
+        android:layout_alignEnd="@+id/btnCreateProfile" />
+
+    <Button
+        android:id="@+id/btnCreateProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create a Profile"
+        android:onClick="goProfile"
+        android:layout_below="@+id/btnLogin"
+        android:layout_alignEnd="@+id/btnCreateActivity"
+        android:layout_alignStart="@+id/btnCreateActivity" />
+
+    <Button
+        android:id="@+id/btnCreateActivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="goHealth"
+        android:text="Create a New Activity"
+        android:layout_below="@+id/btnCreateProfile"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/btnList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Go to List"
+        android:layout_below="@+id/btnCreateActivity"
+        android:layout_alignStart="@+id/btnCreateActivity"
+        android:layout_alignEnd="@+id/btnCreateActivity" />
+
+</RelativeLayout>

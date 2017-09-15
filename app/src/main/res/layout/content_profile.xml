@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="ca.mohawk.truongnguyen.appmedella.ProfileActivity"
+    tools:showIn="@layout/activity_profile">
+
+    <!--TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/text_margin"
+        android:text="@string/large_text" /-->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/profileFrame">
+
+        <TextView
+            android:id="@+id/nameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignStart="@+id/emailText"
+            android:layout_marginTop="26dp"
+            android:text="Name:"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/emailText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/txtEmailEdit"
+            android:layout_alignBottom="@+id/txtEmailEdit"
+            android:layout_alignStart="@+id/passwordText"
+            android:text="Email Address:"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/txtNameEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/nameText"
+            android:layout_alignBottom="@+id/nameText"
+            android:layout_alignStart="@+id/txtEmailEdit"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/txtEmailEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textEmailAddress"
+            android:layout_below="@+id/txtNameEdit"
+            android:layout_alignStart="@+id/txtCreatePassword" />
+
+        <EditText
+            android:id="@+id/txtCreatePassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPassword"
+            android:layout_below="@+id/txtEmailEdit"
+            android:layout_alignStart="@+id/txtConfirmEdit" />
+
+        <EditText
+            android:id="@+id/txtConfirmEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPassword"
+            android:layout_below="@+id/txtCreatePassword"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="16dp" />
+
+        <TextView
+            android:id="@+id/passwordText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/txtCreatePassword"
+            android:layout_alignBottom="@+id/txtCreatePassword"
+            android:layout_alignStart="@+id/confirmText"
+            android:text="Password:"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/confirmText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/txtConfirmEdit"
+            android:layout_alignBottom="@+id/txtConfirmEdit"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="15dp"
+            android:text="Confirm Password:"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/sq1Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="Security Question 1"
+            android:textStyle="bold"
+            android:layout_below="@+id/txtConfirmEdit"
+            android:layout_alignStart="@+id/confirmText" />
+
+        <Spinner
+            android:id="@+id/sq1Spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/txtConfirmEdit"
+            android:layout_alignStart="@+id/sq1Text"
+            android:layout_below="@+id/sq1Text"
+            android:entries="@array/sq1_array"
+            android:spinnerMode="dropdown" />
+
+        <EditText
+            android:id="@+id/txtSq1Answer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/sq1Spinner"
+            android:layout_alignStart="@+id/sq1Spinner"
+            android:layout_below="@+id/sq1Spinner"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/sq2Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="Security Question 2"
+            android:textStyle="bold"
+            android:layout_below="@+id/txtSq1Answer"
+            android:layout_alignStart="@+id/confirmText" />
+
+        <Spinner
+            android:id="@+id/sq2Spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/txtConfirmEdit"
+            android:layout_alignStart="@+id/sq2Text"
+            android:layout_below="@+id/sq2Text"
+            android:entries="@array/sq2_array"
+            android:spinnerMode="dropdown" />
+
+        <EditText
+            android:id="@+id/txtSq2Answer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/sq2Spinner"
+            android:layout_alignStart="@+id/sq2Spinner"
+            android:layout_below="@+id/sq2Spinner"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/sq3Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="Security Question 3"
+            android:textStyle="bold"
+            android:layout_below="@+id/txtSq2Answer"
+            android:layout_alignStart="@+id/confirmText" />
+
+        <Spinner
+            android:id="@+id/sq3Spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/txtConfirmEdit"
+            android:layout_alignStart="@+id/sq3Text"
+            android:layout_below="@+id/sq3Text"
+            android:entries="@array/sq3_array"
+            android:spinnerMode="dropdown" />
+
+        <EditText
+            android:id="@+id/txtSq3Answer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/sq3Spinner"
+            android:layout_alignStart="@+id/sq3Spinner"
+            android:layout_below="@+id/sq3Spinner"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/birthdateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/txtBirthdate"
+            android:layout_alignBottom="@+id/txtBirthdate"
+            android:layout_alignStart="@+id/txtSq3Answer"
+            android:text="Birthdate"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/txtBirthdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="date"
+            android:textSize="14sp"
+            android:layout_below="@+id/txtSq3Answer"
+            android:layout_alignEnd="@+id/txtSq3Answer"
+            android:layout_alignStart="@+id/txtConfirmEdit" />
+
+    </RelativeLayout>
+
+</android.support.v4.widget.NestedScrollView>
