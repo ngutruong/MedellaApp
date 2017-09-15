@@ -81,34 +81,37 @@ public class HomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        //if (id == R.id.nav_camera) {
+        /*if (id == R.id.nav_camera) {
             // Handle the camera action
-        //} else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_gallery) {
 
-        //} else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_slideshow) {
 
-        //} else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_manage) {
 
-        //} else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_share) {
 
-        //} else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_send) {
 
-        //}
+        }*/
 
         if (id == R.id.nav_amHome) {
-            Intent iHome = new Intent(this, HomeActivity.class);
-            startActivity(iHome);
+            //Will deal with this later
 
         } else if (id == R.id.nav_amActivity) {
-
+            Intent iHealth = new Intent(this, HealthActivity.class);
+            startActivity(iHealth);
         } else if (id == R.id.nav_amList) {
+            //ListActivity.class not available yet
 
         } else if (id == R.id.nav_amResults) {
+            //ResultsActivity.class not available yet
 
         } else if (id == R.id.nav_amTrash) {
+            //TrashActivity.class not available yet
 
         } else if (id == R.id.nav_amLogout) {
-
+            //Logout is not available at this moment
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -135,13 +138,4 @@ public class HomeActivity extends AppCompatActivity
         Intent iHealth = new Intent(this, HealthActivity.class);
         startActivity(iHealth);
     }
-
-    //THIS IS FOR TESTING ONLY
-    //public void buttonTest(View view) {
-        //Intent i = new Intent(this, ProfileActivity.class);
-        //Spinner daySpin = (Spinner)findViewById(R.id.daySpinner);
-        //String dayMessage = daySpin.getSelectedItem().toString();
-        //i.putExtra(EXTRA_VALUE, dayMessage);
-        //startActivity(i);
-    //}
 }
