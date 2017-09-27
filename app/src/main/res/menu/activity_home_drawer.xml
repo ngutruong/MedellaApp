@@ -2,43 +2,30 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
-        <!--item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
-        <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" /-->
-
         <item android:title="Home"
             android:id="@+id/nav_amHome"
-            android:icon="@android:drawable/ic_lock_lock" />
+            />
         <item android:title="Health Activity"
             android:id="@+id/nav_amActivity"
-            android:icon="@android:drawable/btn_star_big_on" />
+            android:icon="@android:drawable/ic_menu_add" />
         <item android:title="List"
             android:id="@+id/nav_amList"
-            android:icon="@android:drawable/ic_delete" />
+            android:icon="@android:drawable/ic_menu_agenda" />
         <item android:title="Health Results"
-            android:id="@+id/nav_amResults" />
+            android:id="@+id/nav_amResults"
+            android:icon="@android:drawable/ic_menu_gallery"/>
         <item android:title="Trash"
-            android:id="@+id/nav_amTrash"/>
+            android:id="@+id/nav_amTrash"
+            android:icon="@android:drawable/ic_menu_delete"/>
         <item android:title="Log Out"
-            android:id="@+id/nav_amLogout"/>
+            android:id="@+id/nav_amLogout"
+            android:icon="@android:drawable/ic_menu_revert"/>
 
         <!--FOR USERS WHO ARE NOT LOGGED IN-->
         <!--item android:title="Log In"
             android:id="@+id/amLogin"
-            android:onClick="selectionMade"/-->
+            android:onClick="selectionMade"
+            android:icon="@android:drawable/btn_star"/-->
     </group>
 
     <!--item android:title="Communicate">

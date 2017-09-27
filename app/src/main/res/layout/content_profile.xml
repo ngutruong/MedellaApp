@@ -96,11 +96,12 @@
             android:id="@+id/sq1Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/confirmText"
+            android:layout_below="@+id/txtConfirmEdit"
             android:layout_marginTop="14dp"
             android:text="Security Question 1"
             android:textStyle="bold"
-            android:layout_below="@+id/txtConfirmEdit"
-            android:layout_alignStart="@+id/confirmText" />
+             />
 
         <Spinner
             android:id="@+id/sq1Spinner"
@@ -110,7 +111,8 @@
             android:layout_alignStart="@+id/sq1Text"
             android:layout_below="@+id/sq1Text"
             android:entries="@array/sq1_array"
-            android:spinnerMode="dropdown" />
+            android:spinnerMode="dropdown"
+             />
 
         <EditText
             android:id="@+id/txtSq1Answer"
@@ -121,17 +123,19 @@
             android:layout_below="@+id/sq1Spinner"
             android:ems="10"
             android:inputType="textPersonName"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+             />
 
         <TextView
             android:id="@+id/sq2Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/confirmText"
+            android:layout_below="@+id/txtSq1Answer"
             android:layout_marginTop="14dp"
             android:text="Security Question 2"
             android:textStyle="bold"
-            android:layout_below="@+id/txtSq1Answer"
-            android:layout_alignStart="@+id/confirmText" />
+             />
 
         <Spinner
             android:id="@+id/sq2Spinner"
@@ -141,7 +145,8 @@
             android:layout_alignStart="@+id/sq2Text"
             android:layout_below="@+id/sq2Text"
             android:entries="@array/sq2_array"
-            android:spinnerMode="dropdown" />
+            android:spinnerMode="dropdown"
+             />
 
         <EditText
             android:id="@+id/txtSq2Answer"
@@ -152,17 +157,19 @@
             android:layout_below="@+id/sq2Spinner"
             android:ems="10"
             android:inputType="textPersonName"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+             />
 
         <TextView
             android:id="@+id/sq3Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/confirmText"
+            android:layout_below="@+id/txtSq2Answer"
             android:layout_marginTop="14dp"
             android:text="Security Question 3"
             android:textStyle="bold"
-            android:layout_below="@+id/txtSq2Answer"
-            android:layout_alignStart="@+id/confirmText" />
+             />
 
         <Spinner
             android:id="@+id/sq3Spinner"
@@ -172,7 +179,8 @@
             android:layout_alignStart="@+id/sq3Text"
             android:layout_below="@+id/sq3Text"
             android:entries="@array/sq3_array"
-            android:spinnerMode="dropdown" />
+            android:spinnerMode="dropdown"
+             />
 
         <EditText
             android:id="@+id/txtSq3Answer"
@@ -183,7 +191,8 @@
             android:layout_below="@+id/sq3Spinner"
             android:ems="10"
             android:inputType="textPersonName"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+             />
 
         <TextView
             android:id="@+id/birthdateText"
@@ -192,7 +201,7 @@
             android:layout_alignBaseline="@+id/txtBirthdate"
             android:layout_alignBottom="@+id/txtBirthdate"
             android:layout_alignStart="@+id/txtSq3Answer"
-            android:text="Birthdate"
+            android:text="Birthdate:"
             android:textStyle="bold" />
 
         <EditText
@@ -203,8 +212,102 @@
             android:inputType="date"
             android:textSize="14sp"
             android:layout_below="@+id/txtSq3Answer"
-            android:layout_alignEnd="@+id/txtSq3Answer"
+            android:layout_alignEnd="@+id/txtSq3Answer" />
+
+        <TextView
+            android:id="@+id/heightText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/txtHeight"
+            android:layout_alignBottom="@+id/txtHeight"
+            android:layout_alignStart="@+id/birthdateText"
+            android:text="Height:"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/txtHeight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="number"
+            android:layout_below="@+id/txtBirthdate"
+            android:layout_alignStart="@+id/txtBirthdate"
+            android:layout_alignEnd="@+id/txtBirthdate" />
+
+        <Spinner
+            android:id="@+id/heightSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/txtHeight"
+            android:layout_alignStart="@+id/txtHeight"
+            android:layout_below="@+id/txtHeight"
+            android:textAlignment="textEnd"
+            android:entries="@array/height_array" />
+
+        <CheckBox
+            android:id="@+id/chkFeetInches"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Check if you prefer ft. (feet) and in. (inches)"
+            android:textAlignment="textEnd"
+            android:layout_below="@+id/txtInches"
+            android:layout_alignEnd="@+id/btnNext"
+            android:layout_marginTop="11dp"
             android:layout_alignStart="@+id/txtConfirmEdit" />
+
+        <TextView
+            android:id="@+id/feetText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/txtFeet"
+            android:layout_alignBottom="@+id/txtFeet"
+            android:layout_alignEnd="@+id/heightSpinner"
+            android:text="ft."
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/inchesText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/txtInches"
+            android:layout_alignBottom="@+id/txtInches"
+            android:layout_toEndOf="@+id/txtInches"
+            android:text="in."
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/txtFeet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/heightSpinner"
+            android:layout_below="@+id/heightSpinner"
+            android:layout_toStartOf="@+id/feetText"
+            android:ems="10"
+            android:inputType="number"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/txtInches"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/txtFeet"
+            android:layout_alignStart="@+id/txtFeet"
+            android:layout_below="@+id/txtFeet"
+            android:ems="10"
+            android:inputType="number"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btnNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Next"
+            android:layout_below="@+id/chkFeetInches"
+            android:layout_alignEnd="@+id/txtBirthdate"
+            android:layout_marginTop="12dp"
+            android:onClick="nextClick"/>
 
     </RelativeLayout>
 

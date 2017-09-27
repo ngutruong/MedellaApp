@@ -20,20 +20,20 @@
         completions."
     </string>
     <string name="title_activity_health">Health Activity</string>
-    <string name="large_text">
+    <!--string name="large_text">
         "Material is the metaphor.\n\n"
 
         "A material metaphor is the unifying theory of a rationalized space and a system of motion."
         "The material is grounded in tactile reality, inspired by the study of paper and ink, yet "
         "technologically advanced and open to imagination and magic.\n"
-    </string>
-    <string name="title_activity_profile">Profile</string>
+    </string-->
+    <string name="title_activity_profile">Register Your Profile</string>
 
     <string-array name="sq1_array">
-        <item>What was the last name of your first grade teacher?</item>
-        <item>What is the maiden name of your mother?</item>
         <item>What is the make of your first car?</item>
+        <item>What is the maiden name of your mother?</item>
         <item>Who was your childhood hero?</item>
+        <item>Last name of your first grade teacher?</item>
     </string-array>
     <string-array name="sq2_array">
         <item>What was your childhood nickname?</item>
@@ -48,8 +48,9 @@
         <item>In what city does your nearest sibling live?</item>
     </string-array>
     <string-array name="height_array">
-        <item>cm</item>
-        <item>m</item>
+        <item>cm.</item>
+        <item>m.</item>
+        <item>in.</item>
     </string-array>
     <string-array name="weight_array">
         <item>lbs</item>
