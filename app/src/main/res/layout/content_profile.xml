@@ -218,21 +218,21 @@
             android:id="@+id/heightText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/txtHeight"
-            android:layout_alignBottom="@+id/txtHeight"
-            android:layout_alignStart="@+id/birthdateText"
             android:text="Height:"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:layout_below="@+id/txtBirthdate"
+            android:layout_alignStart="@+id/birthdateText" />
 
         <EditText
             android:id="@+id/txtHeight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/txtBirthdate"
+            android:layout_alignStart="@+id/txtBirthdate"
+            android:layout_below="@+id/txtBirthdate"
             android:ems="10"
             android:inputType="number"
-            android:layout_below="@+id/txtBirthdate"
-            android:layout_alignStart="@+id/txtBirthdate"
-            android:layout_alignEnd="@+id/txtBirthdate" />
+             />
 
         <Spinner
             android:id="@+id/heightSpinner"
@@ -241,8 +241,9 @@
             android:layout_alignEnd="@+id/txtHeight"
             android:layout_alignStart="@+id/txtHeight"
             android:layout_below="@+id/txtHeight"
+            android:entries="@array/height_array"
             android:textAlignment="textEnd"
-            android:entries="@array/height_array" />
+             />
 
         <CheckBox
             android:id="@+id/chkFeetInches"
@@ -262,8 +263,7 @@
             android:layout_alignBaseline="@+id/txtFeet"
             android:layout_alignBottom="@+id/txtFeet"
             android:layout_alignEnd="@+id/heightSpinner"
-            android:text="ft."
-            android:visibility="gone" />
+            android:text="ft." />
 
         <TextView
             android:id="@+id/inchesText"
@@ -272,8 +272,7 @@
             android:layout_alignBaseline="@+id/txtInches"
             android:layout_alignBottom="@+id/txtInches"
             android:layout_toEndOf="@+id/txtInches"
-            android:text="in."
-            android:visibility="gone" />
+            android:text="in." />
 
         <EditText
             android:id="@+id/txtFeet"
@@ -284,8 +283,7 @@
             android:layout_toStartOf="@+id/feetText"
             android:ems="10"
             android:inputType="number"
-            android:textSize="12sp"
-            android:visibility="gone" />
+            android:textSize="12sp" />
 
         <EditText
             android:id="@+id/txtInches"
@@ -296,8 +294,7 @@
             android:layout_below="@+id/txtFeet"
             android:ems="10"
             android:inputType="number"
-            android:textSize="12sp"
-            android:visibility="gone" />
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/btnNext"

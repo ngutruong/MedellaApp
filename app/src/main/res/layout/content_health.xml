@@ -257,9 +257,10 @@
             android:id="@+id/btnHfinish"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Finish"
+            android:layout_alignEnd="@+id/bpmText"
             android:layout_below="@+id/txtDesc"
-            android:layout_alignEnd="@+id/bpmText" />
+            android:onClick="finishClick"
+            android:text="Finish" />
 
         <EditText
             android:id="@+id/txtDesc"
