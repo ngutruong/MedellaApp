@@ -3,6 +3,7 @@ package ca.mohawk.truongnguyen.appmedella;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -18,7 +19,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-public class HealthActivity extends AppCompatActivity {
+public class HealthActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +36,18 @@ public class HealthActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });*/
+
+
+        //start NAVIGATION MENU in onCreate()
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        //end NAVIGATION MENU in onCreate()
     }
 
     private static String collectErrors = "";
@@ -134,4 +147,73 @@ public class HealthActivity extends AppCompatActivity {
                     .show();
         }
     }
+
+    /*
+    start NAVIGATION MENU
+     */
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.home, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        //DRAWER NAVIGATION IN HOME PAGE
+        if (id == R.id.nav_amHome) {
+            Intent iHealth = new Intent(this, HomeActivity.class);
+            startActivity(iHealth);
+        } else if (id == R.id.nav_amActivity) {
+            //Intent is not needed as the Home button leads to this page
+        } else if (id == R.id.nav_amList) {
+            //ListActivity.class not available yet
+
+        } else if (id == R.id.nav_amResults) {
+            Intent iResults = new Intent(this, ResultsActivity.class);
+            startActivity(iResults);
+
+        } else if (id == R.id.nav_amTrash) {
+            //TrashActivity.class not available yet
+
+        } else if (id == R.id.nav_amLogout) {
+            //Logout is not available at this moment
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+    /*
+    end NAVIGATION MENU
+     */
 }
