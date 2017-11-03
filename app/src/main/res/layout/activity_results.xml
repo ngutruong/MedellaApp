@@ -4,13 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ca.mohawk.truongnguyen.appmedella.ResultsActivity">
+    tools:context="ca.mohawk.truongnguyen.appmedella.ResultsActivity"
+    tools:layout_editor_absoluteY="81dp">
 
     <RelativeLayout
-        android:layout_width="368dp"
-        android:layout_height="495dp"
-        tools:layout_editor_absoluteX="9dp"
-        tools:layout_editor_absoluteY="8dp">
+        android:id="@+id/resultsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="166dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnShare"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent">
 
         <TextView
             android:id="@+id/bmiText"
@@ -152,14 +157,19 @@
             android:text="0"
             android:textColor="@android:color/darker_gray"
             android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/btnShare"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/txtHrateResult"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="74dp"
-            android:text="Share your results" />
     </RelativeLayout>
+
+    <Button
+        android:id="@+id/btnShare"
+        android:layout_width="wrap_content"
+        android:layout_height="49dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="280dp"
+        android:text="Share your results"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </android.support.constraint.ConstraintLayout>
