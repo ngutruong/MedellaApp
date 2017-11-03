@@ -10,7 +10,7 @@
     <RelativeLayout
         android:id="@+id/resultsLayout"
         android:layout_width="match_parent"
-        android:layout_height="166dp"
+        android:layout_height="match_parent"
         android:layout_marginBottom="32dp"
         app:layout_constraintBottom_toTopOf="@+id/btnShare"
         app:layout_constraintEnd_toEndOf="parent"
