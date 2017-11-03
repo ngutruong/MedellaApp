@@ -191,8 +191,8 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
 
         //DRAWER NAVIGATION IN HOME PAGE
         if (id == R.id.nav_amHome) {
-            Intent iHealth = new Intent(this, HomeActivity.class);
-            startActivity(iHealth);
+            Intent iHome = new Intent(this, HomeActivity.class);
+            startActivity(iHome);
         } else if (id == R.id.nav_amActivity) {
             //Intent is not needed as the Home button leads to this page
         } else if (id == R.id.nav_amList) {
