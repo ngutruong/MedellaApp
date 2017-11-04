@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/resultsFrame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ca.mohawk.truongnguyen.appmedella.ResultsActivity">
+
+    <Button
+        android:id="@+id/btnShare"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="168dp"
+        android:text="Share your results"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <RelativeLayout
+        android:id="@+id/resultsLayout"
+        android:layout_width="0dp"
+        android:layout_height="147dp"
+        android:layout_marginTop="63dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/bmiText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignStart="@+id/pintText"
+            android:text="BMI:" />
+
+        <TextView
+            android:id="@+id/pintText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/weightText"
+            android:layout_below="@+id/bmiText"
+            android:text="Pain Intensity:" />
+
+        <TextView
+            android:id="@+id/weightText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/systolicText"
+            android:layout_below="@+id/pintText"
+            android:text="Weight:" />
+
+        <TextView
+            android:id="@+id/btempText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/weightText"
+            android:layout_marginStart="13dp"
+            android:text="Body Temperature:" />
+
+        <TextView
+            android:id="@+id/systolicText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/txtSystolicResult"
+            android:layout_alignBottom="@+id/txtSystolicResult"
+            android:layout_alignStart="@+id/btempText"
+            android:text="Systolic Pressure:" />
+
+        <TextView
+            android:id="@+id/diastolicText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/systolicText"
+            android:layout_below="@+id/systolicText"
+            android:text="Diastolic Pressure:" />
+
+        <TextView
+            android:id="@+id/hrateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/diastolicText"
+            android:layout_below="@+id/diastolicText"
+            android:text="Heart Rate:" />
+
+        <TextView
+            android:id="@+id/txtBmiResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/bmiText"
+            android:layout_alignBottom="@+id/bmiText"
+            android:layout_toEndOf="@+id/bmiText"
+            android:paddingLeft="7dp"
+            android:text="0"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtPintResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/pintText"
+            android:layout_alignBottom="@+id/pintText"
+            android:layout_toEndOf="@+id/pintText"
+            android:paddingLeft="7dp"
+            android:text="0"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtWeightResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/weightText"
+            android:layout_alignBottom="@+id/weightText"
+            android:layout_toEndOf="@+id/weightText"
+            android:paddingLeft="7dp"
+            android:text="0"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtBtempResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/btempText"
+            android:layout_alignBottom="@+id/btempText"
+            android:layout_toEndOf="@+id/btempText"
+            android:paddingLeft="7dp"
+            android:text="0"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtSystolicResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btempText"
+            android:layout_toEndOf="@+id/systolicText"
+            android:paddingLeft="7dp"
+            android:text="0"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtDiastolicResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtSystolicResult"
+            android:layout_toEndOf="@+id/diastolicText"
+            android:paddingLeft="7dp"
+            android:text="0"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtHrateResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/hrateText"
+            android:layout_alignBottom="@+id/hrateText"
+            android:layout_toEndOf="@+id/hrateText"
+            android:paddingLeft="7dp"
+            android:text="0"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>

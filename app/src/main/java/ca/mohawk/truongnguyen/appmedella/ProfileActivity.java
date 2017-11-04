@@ -25,15 +25,6 @@ public class ProfileActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
-
         CheckBox feetAndInches = (CheckBox)findViewById(R.id.chkFeetInches);
         final EditText editHeight = (EditText)findViewById(R.id.txtHeight);
         final Spinner spinHeight = (Spinner)findViewById(R.id.heightSpinner);
@@ -138,7 +129,6 @@ public class ProfileActivity extends AppCompatActivity {
             }
 
             //PASSWORD VALIDATION IN PROFILE PAGE
-            //else if(checkPasswordInput.trim().length() == 0){
             if(checkPasswordInput.trim().length() == 0){
                 collectErrors+="- Password is empty.\n";
             }
@@ -152,10 +142,6 @@ public class ProfileActivity extends AppCompatActivity {
             else if (checkConfirmInput.trim().length() < 8 && checkConfirmInput.trim().length() > 0) {
                 collectErrors+="- Confirm Password is less than 8 characters.\n";
             }
-
-            /*else if(checkPasswordInput.trim().length() == 0 && checkConfirmInput.trim().length() == 0){
-                errorDialog.setMessage("Password and Confirm Password must not be empty.");
-            }*/
 
             if(!checkPasswordInput.equals(checkConfirmInput) || !checkConfirmInput.equals(checkPasswordInput)) {
                 collectErrors+="- Passwords do not match.\n";
@@ -180,19 +166,6 @@ public class ProfileActivity extends AppCompatActivity {
             else if (checkAnswer3Input.trim().length() < 5 && checkAnswer3Input.trim().length() > 0) {
                 collectErrors+="- Answer for Security Question 3 is less than 5 characters.\n";
             }
-
-            /*else if(checkAnswer1Input.trim().length() == 0 && checkAnswer2Input.trim().length() == 0 && checkAnswer3Input.trim().length() == 0){
-                errorDialog.setMessage("Security answers must not be empty.");
-            }
-            else if((checkAnswer1Input.trim().length() < 6 && checkAnswer1Input.trim().length() > 0) && (checkAnswer2Input.trim().length() < 6 && checkAnswer2Input.trim().length() > 0) && (checkAnswer3Input.trim().length() < 6 && checkAnswer3Input.trim().length() > 0)){
-                errorDialog.setMessage("Security answers must be at least 6 characters.");
-            }
-
-            //Correct validation
-            else {
-                //NOT THE OFFICIAL CODE -- FOR MINOR TESTING ONLY
-                errorDialog.setMessage("Thank you.");
-            }*/
 
             //HEIGHT VALIDATION IN PROFILE PAGE
             if(heightSpin.getSelectedItem().toString().equals("cm.") && Double.parseDouble(checkHeightInput) < 50){

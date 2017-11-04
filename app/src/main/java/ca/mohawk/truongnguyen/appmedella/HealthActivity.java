@@ -25,29 +25,17 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_health);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
-
-
-        //start NAVIGATION MENU in onCreate()
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_health);
         navigationView.setNavigationItemSelectedListener(this);
-        //end NAVIGATION MENU in onCreate()
     }
 
     private static String collectErrors = "";
@@ -148,9 +136,6 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
         }
     }
 
-    /*
-    start NAVIGATION MENU
-     */
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -164,7 +149,7 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home, menu);
+        //getMenuInflater().inflate(R.menu.menu_health, menu); //Cancel out 3-dot menu in Health Activity page
         return true;
     }
 
@@ -194,7 +179,7 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
             Intent iHome = new Intent(this, HomeActivity.class);
             startActivity(iHome);
         } else if (id == R.id.nav_amActivity) {
-            //Intent is not needed as the Home button leads to this page
+            //Intent is not needed as the Health Activity button leads to this page
         } else if (id == R.id.nav_amList) {
             //ListActivity.class not available yet
 
@@ -213,7 +198,4 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-    /*
-    end NAVIGATION MENU
-     */
 }

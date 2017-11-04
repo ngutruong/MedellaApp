@@ -5,13 +5,13 @@
         <item android:title="Home"
             android:id="@+id/nav_amHome"
             />
-        <item android:title="Health Activity"
+        <item android:title="Add Health Activity"
             android:id="@+id/nav_amActivity"
             android:icon="@android:drawable/ic_menu_add" />
-        <item android:title="List"
+        <item android:title="Activity List"
             android:id="@+id/nav_amList"
             android:icon="@android:drawable/ic_menu_agenda" />
-        <item android:title="Health Results"
+        <item android:title="Overall Results"
             android:id="@+id/nav_amResults"
             android:icon="@android:drawable/ic_menu_gallery"/>
         <item android:title="Trash"
