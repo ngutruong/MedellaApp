@@ -1,22 +1,26 @@
-package ca.mohawk.truongnguyen.appmedella;
+package com.medella.android;
 
 import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class ResultsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+import ca.mohawk.truongnguyen.android.R;
+
+public class HomeActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_results);
+        setContentView(R.layout.activity_home);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -26,10 +30,9 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_results);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_home);
         navigationView.setNavigationItemSelectedListener(this);
     }
-
 
     @Override
     public void onBackPressed() {
@@ -44,7 +47,7 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.menu_results, menu); //Cancel out 3-dot menu in Health Activity page
+        //getMenuInflater().inflate(R.menu.home, menu); //Cancel out 3-dot menu in Home page
         return true;
     }
 
@@ -71,18 +74,17 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
 
         //DRAWER NAVIGATION IN HOME PAGE
         if (id == R.id.nav_amHome) {
-            Intent iHome = new Intent(this, HomeActivity.class);
-            startActivity(iHome);
+            //Intent is not needed as the Home button leads to this page
+
         } else if (id == R.id.nav_amActivity) {
-            //Intent is not needed as the Health Activity button leads to this page
             Intent iHealth = new Intent(this, HealthActivity.class);
             startActivity(iHealth);
-
         } else if (id == R.id.nav_amList) {
             //ListActivity.class not available yet
 
         } else if (id == R.id.nav_amResults) {
-            //Intent is not needed as the Health Activity button leads to this page
+            Intent iResults = new Intent(this, ResultsActivity.class);
+            startActivity(iResults);
 
         } else if (id == R.id.nav_amTrash) {
             //TrashActivity.class not available yet
@@ -96,4 +98,23 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
         return true;
     }
 
+    public final static String EXTRA_VALUE = "ca.mohawk.truongnguyen.appmedella.MESSAGE";
+
+    //Once the Login button is clicked, it will send the user to Login page
+    public void goLogin(View view){
+        Intent iLog = new Intent(this, LoginActivity.class);
+        startActivity(iLog);
+    }
+
+    //Once the Create a Profile button is clicked, it will send the user to Profile page
+    public void goProfile(View view){
+        Intent iProf = new Intent(this, ProfileActivity.class);
+        startActivity(iProf);
+    }
+
+    //It will send user to the Health Activity page to create a new entry
+    public void goHealth(View view){
+        Intent iHealth = new Intent(this, HealthActivity.class);
+        startActivity(iHealth);
+    }
 }

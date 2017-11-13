@@ -1,4 +1,4 @@
-package ca.mohawk.truongnguyen.appmedella;
+package com.medella.android;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -31,6 +31,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import ca.mohawk.truongnguyen.android.R;
 
 import static android.Manifest.permission.READ_CONTACTS;
 

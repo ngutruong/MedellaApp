@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="ca.mohawk.truongnguyen.appmedella.HealthActivity"
+    tools:context="ca.mohawk.truongnguyen.android.com.medella.android.HealthActivity"
     tools:showIn="@layout/activity_health">
 
     <!--TextView

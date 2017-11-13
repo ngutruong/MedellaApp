@@ -1,11 +1,9 @@
-package ca.mohawk.truongnguyen.appmedella;
+package com.medella.android;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -22,6 +20,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.regex.Pattern;
+
+import ca.mohawk.truongnguyen.android.R;
 
 public class ProfileActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -216,11 +216,61 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
     @Override
     public void onBackPressed() {
+        EditText nameInput = (EditText)findViewById(R.id.txtNameEdit);
+        EditText emailInput = (EditText)findViewById(R.id.txtEmailEdit);
+        EditText passwordInput = (EditText)findViewById(R.id.txtCreatePassword);
+        EditText confirmPassword = (EditText)findViewById(R.id.txtConfirmEdit);
+        EditText securityAnswer1 = (EditText)findViewById(R.id.txtSq1Answer);
+        EditText securityAnswer2 = (EditText)findViewById(R.id.txtSq2Answer);
+        EditText securityAnswer3 = (EditText)findViewById(R.id.txtSq3Answer);
+        EditText birthdateInput = (EditText)findViewById(R.id.txtBirthdate);
+        EditText heightInput = (EditText)findViewById(R.id.txtHeight);
+        EditText feetInput = (EditText)findViewById(R.id.txtFeet);
+        EditText inchesInput = (EditText)findViewById(R.id.txtInches);
+
+        boolean emptyName = nameInput.getText().toString().trim().isEmpty();
+        boolean emptyEmail = emailInput.getText().toString().trim().isEmpty();
+        boolean emptyPassword = passwordInput.getText().toString().trim().isEmpty();
+        boolean emptyConfirm = confirmPassword.getText().toString().trim().isEmpty();
+        boolean emptyFirstAnswer = securityAnswer1.getText().toString().trim().isEmpty();
+        boolean emptySecondAnswer = securityAnswer2.getText().toString().trim().isEmpty();
+        boolean emptyThirdAnswer = securityAnswer3.getText().toString().trim().isEmpty();
+        boolean emptyBirthdate; //MUST FIND BIRTHDATE VALIDATION--need to be boolean
+        boolean emptyHeight = heightInput.getText().toString().trim().isEmpty();
+        boolean emptyFeet = feetInput.getText().toString().trim().isEmpty();
+        boolean emptyInches = inchesInput.getText().toString().trim().isEmpty();
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            //Warning message when user clicks the Back button
+            AlertDialog.Builder warningDialog = new AlertDialog.Builder(this);
+            //Will redirect to Home page when user clicks Yes
+            warningDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    ProfileActivity.super.onBackPressed();
+                }
+            });
+            //Registration page will stay when user clicks No
+            warningDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                }
+            });
+            warningDialog.setTitle("Registration Incomplete")
+                    .setMessage("Are you sure you want to exit?");
+
+            //Warning message must show when one or more fields are not empty
+            //Validations for birthdate, feet and inches are not available yet
+            if(!emptyName || !emptyEmail || !emptyPassword || !emptyConfirm || !emptyFirstAnswer || !emptySecondAnswer || !emptyThirdAnswer || !emptyHeight) {
+                warningDialog.show(); //Warning message will show when user clicks the Back button
+            }
+            else{
+                super.onBackPressed(); //Will redirect to previous page when all fields are empty
+            }
         }
     }
 
@@ -252,18 +302,100 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        EditText nameInput = (EditText)findViewById(R.id.txtNameEdit);
+        EditText emailInput = (EditText)findViewById(R.id.txtEmailEdit);
+        EditText passwordInput = (EditText)findViewById(R.id.txtCreatePassword);
+        EditText confirmPassword = (EditText)findViewById(R.id.txtConfirmEdit);
+        EditText securityAnswer1 = (EditText)findViewById(R.id.txtSq1Answer);
+        EditText securityAnswer2 = (EditText)findViewById(R.id.txtSq2Answer);
+        EditText securityAnswer3 = (EditText)findViewById(R.id.txtSq3Answer);
+        EditText birthdateInput = (EditText)findViewById(R.id.txtBirthdate);
+        EditText heightInput = (EditText)findViewById(R.id.txtHeight);
+        EditText feetInput = (EditText)findViewById(R.id.txtFeet);
+        EditText inchesInput = (EditText)findViewById(R.id.txtInches);
+
+        boolean emptyName = nameInput.getText().toString().trim().isEmpty();
+        boolean emptyEmail = emailInput.getText().toString().trim().isEmpty();
+        boolean emptyPassword = passwordInput.getText().toString().trim().isEmpty();
+        boolean emptyConfirm = confirmPassword.getText().toString().trim().isEmpty();
+        boolean emptyFirstAnswer = securityAnswer1.getText().toString().trim().isEmpty();
+        boolean emptySecondAnswer = securityAnswer2.getText().toString().trim().isEmpty();
+        boolean emptyThirdAnswer = securityAnswer3.getText().toString().trim().isEmpty();
+        boolean emptyBirthdate; //MUST FIND BIRTHDATE VALIDATION--need to be boolean
+        boolean emptyHeight = heightInput.getText().toString().trim().isEmpty();
+        boolean emptyFeet = feetInput.getText().toString().trim().isEmpty();
+        boolean emptyInches = inchesInput.getText().toString().trim().isEmpty();
+
+        final Intent iHome = new Intent(ProfileActivity.this, HomeActivity.class);
+        final Intent iHealth = new Intent(ProfileActivity.this, HealthActivity.class);
+        final Intent iResults = new Intent(ProfileActivity.this, ResultsActivity.class);
+
+        //Warning message when user selects an option from navigation drawer
+        AlertDialog.Builder warningDialog = new AlertDialog.Builder(this);
+        //Registration page will stay when user clicks No
+        warningDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        warningDialog.setTitle("Registration Incomplete")
+                .setMessage("Are you sure you want to exit?");
+
         //DRAWER NAVIGATION IN HOME PAGE
         if (id == R.id.nav_amHome) {
-            Intent iHome = new Intent(this, HomeActivity.class);
-            startActivity(iHome);
+            //Will redirect to Home page when user selects Yes
+            warningDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    startActivity(iHome);
+                }
+            });
+
+            //Warning message must show when one or more fields are not empty
+            //Validations for birthdate, feet and inches are not available yet
+            if(!emptyName || !emptyEmail || !emptyPassword || !emptyConfirm || !emptyFirstAnswer || !emptySecondAnswer || !emptyThirdAnswer || !emptyHeight) {
+                warningDialog.show(); //Warning message will show when user selects the Home option
+            }
+            else{
+                startActivity(iHome);  //Will redirect to Home page when all fields are empty
+            }
         } else if (id == R.id.nav_amActivity) {
-            Intent iHealth = new Intent(this, HealthActivity.class);
-            startActivity(iHealth);
+            //Will redirect to Activity page when user clicks Yes
+            warningDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    startActivity(iHealth);
+                }
+            });
+
+            //Warning message must show when one or more fields are not empty
+            //Validations for birthdate, feet and inches are not available yet
+            if(!emptyName || !emptyEmail || !emptyPassword || !emptyConfirm || !emptyFirstAnswer || !emptySecondAnswer || !emptyThirdAnswer || !emptyHeight) {
+                warningDialog.show(); //Warning message will show when user selects the Activity option
+            }
+            else{
+                startActivity(iHealth);  //Will redirect to Activity page when all fields are empty
+            }
         } else if (id == R.id.nav_amList) {
             //ListActivity.class not available yet
         } else if (id == R.id.nav_amResults) {
-            Intent iResults = new Intent(this, ResultsActivity.class);
-            startActivity(iResults);
+            //Will redirect to Results page when user clicks Yes
+            warningDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    startActivity(iResults);
+                }
+            });
+
+            //Warning message must show when one or more fields are not empty
+            //Validations for birthdate, feet and inches are not available yet
+            if(!emptyName || !emptyEmail || !emptyPassword || !emptyConfirm || !emptyFirstAnswer || !emptySecondAnswer || !emptyThirdAnswer || !emptyHeight) {
+                warningDialog.show(); //Warning message will show when user selects the Results option
+            }
+            else{
+                startActivity(iResults);  //Will redirect to Results page when all fields are empty
+            }
         } else if (id == R.id.nav_amTrash) {
             //TrashActivity.class not available yet
         } else if (id == R.id.nav_amLogout) {

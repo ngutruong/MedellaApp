@@ -1,4 +1,4 @@
-package ca.mohawk.truongnguyen.appmedella;
+package com.medella.android;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

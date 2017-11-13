@@ -1,4 +1,4 @@
-package ca.mohawk.truongnguyen.appmedella;
+package com.medella.android;
 
 import org.junit.Test;
 
