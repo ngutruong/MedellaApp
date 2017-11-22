@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="ca.mohawk.truongnguyen.android.com.medella.android.HealthActivity"
+    tools:context="com.medella.android.HealthActivity"
     tools:showIn="@layout/activity_health">
 
     <!--TextView
@@ -15,29 +15,30 @@
         android:text="@string/large_text" /-->
 
     <RelativeLayout
+        android:id="@+id/healthFrame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/healthFrame">
+        android:layout_height="wrap_content">
+
         <TextView
             android:id="@+id/titleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignStart="@+id/weightText"
             android:layout_marginTop="26dp"
             android:text="Title"
-            android:textStyle="bold"
-            android:layout_alignParentTop="true"
-            android:layout_alignStart="@+id/weightText" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/weightText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Weight"
-            android:textStyle="bold"
             android:layout_alignBaseline="@+id/txtWeight"
             android:layout_alignBottom="@+id/txtWeight"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="16dp" />
+            android:layout_marginStart="16dp"
+            android:text="Weight"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/txtTitle"
@@ -47,10 +48,10 @@
             android:layout_alignBottom="@+id/titleText"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="11dp"
+            android:layout_toEndOf="@+id/hrateText"
             android:ems="10"
             android:inputType="textPersonName"
-            android:textSize="12sp"
-            android:layout_toEndOf="@+id/hrateText" />
+            android:textSize="12sp" />
 
         <EditText
             android:id="@+id/txtWeight"
@@ -68,10 +69,10 @@
             android:id="@+id/pintText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:text="Pain Intensity"
             android:layout_alignBottom="@+id/pintSpinner"
-            android:layout_alignStart="@+id/weightText" />
+            android:layout_alignStart="@+id/weightText"
+            android:text="Pain Intensity"
+            android:textStyle="bold" />
 
         <Spinner
             android:id="@+id/weightSpinner"
@@ -87,51 +88,51 @@
             android:id="@+id/medText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Medication"
-            android:textStyle="bold"
             android:layout_alignBaseline="@+id/txtMedName"
             android:layout_alignBottom="@+id/txtMedName"
-            android:layout_alignStart="@+id/pintText" />
+            android:layout_alignStart="@+id/pintText"
+            android:text="Medication"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/btempText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Body Temperature"
-            android:textStyle="bold"
             android:layout_alignBaseline="@+id/txtTemperature"
             android:layout_alignBottom="@+id/txtTemperature"
-            android:layout_alignStart="@+id/medText" />
+            android:layout_alignStart="@+id/medText"
+            android:text="Body Temperature"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/bpressureText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/btempText"
+            android:layout_below="@+id/btempText"
             android:layout_marginTop="55dp"
             android:text="Blood Pressure"
-            android:textStyle="bold"
-            android:layout_below="@+id/btempText"
-            android:layout_alignStart="@+id/btempText" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/hrateText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Heart Rate"
-            android:textStyle="bold"
             android:layout_alignBaseline="@+id/txtHrate"
             android:layout_alignBottom="@+id/txtHrate"
-            android:layout_alignStart="@+id/bpressureText" />
+            android:layout_alignStart="@+id/bpressureText"
+            android:text="Heart Rate"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/descText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/hrateText"
+            android:layout_below="@+id/txtHrate"
             android:layout_marginTop="18dp"
             android:text="Medical Description"
-            android:textStyle="bold"
-            android:layout_below="@+id/txtHrate"
-            android:layout_alignStart="@+id/hrateText" />
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/txtMedName"
@@ -150,8 +151,8 @@
             android:id="@+id/doseSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/txtMedName"
-            android:layout_alignStart="@+id/txtMedName"
+            android:layout_alignEnd="@+id/txtDosage"
+            android:layout_alignStart="@+id/tempSpinner"
             android:layout_below="@+id/txtDosage"
             android:entries="@array/dosage_array"
             android:textAlignment="textEnd" />
@@ -160,7 +161,7 @@
             android:id="@+id/txtDosage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/doseSpinner"
+            android:layout_alignStart="@+id/txtMedName"
             android:layout_below="@+id/txtMedName"
             android:ems="10"
             android:hint="Dosage amount"
@@ -172,8 +173,7 @@
             android:id="@+id/txtTemperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/doseSpinner"
-            android:layout_alignStart="@+id/txtSystolic"
+            android:layout_alignEnd="@+id/txtDosage"
             android:layout_below="@+id/doseSpinner"
             android:ems="10"
             android:hint="Add temperature number here"
@@ -185,10 +185,10 @@
             android:id="@+id/tempSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/txtTemperature"
+            android:layout_alignStart="@+id/txtSystolic"
             android:layout_below="@+id/txtTemperature"
             android:entries="@array/btemp_array"
-            android:layout_alignEnd="@+id/doseSpinner"
-            android:layout_alignStart="@+id/txtTemperature"
             android:textAlignment="textEnd" />
 
         <EditText
@@ -226,32 +226,32 @@
             android:id="@+id/diastolicText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Diastolic"
             android:layout_alignBaseline="@+id/txtDiastolic"
             android:layout_alignBottom="@+id/txtDiastolic"
-            android:layout_toEndOf="@+id/hrateText" />
+            android:layout_toEndOf="@+id/hrateText"
+            android:text="Diastolic" />
 
         <EditText
             android:id="@+id/txtHrate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/txtTemperature"
             android:layout_below="@+id/txtDiastolic"
             android:layout_marginTop="12dp"
+            android:layout_toStartOf="@+id/bpmText"
             android:ems="10"
             android:inputType="number"
             android:textAlignment="center"
-            android:textSize="12sp"
-            android:layout_alignStart="@+id/tempSpinner"
-            android:layout_toStartOf="@+id/bpmText" />
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/bpmText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="bpm"
             android:layout_alignBaseline="@+id/txtHrate"
             android:layout_alignBottom="@+id/txtHrate"
-            android:layout_alignEnd="@+id/tempSpinner" />
+            android:layout_alignEnd="@+id/tempSpinner"
+            android:text="bpm" />
 
         <Button
             android:id="@+id/btnHfinish"
@@ -260,7 +260,7 @@
             android:layout_alignEnd="@+id/bpmText"
             android:layout_below="@+id/txtDesc"
             android:onClick="finishClick"
-            android:text="Finish" />
+            android:text="Add Activity" />
 
         <EditText
             android:id="@+id/txtDesc"

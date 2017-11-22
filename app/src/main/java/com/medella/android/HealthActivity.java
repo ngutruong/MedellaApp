@@ -35,6 +35,9 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_health);
         navigationView.setNavigationItemSelectedListener(this);
+
+        Spinner dosageSpin = (Spinner)findViewById(R.id.doseSpinner);
+        dosageSpin.setSelection(15); //Set mg (Milligram) as default item in Dosage spinner
     }
 
     private static String collectErrors = "";
@@ -50,6 +53,7 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
         EditText heartRate = (EditText)findViewById(R.id.txtHrate);
         EditText healthDescription = (EditText)findViewById(R.id.txtDesc);
         Spinner weightSpin = (Spinner)findViewById(R.id.weightSpinner);
+        Spinner temperatureSpin = (Spinner)findViewById(R.id.tempSpinner);
 
 
         AlertDialog.Builder errorDialog = new AlertDialog.Builder(this);
@@ -73,9 +77,12 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
             else if(weightSpin.getSelectedItem().toString().equals("lbs") && Double.parseDouble(weightInput.getText().toString()) < 7.7){
                 collectErrors+="- Please enter a valid weight.\n";
             }
-            else if(Double.parseDouble(weightInput.getText().toString()) < 0){
-                collectErrors+="- Weight must not have negative value.\n";
+            else if(weightSpin.getSelectedItem().toString().equals("kg") && Double.parseDouble(weightInput.getText().toString()) < 3.5){
+                collectErrors+="- Please enter a valid weight.\n";
             }
+            //else if(Double.parseDouble(weightInput.getText().toString()) < 0){
+              //  collectErrors+="- Weight must not have negative value.\n";
+            //}
 
             //HEALTH DESCRIPTION VALIDATION FOR HEALTH ACTIVITY PAGE
             if(healthDescription.getText().toString().trim().isEmpty()){
@@ -85,10 +92,14 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
             //BODY TEMPERATURE VALIDATION IN HEALTH ACTIVITY PAGE
             if(Double.parseDouble(temperatureInput.getText().toString()) == 0){
                 collectErrors+="- Body temperature must not be 0.\n";
+            } else if (Double.parseDouble(temperatureInput.getText().toString()) < 35 && temperatureSpin.getSelectedItem().toString().equals("degrees Celsius")) {
+                collectErrors+="- Please enter a valid body temperature.\n";
+            } else if (Double.parseDouble(temperatureInput.getText().toString()) < 95 && temperatureSpin.getSelectedItem().toString().equals("degrees Fahrenheit")) {
+                collectErrors+="- Please enter a valid body temperature.\n";
             }
-            else if(Double.parseDouble(temperatureInput.getText().toString()) < 0){
-                collectErrors+="- Body temperature must not have negative value.\n";
-            }
+            //else if(Double.parseDouble(temperatureInput.getText().toString()) < 0){
+            //    collectErrors+="- Body temperature must not have negative value.\n";
+            //}
 
             /*
             VALIDATION IS ERRONEOUS--MESSAGES SHOULD SHOW
@@ -101,6 +112,9 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
             else if(Double.parseDouble(systolicInput.getText().toString()) > 250){
                 collectErrors+="- Systolic pressure must not be greater than 250.\n";
             }
+            else if(!systolicInput.getText().toString().trim().isEmpty() && diastolicInput.getText().toString().trim().isEmpty()){
+                collectErrors+="- Diastolic pressure must not be empty while systolic pressure is filled.\n";
+            }
 
             //DIASTOLIC PRESSURE VALIDATION IN HEALTH ACTIVITY PAGE
             if(Double.parseDouble(diastolicInput.getText().toString()) < 60){
@@ -108,6 +122,9 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
             }
             else if(Double.parseDouble(diastolicInput.getText().toString()) > 140){
                 collectErrors+="- Diastolic pressure must not be greater than 140.\n";
+            }
+            else if(systolicInput.getText().toString().trim().isEmpty() && !diastolicInput.getText().toString().trim().isEmpty()){
+                collectErrors+="- Systolic pressure must not be empty while diastolic pressure is filled.\n";
             }
 
             //HEART RATE VALIDATION IN HEALTH ACTIVITY PAGE

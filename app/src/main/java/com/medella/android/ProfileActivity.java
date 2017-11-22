@@ -1,5 +1,6 @@
 package com.medella.android;
 
+import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -329,6 +330,8 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         final Intent iHome = new Intent(ProfileActivity.this, HomeActivity.class);
         final Intent iHealth = new Intent(ProfileActivity.this, HealthActivity.class);
         final Intent iResults = new Intent(ProfileActivity.this, ResultsActivity.class);
+        //final Intent iList = new Intent(ProfileActivity.this, ListActivity.class); //ListActivity isn't available yet; don't know why it's available
+        //final Intent iTrash = new Intent(ProfileActivity.this, TrashActivity.class);
 
         //Warning message when user selects an option from navigation drawer
         AlertDialog.Builder warningDialog = new AlertDialog.Builder(this);
@@ -381,6 +384,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             //ListActivity.class not available yet
         } else if (id == R.id.nav_amResults) {
             //Will redirect to Results page when user clicks Yes
+            //MAY NOT SHOW RESULTS OPTION DUE TO NOT BEING LOGIN
             warningDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
