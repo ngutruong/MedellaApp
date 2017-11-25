@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import ca.mohawk.truongnguyen.android.R;
 
@@ -32,6 +33,16 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
         navigationView.setNavigationItemSelectedListener(this);
     }
 
+    //Must add Email--Gmail is available but can't be the only email app
+    public void shareClick(View view){
+        Intent iShare = new Intent(Intent.ACTION_SEND);
+        iShare.setType("text/plain");
+        String shareBody = "Your body here"; //Not complete
+        String shareSub  = "Your subject here"; //Not complete
+        iShare.putExtra(Intent.EXTRA_TEXT, shareBody);
+        iShare.putExtra(Intent.EXTRA_TEXT, shareSub);
+        startActivity(Intent.createChooser(iShare, "Share your health results via"));
+    }
 
     @Override
     public void onBackPressed() {
