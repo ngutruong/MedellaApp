@@ -79,8 +79,11 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_amActivity) {
             Intent iHealth = new Intent(this, HealthActivity.class);
             startActivity(iHealth);
-        } else if (id == R.id.nav_amList) {
-            //ListActivity.class not available yet
+        }else if (id == R.id.nav_amList) {
+            //TESTING ONLY
+            //LIST ACTIVITY NOT OFFICIAL
+            Intent iList = new Intent(this, ListActivity.class);
+            startActivity(iList);
 
         } else if (id == R.id.nav_amResults) {
             Intent iResults = new Intent(this, ResultsActivity.class);
@@ -116,5 +119,12 @@ public class HomeActivity extends AppCompatActivity
     public void goHealth(View view){
         Intent iHealth = new Intent(this, HealthActivity.class);
         startActivity(iHealth);
+    }
+
+    //TESTING ONLY
+    //It will send user to List page
+    public void goList(View view){
+        Intent iList = new Intent(this, ListActivity.class);
+        startActivity(iList);
     }
 }

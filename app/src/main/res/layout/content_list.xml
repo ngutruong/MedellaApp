@@ -7,5 +7,5 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.medella.android.ListActivity"
     tools:showIn="@layout/activity_list">
-
+    
 </android.support.constraint.ConstraintLayout>

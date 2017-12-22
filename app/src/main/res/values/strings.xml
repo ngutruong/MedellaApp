@@ -95,4 +95,6 @@
         <item>degrees Celsius</item> <!--need to find 'degrees' symbol-->
         <item>degrees Fahrenheit</item> <!--need to find 'degrees' symbol-->
     </string-array>
+
+    <string name="title_activity_list">List</string>
 </resources>

@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import ca.mohawk.truongnguyen.android.R;
 
@@ -33,12 +34,40 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    //Must add Email--Gmail is available but can't be the only email app
+    //Allow sharing options when users tap 'Share Your Results' button
     public void shareClick(View view){
+        TextView bmiLabel = (TextView)findViewById(R.id.bmiText);
+        TextView pintLabel = (TextView)findViewById(R.id.pintText);
+        TextView weightLabel = (TextView)findViewById(R.id.weightText);
+        TextView btempLabel = (TextView)findViewById(R.id.btempText);
+        TextView systolicLabel = (TextView)findViewById(R.id.systolicText);
+        TextView diastolicLabel = (TextView)findViewById(R.id.diastolicText);
+        TextView hrateLabel = (TextView)findViewById(R.id.hrateText);
+
+        TextView bmiResult = (TextView)findViewById(R.id.txtBmiResult);
+        TextView pintResult = (TextView)findViewById(R.id.txtPintResult);
+        TextView weightResult = (TextView)findViewById(R.id.txtWeightResult);
+        TextView btempResult = (TextView)findViewById(R.id.txtBtempResult);
+        TextView systolicResult = (TextView)findViewById(R.id.txtSystolicResult);
+        TextView diastolicResult = (TextView)findViewById(R.id.txtDiastolicResult);
+        TextView hrateResult = (TextView)findViewById(R.id.txtHrateResult);
+
+        String showBmi = bmiLabel.getText().toString() + bmiResult.getText().toString() + "\n";
+        String showPint = pintLabel.getText().toString() + pintResult.getText().toString() + "\n";
+        String showWeight = weightLabel.getText().toString() + weightResult.getText().toString() + "\n";
+        String showBtemp = btempLabel.getText().toString() + btempResult.getText().toString() + "\n";
+        String showSystolic = systolicLabel.getText().toString() + systolicResult.getText().toString() + "\n";
+        String showDiastolic = diastolicLabel.getText().toString() + diastolicResult.getText().toString() + "\n";
+        String showHrate = hrateLabel.getText().toString() + hrateResult.getText().toString() + "\n";
+
         Intent iShare = new Intent(Intent.ACTION_SEND);
         iShare.setType("text/plain");
-        String shareBody = "Your body here"; //Not complete
-        String shareSub  = "Your subject here"; //Not complete
+
+        //String shareBody = showBmi + showPint + showWeight + showBtemp + showSystolic + showDiastolic + showHrate; //Not complete? - subject does not work because of update?
+        String shareBody = "Your body here"; //shareBody does not show up - possibly due to update?
+        //String shareSub  = "My Overall Health Results from Medella"; //Not complete? - Concatenate user's name
+        String shareSub = showBmi + showPint + showWeight + showBtemp + showSystolic + showDiastolic + showHrate; //shareSub acts as a body instead of subject - possibly due to update?
+
         iShare.putExtra(Intent.EXTRA_TEXT, shareBody);
         iShare.putExtra(Intent.EXTRA_TEXT, shareSub);
         startActivity(Intent.createChooser(iShare, "Share your health results via"));

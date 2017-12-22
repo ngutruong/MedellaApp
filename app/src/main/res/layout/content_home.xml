@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/homeFrame"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="ca.mohawk.truongnguyen.android.com.medella.android.HomeActivity"
+    tools:context="com.medella.android.HomeActivity"
     tools:showIn="@layout/app_bar_home">
 
     <ImageView
@@ -51,6 +51,7 @@
         android:id="@+id/btnList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="goList"
         android:text="Go to List"
         android:layout_below="@+id/btnCreateActivity"
         android:layout_alignStart="@+id/btnCreateActivity"
