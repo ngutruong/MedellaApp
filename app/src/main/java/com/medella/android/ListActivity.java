@@ -17,8 +17,6 @@ import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.mohawk.truongnguyen.android.R;
-
 public class ListActivity extends AppCompatActivity {
     MaterialSearchView searchView;
     ListView testListview;

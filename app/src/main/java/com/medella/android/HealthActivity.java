@@ -16,8 +16,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import ca.mohawk.truongnguyen.android.R;
-
 public class HealthActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override

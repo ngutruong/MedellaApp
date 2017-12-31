@@ -22,8 +22,6 @@ import android.widget.TextView;
 
 import java.util.regex.Pattern;
 
-import ca.mohawk.truongnguyen.android.R;
-
 public class ProfileActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
