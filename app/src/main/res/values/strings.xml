@@ -7,7 +7,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_login">Sign in</string>
 
-    <!-- Strings related to login -->
+    <!-- Strings for LoginActivity -->
     <string name="prompt_email">Email Address</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Login</string>
@@ -19,16 +19,13 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+
+    <!-- Strings for HealthActivity -->
     <string name="title_activity_health">Health Activity</string>
-    <!--string name="large_text">
-        "Material is the metaphor.\n\n"
 
-        "A material metaphor is the unifying theory of a rationalized space and a system of motion."
-        "The material is grounded in tactile reality, inspired by the study of paper and ink, yet "
-        "technologically advanced and open to imagination and magic.\n"
-    </string-->
+    <!-- Strings for ProfileActivity -->
     <string name="title_activity_profile">Register Your Profile</string>
-
+    <!-- Array of security questions for ProfileActivity -->
     <string-array name="sq1_array">
         <item>What is the make of your first car?</item>
         <item>What is the maiden name of your mother?</item>
@@ -47,15 +44,20 @@
         <item>What was the name of the hospital you were born in?</item>
         <item>In what city does your nearest sibling live?</item>
     </string-array>
+    <!-- Array of height units for ProfileActivity -->
     <string-array name="height_array">
         <item>cm.</item>
         <item>m.</item>
         <item>in.</item>
     </string-array>
+
+    <!-- Strings for HealthActivity -->
+    <!-- Array of weight units for HealthActivity -->
     <string-array name="weight_array">
         <item>lbs</item>
         <item>kg</item>
     </string-array>
+    <!-- Array of Pain Intensity rates for HealthActivity -->
     <string-array name="pint_array">
         <item>1 - Not Painful</item>
         <item>2 - Slightly Painful</item>
@@ -68,6 +70,7 @@
         <item>9 - Extremely Painful</item>
         <item>10 - Most Painful</item>
     </string-array>
+    <!-- Array of dosage units for HealthActivity -->
     <string-array name="dosage_array">
         <item>c (Cup)</item>
         <item>cc (Cubic centimeter)</item>
@@ -91,10 +94,15 @@
         <item>tbsp (Tablespoon)</item>
         <item>tsp (Teaspoon)</item>
     </string-array>
+    <!-- Array of temperature units for HealthActivity -->
     <string-array name="btemp_array">
-        <item>degrees Celsius</item> <!--need to find 'degrees' symbol-->
-        <item>degrees Fahrenheit</item> <!--need to find 'degrees' symbol-->
+        <item>°C</item>
+        <item>°F</item>
     </string-array>
 
+    <!-- Strings for ListActivity -->
     <string name="title_activity_list">List</string>
+
+    <!-- Strings for ResultsActivity -->
+    <string name="title_activity_results">Results</string>
 </resources>

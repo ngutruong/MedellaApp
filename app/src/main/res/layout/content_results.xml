@@ -5,7 +5,7 @@
     android:id="@+id/resultsFrame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.medella.android.ResultsActivity">
+    tools:context="com.medella.android.activities.ResultsActivity">
 
     <Button
         android:id="@+id/btnShare"
