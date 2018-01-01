@@ -86,10 +86,39 @@
     </ScrollView>
 
     <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="" />
+
+    <TextView
         android:id="@+id/txtForgot"
+        android:layout_width="186dp"
+        android:layout_height="35dp"
+        android:text="Forgot Password? Tap here."
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/txtRegister"
+        android:onClick="goProfile"
+        android:layout_width="181dp"
+        android:layout_height="35dp"
+        android:text="New to Medella? Tap here."
+        android:textAlignment="center" />
+
+    <!--TextView
+        android:id="@+id/txtRegister"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
         android:text="Forgot Password?"
         android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/txtForgot"
+        android:layout_width="221dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="Forgot Password?"
+        android:textAlignment="center" /-->
+
 </LinearLayout>
