@@ -7,7 +7,6 @@ import android.database.sqlite.*;
 import android.provider.BaseColumns;
 
 import com.medella.android.listeners.OnDatabaseChangedListener;
-import com.medella.android.memoservices.VoiceMemoItem;
 
 public class DBHelper extends SQLiteOpenHelper {
     private Context mContext;
@@ -77,8 +76,8 @@ public class DBHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + DBHelperItem.PROFILE_TABLE_NAME + " (" +
                     DBHelperItem.COLUMN_NAME_PROFILE_ID + " INTEGER PRIMARY KEY, " + // auto-increment?
                     DBHelperItem.COLUMN_NAME_PROFILE_NAME + " TEXT, " +
-                    DBHelperItem.COLUMN_NAME_PROFILE_EMAIL + " VARCHAR(254), " + // may not work?
-                    DBHelperItem.COLUMN_NAME_PROFILE_PASSWORD + " VARCHAR(254), " + // may not work?
+                    DBHelperItem.COLUMN_NAME_PROFILE_EMAIL + " TEXT, " +
+                    DBHelperItem.COLUMN_NAME_PROFILE_PASSWORD + " TEXT, " +
                     DBHelperItem.COLUMN_NAME_PROFILE_SECURITY_ANSWER_1 + " TEXT, " +
                     DBHelperItem.COLUMN_NAME_PROFILE_SECURITY_ANSWER_2 + " TEXT, " +
                     DBHelperItem.COLUMN_NAME_PROFILE_SECURITY_ANSWER_3 + " TEXT, " +
@@ -154,6 +153,7 @@ public class DBHelper extends SQLiteOpenHelper {
         mOnDatabaseChangedListener = listener;
     }
 
+    /*
     public VoiceMemoItem getVoiceMemoAt(int position) {
         SQLiteDatabase db = getReadableDatabase();
         String[] projection = {
@@ -222,4 +222,5 @@ public class DBHelper extends SQLiteOpenHelper {
             mOnDatabaseChangedListener.onDatabaseEntryRenamed();
         }
     }
+    */
 }
