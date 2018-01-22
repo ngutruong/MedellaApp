@@ -14,9 +14,10 @@
         <item android:title="Overall Results"
             android:id="@+id/nav_amResults"
             android:icon="@android:drawable/ic_menu_gallery"/>
-        <item android:title="Trash"
+        <!-- Will not be using Trash/Archive -->
+        <!--item android:title="Trash"
             android:id="@+id/nav_amTrash"
-            android:icon="@android:drawable/ic_menu_delete"/>
+            android:icon="@android:drawable/ic_menu_delete"/-->
         <item android:title="Log Out"
             android:id="@+id/nav_amLogout"
             android:icon="@android:drawable/ic_menu_revert"/>

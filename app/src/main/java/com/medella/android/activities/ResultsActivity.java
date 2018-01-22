@@ -116,18 +116,15 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
             Intent iHome = new Intent(this, HomeActivity.class);
             startActivity(iHome);
         } else if (id == R.id.nav_amActivity) {
-            //Intent is not needed as the Health Activity button leads to this page
             Intent iHealth = new Intent(this, HealthActivity.class);
             startActivity(iHealth);
 
         } else if (id == R.id.nav_amList) {
-            //ListActivity.class not available yet
+            Intent iList = new Intent(this, ListActivity.class);
+            startActivity(iList);
 
         } else if (id == R.id.nav_amResults) {
-            //Intent is not needed as the Health Activity button leads to this page
-
-        } else if (id == R.id.nav_amTrash) {
-            //TrashActivity.class not available yet
+            //Intent is not needed as the Result button leads to this page
 
         } else if (id == R.id.nav_amLogout) {
             //Logout is not available at this moment

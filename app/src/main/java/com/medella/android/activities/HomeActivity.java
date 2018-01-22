@@ -89,9 +89,6 @@ public class HomeActivity extends AppCompatActivity
             Intent iResults = new Intent(this, ResultsActivity.class);
             startActivity(iResults);
 
-        } else if (id == R.id.nav_amTrash) {
-            //TrashActivity.class not available yet
-
         } else if (id == R.id.nav_amLogout) {
             //Logout is not available at this moment
         }
