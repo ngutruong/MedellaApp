@@ -20,6 +20,17 @@ import com.medella.android.R;
 
 public class HealthActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    private String healthActivityTitle = null;
+
+    public boolean areAllInputsValid = false;
+
+    public boolean medicationNameError = true;
+    public boolean medicationAmountError = true;
+    public boolean bodyTemperatureError = true;
+    public boolean systolicError = true;
+    public boolean diastolicError = true;
+    public boolean heartRateError = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,11 +102,16 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
 
             //BODY TEMPERATURE VALIDATION IN HEALTH ACTIVITY PAGE
             if(Double.parseDouble(temperatureInput.getText().toString()) == 0){
+                bodyTemperatureError = true;
                 collectErrors+="- Body temperature must not be 0.\n";
             } else if (Double.parseDouble(temperatureInput.getText().toString()) < 35 && temperatureSpin.getSelectedItem().toString().equals("degrees Celsius")) {
+                bodyTemperatureError = true;
                 collectErrors+="- Please enter a valid body temperature.\n";
             } else if (Double.parseDouble(temperatureInput.getText().toString()) < 95 && temperatureSpin.getSelectedItem().toString().equals("degrees Fahrenheit")) {
+                bodyTemperatureError = true;
                 collectErrors+="- Please enter a valid body temperature.\n";
+            } else {
+                bodyTemperatureError = false; // no error will trigger if body temperature input is empty or valid
             }
             //else if(Double.parseDouble(temperatureInput.getText().toString()) < 0){
             //    collectErrors+="- Body temperature must not have negative value.\n";
@@ -107,47 +123,73 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
 
             //SYSTOLIC PRESSURE VALIDATION IN HEALTH ACTIVITY PAGE
             if(Double.parseDouble(systolicInput.getText().toString()) < 90){
+                systolicError = true;
                 collectErrors+="- Systolic pressure must not be less than 90.\n";
             }
             else if(Double.parseDouble(systolicInput.getText().toString()) > 250){
+                systolicError = true;
                 collectErrors+="- Systolic pressure must not be greater than 250.\n";
             }
             else if(!systolicInput.getText().toString().trim().isEmpty() && diastolicInput.getText().toString().trim().isEmpty()){
+                systolicError = true;
                 collectErrors+="- Diastolic pressure must not be empty while systolic pressure is filled.\n";
+            }
+            else{
+                systolicError = false; // no error will trigger if systolic and diastolic inputs are empty or valid
             }
 
             //DIASTOLIC PRESSURE VALIDATION IN HEALTH ACTIVITY PAGE
             if(Double.parseDouble(diastolicInput.getText().toString()) < 60){
+                diastolicError = true;
                 collectErrors+="- Diastolic pressure must not be less than 60.\n";
             }
             else if(Double.parseDouble(diastolicInput.getText().toString()) > 140){
+                diastolicError = true;
                 collectErrors+="- Diastolic pressure must not be greater than 140.\n";
             }
             else if(systolicInput.getText().toString().trim().isEmpty() && !diastolicInput.getText().toString().trim().isEmpty()){
+                diastolicError = true;
                 collectErrors+="- Systolic pressure must not be empty while diastolic pressure is filled.\n";
+            }
+            else {
+                diastolicError = false; // no error will trigger if diastolic and systolic inputs are empty or valid
             }
 
             //HEART RATE VALIDATION IN HEALTH ACTIVITY PAGE
             if(Double.parseDouble(heartRate.getText().toString()) < 20 && Double.parseDouble(heartRate.getText().toString()) > 0){
+                heartRateError = true;
                 collectErrors+="- Heart rate is not valid.\n";
+
             }
             else if(Double.parseDouble(heartRate.getText().toString()) == 0 && !heartRate.getText().toString().trim().isEmpty()){
+                heartRateError = true;
                 collectErrors+="- Heart rate must not be 0.\n";
+            }
+            else {
+                heartRateError = false; // no error will trigger if heart rate input is empty or valid
             }
         }
         catch (Exception ex){
+            areAllInputsValid = false;
             errorDialog.setMessage("Please enter a valid input.");
         }
 
-        if(collectErrors.trim().length() > 0) {
+        if(collectErrors.trim().length() > 0 && heartRateError==true && bodyTemperatureError==true && systolicError==true && diastolicError==true) {
             errorDialog.setTitle("Error")
                     .setMessage("Health activity is not complete due to the following errors:\n\n" + collectErrors)
                     .show();
             collectErrors = ""; //Reset errors
+            areAllInputsValid = false; //All inputs will not be saved if one or more inputs are not valid
         }
         else{
+            areAllInputsValid = true; //All inputs can be saved if they are valid
+        }
+
+        if(areAllInputsValid==true){
+            healthActivityTitle = titleInput.getText().toString();
+
             errorDialog.setTitle("Health Activity Added")
-                    .setMessage("Thank you.")
+                    .setMessage(healthActivityTitle + " has been successfully added to List.")
                     .show();
         }
     }
@@ -197,14 +239,12 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
         } else if (id == R.id.nav_amActivity) {
             //Intent is not needed as the Health Activity button leads to this page
         } else if (id == R.id.nav_amList) {
-            //ListActivity.class not available yet
+            Intent iList = new Intent(this, ListActivity.class);
+            startActivity(iList);
 
         } else if (id == R.id.nav_amResults) {
             Intent iResults = new Intent(this, ResultsActivity.class);
             startActivity(iResults);
-
-        } else if (id == R.id.nav_amTrash) {
-            //TrashActivity.class not available yet
 
         } else if (id == R.id.nav_amLogout) {
             //Logout is not available at this moment

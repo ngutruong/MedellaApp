@@ -329,8 +329,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         final Intent iHome = new Intent(ProfileActivity.this, HomeActivity.class);
         final Intent iHealth = new Intent(ProfileActivity.this, HealthActivity.class);
         final Intent iResults = new Intent(ProfileActivity.this, ResultsActivity.class);
-        //final Intent iList = new Intent(ProfileActivity.this, ListActivity.class); //ListActivity isn't available yet; don't know why it's available
-        //final Intent iTrash = new Intent(ProfileActivity.this, TrashActivity.class);
+        final Intent iList = new Intent(ProfileActivity.this, ListActivity.class); //ListActivity isn't available yet; don't know why it's available
 
         //Warning message when user selects an option from navigation drawer
         AlertDialog.Builder warningDialog = new AlertDialog.Builder(this);
@@ -363,6 +362,8 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 startActivity(iHome);  //Will redirect to Home page when all fields are empty
             }
         } else if (id == R.id.nav_amActivity) {
+            // MAY NOT SHOW HEALTH ACTIVITY OPTION DUE TO NOT BEING LOGIN
+
             //Will redirect to Activity page when user clicks Yes
             warningDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
@@ -380,10 +381,28 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 startActivity(iHealth);  //Will redirect to Activity page when all fields are empty
             }
         } else if (id == R.id.nav_amList) {
-            //ListActivity.class not available yet
-        } else if (id == R.id.nav_amResults) {
+            // MAY NOT SHOW LIST OPTION DUE TO NOT BEING LOGIN
+
             //Will redirect to Results page when user clicks Yes
-            //MAY NOT SHOW RESULTS OPTION DUE TO NOT BEING LOGIN
+            warningDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    startActivity(iList);
+                }
+            });
+
+            //Warning message must show when one or more fields are not empty
+            //Validations for birthdate, feet and inches are not available yet
+            if(!emptyName || !emptyEmail || !emptyPassword || !emptyConfirm || !emptyFirstAnswer || !emptySecondAnswer || !emptyThirdAnswer || !emptyHeight) {
+                warningDialog.show(); //Warning message will show when user selects the Results option
+            }
+            else{
+                startActivity(iResults);  //Will redirect to Results page when all fields are empty
+            }
+        } else if (id == R.id.nav_amResults) {
+            // MAY NOT SHOW RESULTS OPTION DUE TO NOT BEING LOGIN
+
+            //Will redirect to Results page when user clicks Yes
             warningDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -399,8 +418,6 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             else{
                 startActivity(iResults);  //Will redirect to Results page when all fields are empty
             }
-        } else if (id == R.id.nav_amTrash) {
-            //TrashActivity.class not available yet
         } else if (id == R.id.nav_amLogout) {
             //Logout is not available at this moment
             //Logout must not appear while registering account
