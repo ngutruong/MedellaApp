@@ -19,6 +19,11 @@ android {
     }
     productFlavors {
     }
+    repositories {
+        flatDir {
+            dirs 'aars'
+        }
+    }
 }
 
 dependencies {
@@ -33,6 +38,11 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:26.+'
     compile 'com.melnykov:floatingactionbutton:1.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.google.code.gson:gson:2.3'
+    compile 'com.google.guava:guava:18.0'
+    compile 'com.squareup.okhttp:okhttp:2.5.0'
+    compile 'com.microsoft.azure:azure-mobile-android:3.2.0@aar'
+    compile 'com.microsoft.azure:azure-notifications-handler:1.0.1@jar'
     testCompile 'junit:junit:4.12'
 
     compile 'com.miguelcatalan:materialsearchview:1.4.0'
