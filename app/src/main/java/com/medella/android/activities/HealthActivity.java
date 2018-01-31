@@ -26,7 +26,9 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import com.medella.android.R;
 import com.medella.android.database.ActivityTable;
+import com.medella.android.database.ActivityTableAdapter;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
+import com.microsoft.windowsazure.mobileservices.MobileServiceException;
 import com.microsoft.windowsazure.mobileservices.http.NextServiceFilterCallback;
 import com.microsoft.windowsazure.mobileservices.http.OkHttpClientFactory;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilter;
@@ -42,6 +44,7 @@ import com.squareup.okhttp.OkHttpClient;
 
 import java.net.MalformedURLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -69,7 +72,6 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
     private EditText weightInput;
     private EditText medName;
     private EditText medDose;
-    private Spinner medSpin;
     private EditText temperatureInput;
     private EditText systolicInput;
     private EditText diastolicInput;
@@ -77,6 +79,8 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
     private EditText healthDescription;
     private Spinner weightSpin;
     private Spinner temperatureSpin;
+    private Spinner doseSpin;
+    private Spinner pintSpin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +141,8 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
             healthDescription = (EditText)findViewById(R.id.txtDesc);
             weightSpin = (Spinner)findViewById(R.id.weightSpinner);
             temperatureSpin = (Spinner)findViewById(R.id.tempSpinner);
+            doseSpin = (Spinner)findViewById(R.id.doseSpinner);
+            pintSpin = (Spinner)findViewById(R.id.pintSpinner);
 
             // Create an adapter to bind the items with the view
             // MAY APPLY TO LIST
@@ -154,18 +160,26 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
         }
     }
 
-    private float convertCelsiusToFahrenheit(float celsiusTemp){
+    private float convertCelsiusToFahrenheit(float celsiusTemp)
+    {
         return celsiusTemp*(9/5)+32;
     }
-    private float convertFahrenheitToCelsius(float fahrenheitTemp){
+    private float convertFahrenheitToCelsius(float fahrenheitTemp)
+    {
         return (fahrenheitTemp-32)*(5/9);
     }
-    private float convertLbsToKg(float weightLbs){
+    private float convertLbsToKg(float weightLbs)
+    {
         return (float) (weightLbs*(1/2.2));
     }
-    private float convertKgToLbs(float weightKg){
+    private float convertKgToLbs(float weightKg)
+    {
         return (float) (weightKg*2.2);
     }
+    private float calculateBmi(float weightKg, float heightMeter){
+        return (float) (weightKg/(Math.pow(heightMeter, 2)));
+    }
+    
     private static String collectErrors = "";
 
     public void finishClick(View view) {
@@ -309,7 +323,14 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
             final ActivityTable item = new ActivityTable();
 
             item.setActivityTitle(titleInput.getText().toString());
-            //item.setPainIntensity();
+            if(pintSpin.getSelectedItem().toString().contains("Most Painful")){
+                item.setPainIntensity(10);
+            }
+            else{
+                String getNumber = pintSpin.getSelectedItem().toString().substring(0,1);
+                float painNumber = Float.valueOf(getNumber);
+                item.setPainIntensity(painNumber);
+            }
             if(weightSpin.getSelectedItem().toString().equals("lbs")){
                 item.setWeightLbs(Float.valueOf(weightInput.getText().toString()));
             }
@@ -327,10 +348,11 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
             if(!medName.getText().toString().trim().isEmpty()){
                 item.setMedicationBrand(medName.getText().toString());
             }
-            /*if(!medDose.getText().toString().trim().isEmpty()){
-                String dosageUnit =
-                item.setMedicationDosage();
-            }*/
+            if(!medDose.getText().toString().trim().isEmpty()){
+                String dosageAmount = medDose.getText().toString();
+                String dosageUnit = doseSpin.getSelectedItem().toString();
+                item.setMedicationDosage(dosageAmount+dosageUnit);
+            }
             if(temperatureSpin.getSelectedItem().toString().contains(("C"))){
                 item.setBodyTemperatureCelsius(Float.valueOf(temperatureInput.getText().toString()));
             }
@@ -350,6 +372,9 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
             }
             if(!diastolicInput.getText().toString().trim().isEmpty()){
                 item.setDiastolic(Float.valueOf(diastolicInput.getText().toString()));
+            }
+            if(!heartRate.getText().toString().trim().isEmpty()){
+                item.setHeartRate(Float.valueOf(heartRate.getText().toString()));
             }
             item.setDescription(healthDescription.getText().toString());
 
@@ -378,12 +403,63 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
             errorDialog.setTitle("Health Activity Added")
                     .setMessage(titleInput.getText().toString() + " has been successfully added to List.")
                     .show();
+
+            titleInput.setText("");
+            weightInput.setText("");
+            medName.setText("");
+            medDose.setText("");
+            temperatureInput.setText("");
+            systolicInput.setText("");
+            diastolicInput.setText("");
+            heartRate.setText("");
+            healthDescription.setText("");
         }
     }
 
     public ActivityTable addItemInTable(ActivityTable item) throws ExecutionException, InterruptedException {
         ActivityTable entity = mActivityTable.insert(item).get();
         return entity;
+    }
+
+    private void refreshItemsFromTable() {
+
+        // Get the items that weren't marked as completed and add them in the
+        // adapter
+
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>(){
+            @Override
+            protected Void doInBackground(Void... params) {
+
+                try {
+                    final List<ActivityTable> results = refreshItemsFromMobileServiceTable();
+
+                    //Offline Sync
+                    //final List<ActivityTable> results = refreshItemsFromMobileServiceTableSyncTable();
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mAdapter.clear();
+
+                            for (ActivityTable item : results) {
+                                mAdapter.add(item);
+                            }
+                        }
+                    });
+                } catch (final Exception e){
+                    createAndShowDialogFromTask(e, "Error");
+                }
+
+                return null;
+            }
+        };
+
+        runAsyncTask(task);
+    }
+
+    private List<ActivityTable> refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException, MobileServiceException {
+        //return mActivityTable.where().field("complete").eq(val(false)).execute().get();
+        return mActivityTable.execute().get();
     }
 
     private AsyncTask<Void, Void, Void> initLocalStore() throws MobileServiceLocalStoreException, ExecutionException, InterruptedException {
@@ -402,11 +478,19 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
 
                     Map<String, ColumnDataType> tableDefinition = new HashMap<String, ColumnDataType>();
                     tableDefinition.put("id", ColumnDataType.String);
-                    //tableDefinition.put("text", ColumnDataType.String);
-                    //tableDefinition.put("complete", ColumnDataType.Boolean);
                     tableDefinition.put("activity_title", ColumnDataType.String);
+                    tableDefinition.put("pain_intensity", ColumnDataType.Real);
+                    tableDefinition.put("bodytemperature_celsius", ColumnDataType.Real);
+                    tableDefinition.put("bodytemperature_fahrenheit", ColumnDataType.Real);
                     tableDefinition.put("activity_description", ColumnDataType.String);
                     tableDefinition.put("weight_lbs", ColumnDataType.Real);
+                    tableDefinition.put("weight_kg", ColumnDataType.Real);
+                    tableDefinition.put("medication_brand", ColumnDataType.String);
+                    tableDefinition.put("medication_dosage", ColumnDataType.String);
+                    tableDefinition.put("systolic", ColumnDataType.Real);
+                    tableDefinition.put("diastolic", ColumnDataType.Real);
+                    tableDefinition.put("heart_rate", ColumnDataType.Real);
+                    tableDefinition.put("bmi", ColumnDataType.Real);
 
                     localStore.defineTable("ActivityTable", tableDefinition);
 

@@ -72,27 +72,27 @@
     </string-array>
     <!-- Array of dosage units for HealthActivity -->
     <string-array name="dosage_array">
-        <item>c (Cup)</item>
-        <item>cc (Cubic centimeter)</item>
-        <item>cm (Centimeter)</item>
-        <item>dr (Dram)</item>
-        <item>fl (Fluid)</item>
-        <item>g (Gram)</item>
-        <item>gr (Grain)</item>
-        <item>gtt (Drop)</item>
-        <item>in (Inch)</item>
-        <item>kg (Kilogram)</item>
-        <item>L (Liter)</item>
-        <item>lb (Pound)</item>
-        <item>m (Meter)</item>
-        <item>mcg (Microgram)</item>
-        <item>mEq (Milliquivalent)</item>
-        <item>mg (Milligram)</item>
-        <item>mL (Milliliter)</item>
-        <item>mm (Millimeter)</item>
-        <item>oz (Ounce)</item>
-        <item>tbsp (Tablespoon)</item>
-        <item>tsp (Teaspoon)</item>
+        <item>c</item>
+        <item>cc</item>
+        <item>cm</item>
+        <item>dr</item>
+        <item>fl</item>
+        <item>g</item>
+        <item>gr</item>
+        <item>gtt</item>
+        <item>in</item>
+        <item>kg</item>
+        <item>L</item>
+        <item>lbs</item>
+        <item>m</item>
+        <item>mcg</item>
+        <item>mEq</item>
+        <item>mg</item>
+        <item>mL</item>
+        <item>mm</item>
+        <item>oz</item>
+        <item>tbsp</item>
+        <item>tsp</item>
     </string-array>
     <!-- Array of temperature units for HealthActivity -->
     <string-array name="btemp_array">

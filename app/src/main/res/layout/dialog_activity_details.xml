@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/titleTextDialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_weight="1"
+        android:text="Title: "
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/weightTextDialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/titleTextDialog"
+        android:layout_weight="1"
+        android:text="Weight: "
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/bmiTextDialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/weightTextDialog"
+        android:layout_weight="1"
+        android:text="BMI: "
+        android:textStyle="bold" />
+
+
+    <TextView
+        android:id="@+id/painIntensityTextDialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/weightTextDialog"
+        android:layout_marginTop="19dp"
+        android:layout_weight="1"
+        android:text="Pain Intensity: "
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/medicationBrandTextDialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/painIntensityTextDialog"
+        android:layout_weight="1"
+        android:text="Medication Brand: "
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/medicationDosageTextDialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/medicationBrandTextDialog"
+        android:layout_weight="1"
+        android:text="Dosage: "
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/temperatureTextDialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/medicationDosageTextDialog"
+        android:layout_weight="1"
+        android:text="Body Temperature: "
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/systolicTextDialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/temperatureTextDialog"
+        android:layout_weight="1"
+        android:text="Systolic: "
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/diastolicTextDialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/systolicTextDialog"
+        android:layout_weight="1"
+        android:text="Diastolic: "
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/heartrateTextDialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/diastolicTextDialog"
+        android:layout_weight="1"
+        android:text="Heart Rate: "
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/descriptionTextDialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/heartrateTextDialog"
+        android:layout_weight="1"
+        android:text="Medical Description:"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/descriptionDialogInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/descriptionTextDialog"
+        android:layout_weight="1"
+        android:text="activity_description" />
+
+    <TextView
+        android:id="@+id/titleDialogInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/weightTextDialog"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/titleTextDialog"
+        android:text="activity_title"
+        android:textAlignment="textEnd" />
+
+    <TextView
+        android:id="@+id/weightDialogInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/titleDialogInfo"
+        android:layout_toEndOf="@+id/weightTextDialog"
+        android:text="activity_weight"
+        android:textAlignment="textEnd" />
+
+    <TextView
+        android:id="@+id/bmiDialogInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/weightTextDialog"
+        android:layout_toEndOf="@+id/bmiTextDialog"
+        android:text="bmi number and staus"
+        android:textAlignment="textEnd" />
+
+    <TextView
+        android:id="@+id/painIntensityDialogInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/medicationBrandTextDialog"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/painIntensityTextDialog"
+        android:text="pain_intensity"
+        android:textAlignment="textEnd" />
+
+    <TextView
+        android:id="@+id/medBrandDialogInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/medicationDosageTextDialog"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/medicationBrandTextDialog"
+        android:text="medication_brand"
+        android:textAlignment="textEnd" />
+
+    <TextView
+        android:id="@+id/medDosageDialogInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/medicationDosageTextDialog"
+        android:layout_toEndOf="@+id/medicationDosageTextDialog"
+        android:text="medication_dosage"
+        android:textAlignment="textEnd" />
+
+    <TextView
+        android:id="@+id/bodyTempDialogInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/medDosageDialogInfo"
+        android:layout_toEndOf="@+id/temperatureTextDialog"
+        android:text="body_temperature"
+        android:textAlignment="textEnd" />
+
+    <TextView
+        android:id="@+id/systolicDialogInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/bodyTempDialogInfo"
+        android:layout_toEndOf="@+id/systolicTextDialog"
+        android:text="systolic_pressure"
+        android:textAlignment="textEnd" />
+
+    <TextView
+        android:id="@+id/diastolicDialogInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/bodyTempDialogInfo"
+        android:layout_below="@+id/systolicDialogInfo"
+        android:layout_toEndOf="@+id/diastolicTextDialog"
+        android:text="diastolic_pressure"
+        android:textAlignment="textEnd" />
+
+    <TextView
+        android:id="@+id/heartrateDialogInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/diastolicDialogInfo"
+        android:layout_toEndOf="@+id/heartrateTextDialog"
+        android:text="heart_rate"
+        android:textAlignment="textEnd" />
+
+</RelativeLayout>

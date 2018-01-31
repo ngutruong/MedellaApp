@@ -41,6 +41,9 @@ public class ActivityTable {
     @com.google.gson.annotations.SerializedName("heart_rate")
     private float mHeartRate;
 
+    @com.google.gson.annotations.SerializedName("bmi")
+    private float mBmi;
+
     /**
      * Activity id
      * NEEDS CONFIGURATION AND RESEARCH
@@ -62,7 +65,13 @@ public class ActivityTable {
 
     }
 
-    public ActivityTable(String title, float painLevel, float temperatureCelsius, float temperatureFahrenheit, String description, float weightLbs, float weightKg, String medBrand, String medDosage, float systolic, float diastolic, float hrate, String id) {
+    public ActivityTable(String title, float painLevel,
+                         float temperatureCelsius, float temperatureFahrenheit,
+                         String description,
+                         float weightLbs, float weightKg, float bmi,
+                         String medBrand, String medDosage,
+                         float systolic, float diastolic,
+                         float hrate, String id) {
         this.setActivityTitle(title);
         this.setPainIntensity(painLevel);
         this.setBodyTemperatureCelsius(temperatureCelsius);
@@ -70,6 +79,7 @@ public class ActivityTable {
         this.setDescription(description);
         this.setWeightLbs(weightLbs);
         this.setWeightKg(weightKg);
+        this.setBmi(bmi);
         this.setMedicationBrand(medBrand);
         this.setMedicationDosage(medDosage);
         this.setSystolic(systolic);
@@ -114,6 +124,8 @@ public class ActivityTable {
     //Profile id here
     public float getHeartRate(){ return mHeartRate; }
     public final void setHeartRate(float heartRate){ mHeartRate = heartRate; }
+    public float getBmi(){ return mBmi; }
+    public final void setBmi(float bmi){ mBmi = bmi; }
     public String getId() {
         return mId;
     }
