@@ -15,7 +15,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+
 import com.medella.android.R;
 
 /**
@@ -40,7 +44,7 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
         protected TextView tvActivityTitle;
         protected TextView tvActivityDetails;
         protected TextView tvBmiStatus;
-        //protected TextView tvDateAdded;
+        protected TextView tvDateAdded;
         protected View cardView;
     }
 
@@ -104,7 +108,7 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
             holder.tvActivityTitle = (TextView)row.findViewById(R.id.activity_title_text);
             holder.tvActivityDetails = (TextView)row.findViewById(R.id.activity_details_text);
             holder.tvBmiStatus = (TextView)row.findViewById(R.id.bmi_status_text);
-            //holder.tvDateAdded = (TextView)row.findViewById(R.id.activity_date_added_text);
+            holder.tvDateAdded = (TextView)row.findViewById(R.id.activity_date_added_text);
             holder.cardView = row.findViewById(R.id.activity_card_view);
 
             //result = convertView;
@@ -124,6 +128,9 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
         //holder.title.setText(title);
             holder.tvActivityTitle.setText(currentItem.getActivityTitle());
             holder.tvActivityDetails.setText(currentItem.getDescription());
+            String addedDate = currentItem.getCreatedAt().substring(0,10)+" ";
+            String addedTime = currentItem.getCreatedAt().substring(11,19);
+            holder.tvDateAdded.setText("Created: "+addedDate+addedTime);
             /*holder.tvDateAdded.setText(DateUtils.formatDateTime(
                     mContext,
                     currentItem.getCreatedAt(),

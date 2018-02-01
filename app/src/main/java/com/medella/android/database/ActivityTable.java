@@ -47,6 +47,9 @@ public class ActivityTable {
     @com.google.gson.annotations.SerializedName("activity_location")
     private String mLocation;
 
+    @com.google.gson.annotations.SerializedName("createdAt")
+    private String mCreatedAt;
+
     /**
      * Activity id
      * NEEDS CONFIGURATION AND RESEARCH
@@ -138,6 +141,7 @@ public class ActivityTable {
     public final void setId(String id) {
         mId = id;
     }
+    public String getCreatedAt(){ return mCreatedAt; }
 
     @Override
     public boolean equals(Object o) {
