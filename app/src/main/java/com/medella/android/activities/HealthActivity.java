@@ -27,6 +27,7 @@ import com.google.common.util.concurrent.SettableFuture;
 import com.medella.android.R;
 import com.medella.android.database.ActivityTable;
 import com.medella.android.database.ActivityTableAdapter;
+import com.medella.android.database.ActivityTableAdapter1;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.MobileServiceException;
 import com.microsoft.windowsazure.mobileservices.http.NextServiceFilterCallback;
@@ -142,7 +143,8 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
             spPainIntensity = (Spinner)findViewById(R.id.pintSpinner);
 
             // Create an adapter to bind the items with the view
-            mAdapter = new ActivityTableAdapter(this, R.layout.row_list_to_do);
+            //mAdapter = new ActivityTableAdapter1(this, R.layout.row_list_to_do);
+            mAdapter = new ActivityTableAdapter(this, R.layout.activity_card_view);
             ListView listViewToDo = (ListView) findViewById(R.id.listViewToDo);
             listViewToDo.setAdapter(mAdapter);
 

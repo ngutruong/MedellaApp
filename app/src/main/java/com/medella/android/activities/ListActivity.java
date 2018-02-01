@@ -5,12 +5,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -38,7 +34,6 @@ import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +45,9 @@ public class ListActivity extends AppCompatActivity {
     //ListView testListview;
     private MobileServiceClient mClient;
     private MobileServiceTable<ActivityTable> mActivityTable;
+    //private ActivityTableAdapter1 mAdapter;
     private ActivityTableAdapter mAdapter;
+    private ProgressBar mProgressBar;
 
     /*String[] testingListSource = {
             "Glaucoma",
@@ -65,10 +62,10 @@ public class ListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-        //mProgressBar = (ProgressBar) findViewById(R.id.loadingProgressBar);
+        mProgressBar = (ProgressBar) findViewById(R.id.loadListProgressBar);
 
         // Initialize the progress bar
-        //mProgressBar.setVisibility(ProgressBar.GONE);
+        mProgressBar.setVisibility(ProgressBar.GONE);
 
         try {
             // Create the Mobile Service Client instance, using the provided
@@ -100,7 +97,12 @@ public class ListActivity extends AppCompatActivity {
             initLocalStore().get();
 
             // Create an adapter to bind the items with the view
-            mAdapter = new ActivityTableAdapter(this, R.layout.row_list_to_do);
+            /*
+            mAdapter = new ActivityTableAdapter1(this, R.layout.row_list_to_do);
+            ListView listViewToDo = (ListView) findViewById(R.id.listViewToDo);
+            listViewToDo.setAdapter(mAdapter);
+            */
+            mAdapter = new ActivityTableAdapter(this, R.layout.activity_card_view);
             ListView listViewToDo = (ListView) findViewById(R.id.listViewToDo);
             listViewToDo.setAdapter(mAdapter);
 
@@ -248,7 +250,7 @@ public class ListActivity extends AppCompatActivity {
 
                 @Override
                 public void run() {
-                    //if (mProgressBar != null) mProgressBar.setVisibility(ProgressBar.VISIBLE);
+                    if (mProgressBar != null) mProgressBar.setVisibility(ProgressBar.VISIBLE);
                 }
             });
 
@@ -266,7 +268,7 @@ public class ListActivity extends AppCompatActivity {
 
                         @Override
                         public void run() {
-                            //if (mProgressBar != null) mProgressBar.setVisibility(ProgressBar.GONE);
+                            if (mProgressBar != null) mProgressBar.setVisibility(ProgressBar.GONE);
                         }
                     });
 
