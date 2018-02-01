@@ -1,5 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <ListView
+        android:id="@+id/listViewToDo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:listitem="@layout/row_list_to_do"
+        android:padding="6dip" >
+
+    </ListView>
+
+</LinearLayout>
+
+<!--?xml version="1.0" encoding="utf-8"?-->
+<!--android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,4 +27,21 @@
     tools:context="com.medella.android.activities.ListActivity"
     tools:showIn="@layout/activity_list">
     
-</android.support.constraint.ConstraintLayout>
+</android.support.constraint.ConstraintLayout-->
+
+<!-- For cardview - DON'T LOSE IT -->
+<!--RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_list_viewer"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context="com.medella.android.activities.ListActivity">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/activityRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+</RelativeLayout-->

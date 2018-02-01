@@ -283,6 +283,13 @@
             android:entries="@array/pint_array"
             android:textAlignment="textEnd" />
 
+        <ProgressBar
+            android:id="@+id/loadingProgressBar"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_alignBottom="@+id/btnHfinish"
+            android:layout_below="@+id/txtDesc"
+            android:layout_toStartOf="@+id/btnHfinish" />
 
     </RelativeLayout>
 

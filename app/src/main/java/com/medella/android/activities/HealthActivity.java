@@ -42,7 +42,9 @@ import com.microsoft.windowsazure.mobileservices.table.sync.localstore.SQLiteLoc
 import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.SimpleSyncHandler;
 import com.squareup.okhttp.OkHttpClient;
 
+import java.math.RoundingMode;
 import java.net.MalformedURLException;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,12 +53,8 @@ import java.util.concurrent.TimeUnit;
 
 public class HealthActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private String healthActivityTitle = null;
-
     public boolean areAllInputsValid = false;
-
-    public boolean medicationNameError = true;
-    public boolean medicationAmountError = true;
+    
     public boolean bodyTemperatureError = true;
     public boolean systolicError = true;
     public boolean diastolicError = true;
@@ -64,28 +62,31 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
 
     private MobileServiceClient mClient;
     private MobileServiceTable<ActivityTable> mActivityTable;
-    //Offline Sync
-    //private MobileServiceSyncTable<ActivityTable> mActivityTable;
+
     private ActivityTableAdapter mAdapter;
     
-    private EditText titleInput;
-    private EditText weightInput;
-    private EditText medName;
-    private EditText medDose;
-    private EditText temperatureInput;
-    private EditText systolicInput;
-    private EditText diastolicInput;
-    private EditText heartRate;
-    private EditText healthDescription;
-    private Spinner weightSpin;
-    private Spinner temperatureSpin;
-    private Spinner doseSpin;
-    private Spinner pintSpin;
+    private EditText etTitle;
+    private EditText etWeight;
+    private EditText etMedicationBrand;
+    private EditText etMedicationDosage;
+    private EditText etBodyTemperature;
+    private EditText etSystolic;
+    private EditText etDiastolic;
+    private EditText etHeartRate;
+    private EditText etDescription;
+    private Spinner spWeight;
+    private Spinner spBodyTemperature;
+    private Spinner spMedicationDosage;
+    private Spinner spPainIntensity;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_health);
+
+        mProgressBar = (ProgressBar)findViewById(R.id.loadingProgressBar);
+        mProgressBar.setVisibility(ProgressBar.GONE);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -121,31 +122,26 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
             });
 
             // Get the Mobile Service Table instance to use
-
             mActivityTable = mClient.getTable(ActivityTable.class);
-
-            // Offline Sync
-            //mActivityTable = mClient.getSyncTable("ActivityTable", ActivityTable.class);
-
+            
             //Init local storage
             initLocalStore().get();
 
-            titleInput = (EditText)findViewById(R.id.txtTitle);
-            weightInput = (EditText)findViewById(R.id.txtWeight);
-            medName = (EditText)findViewById(R.id.txtMedName);
-            medDose = (EditText)findViewById(R.id.txtDosage);
-            temperatureInput = (EditText)findViewById(R.id.txtTemperature);
-            systolicInput = (EditText)findViewById(R.id.txtSystolic);
-            diastolicInput = (EditText)findViewById(R.id.txtDiastolic);
-            heartRate = (EditText)findViewById(R.id.txtHrate);
-            healthDescription = (EditText)findViewById(R.id.txtDesc);
-            weightSpin = (Spinner)findViewById(R.id.weightSpinner);
-            temperatureSpin = (Spinner)findViewById(R.id.tempSpinner);
-            doseSpin = (Spinner)findViewById(R.id.doseSpinner);
-            pintSpin = (Spinner)findViewById(R.id.pintSpinner);
+            etTitle = (EditText)findViewById(R.id.txtTitle);
+            etWeight = (EditText)findViewById(R.id.txtWeight);
+            etMedicationBrand = (EditText)findViewById(R.id.txtMedName);
+            etMedicationDosage = (EditText)findViewById(R.id.txtDosage);
+            etBodyTemperature = (EditText)findViewById(R.id.txtTemperature);
+            etSystolic = (EditText)findViewById(R.id.txtSystolic);
+            etDiastolic = (EditText)findViewById(R.id.txtDiastolic);
+            etHeartRate = (EditText)findViewById(R.id.txtHrate);
+            etDescription = (EditText)findViewById(R.id.txtDesc);
+            spWeight = (Spinner)findViewById(R.id.weightSpinner);
+            spBodyTemperature = (Spinner)findViewById(R.id.tempSpinner);
+            spMedicationDosage = (Spinner)findViewById(R.id.doseSpinner);
+            spPainIntensity = (Spinner)findViewById(R.id.pintSpinner);
 
             // Create an adapter to bind the items with the view
-            // MAY APPLY TO LIST
             mAdapter = new ActivityTableAdapter(this, R.layout.row_list_to_do);
             ListView listViewToDo = (ListView) findViewById(R.id.listViewToDo);
             listViewToDo.setAdapter(mAdapter);
@@ -162,22 +158,37 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
 
     private float convertCelsiusToFahrenheit(float celsiusTemp)
     {
-        return celsiusTemp*(9/5)+32;
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
+        float calculatedFahrenheit = (celsiusTemp*9/5) + 32;
+        return Float.parseFloat(df.format(calculatedFahrenheit));
     }
     private float convertFahrenheitToCelsius(float fahrenheitTemp)
     {
-        return (fahrenheitTemp-32)*(5/9);
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
+        float calculatedCelsius = ((fahrenheitTemp - 32)*5)/9;
+        return Float.parseFloat(df.format(calculatedCelsius));
     }
     private float convertLbsToKg(float weightLbs)
     {
-        return (float) (weightLbs*(1/2.2));
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
+        float calculatedKg = (float) (weightLbs*(1/2.2));
+        return Float.parseFloat(df.format(calculatedKg));
     }
     private float convertKgToLbs(float weightKg)
     {
-        return (float) (weightKg*2.2);
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
+        float calculatedLbs = (float) (weightKg*2.2);
+        return Float.parseFloat(df.format(calculatedLbs));
     }
     private float calculateBmi(float weightKg, float heightMeter){
-        return (float) (weightKg/(Math.pow(heightMeter, 2)));
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
+        float bmi = (float) (weightKg/(Math.pow(heightMeter, 2)));
+        return Float.parseFloat(df.format(bmi));
     }
     
     private static String collectErrors = "";
@@ -194,60 +205,54 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
 
         try {
             //TITLE VALIDATION IN HEALTH ACTIVITY PAGE
-            if(titleInput.getText().toString().trim().isEmpty()){
+            if(etTitle.getText().toString().trim().isEmpty()){
                 collectErrors+="- Title is empty.\n";
             }
 
             //WEIGHT VALIDATION IN HEALTH ACTIVITY PAGE
-            if(weightInput.getText().toString().trim().isEmpty()){
+            if(etWeight.getText().toString().trim().isEmpty()){
                 collectErrors+="- Weight is empty.\n";
             }
-            else if(weightSpin.getSelectedItem().toString().equals("lbs") && Float.valueOf(weightInput.getText().toString()) < 7.7){
+            else if(spWeight.getSelectedItem().toString().equals("lbs") && Float.valueOf(etWeight.getText().toString()) < 7.7){
                 collectErrors+="- Please enter a valid weight.\n";
             }
-            else if(weightSpin.getSelectedItem().toString().equals("kg") && Float.valueOf(weightInput.getText().toString()) < 3.5){
+            else if(spWeight.getSelectedItem().toString().equals("kg") && Float.valueOf(etWeight.getText().toString()) < 3.5){
                 collectErrors+="- Please enter a valid weight.\n";
             }
-            //else if(Float.valueOf(weightInput.getText().toString()) < 0){
-              //  collectErrors+="- Weight must not have negative value.\n";
-            //}
 
             //HEALTH DESCRIPTION VALIDATION FOR HEALTH ACTIVITY PAGE
-            if(healthDescription.getText().toString().trim().isEmpty()){
+            if(etDescription.getText().toString().trim().isEmpty()){
                 collectErrors+="- Medical description is empty.\n";
             }
 
             //BODY TEMPERATURE VALIDATION IN HEALTH ACTIVITY PAGE
-            if(Float.valueOf(temperatureInput.getText().toString()) == 0){
+            if(Float.valueOf(etBodyTemperature.getText().toString()) == 0){
                 bodyTemperatureError = true;
                 collectErrors+="- Body temperature must not be 0.\n";
-            } else if (Float.valueOf(temperatureInput.getText().toString()) < 35 && temperatureSpin.getSelectedItem().toString().equals("degrees Celsius")) {
+            } else if (Float.valueOf(etBodyTemperature.getText().toString()) < 35 && spBodyTemperature.getSelectedItem().toString().equals("degrees Celsius")) {
                 bodyTemperatureError = true;
                 collectErrors+="- Please enter a valid body temperature.\n";
-            } else if (Float.valueOf(temperatureInput.getText().toString()) < 95 && temperatureSpin.getSelectedItem().toString().equals("degrees Fahrenheit")) {
+            } else if (Float.valueOf(etBodyTemperature.getText().toString()) < 95 && spBodyTemperature.getSelectedItem().toString().equals("degrees Fahrenheit")) {
                 bodyTemperatureError = true;
                 collectErrors+="- Please enter a valid body temperature.\n";
             } else {
                 bodyTemperatureError = false; // no error will trigger if body temperature input is empty or valid
             }
-            //else if(Float.valueOf(temperatureInput.getText().toString()) < 0){
-            //    collectErrors+="- Body temperature must not have negative value.\n";
-            //}
 
             /*
             VALIDATION IS ERRONEOUS--MESSAGES SHOULD SHOW
              */
 
             //SYSTOLIC PRESSURE VALIDATION IN HEALTH ACTIVITY PAGE
-            if(Float.valueOf(systolicInput.getText().toString()) < 90){
+            if(Float.valueOf(etSystolic.getText().toString()) < 90){
                 systolicError = true;
                 collectErrors+="- Systolic pressure must not be less than 90.\n";
             }
-            else if(Float.valueOf(systolicInput.getText().toString()) > 250){
+            else if(Float.valueOf(etSystolic.getText().toString()) > 250){
                 systolicError = true;
                 collectErrors+="- Systolic pressure must not be greater than 250.\n";
             }
-            else if(!systolicInput.getText().toString().trim().isEmpty() && diastolicInput.getText().toString().trim().isEmpty()){
+            else if(!etSystolic.getText().toString().trim().isEmpty() && etDiastolic.getText().toString().trim().isEmpty()){
                 systolicError = true;
                 collectErrors+="- Diastolic pressure must not be empty while systolic pressure is filled.\n";
             }
@@ -256,15 +261,15 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
             }
 
             //DIASTOLIC PRESSURE VALIDATION IN HEALTH ACTIVITY PAGE
-            if(Float.valueOf(diastolicInput.getText().toString()) < 60){
+            if(Float.valueOf(etDiastolic.getText().toString()) < 60){
                 diastolicError = true;
                 collectErrors+="- Diastolic pressure must not be less than 60.\n";
             }
-            else if(Float.valueOf(diastolicInput.getText().toString()) > 140){
+            else if(Float.valueOf(etDiastolic.getText().toString()) > 140){
                 diastolicError = true;
                 collectErrors+="- Diastolic pressure must not be greater than 140.\n";
             }
-            else if(systolicInput.getText().toString().trim().isEmpty() && !diastolicInput.getText().toString().trim().isEmpty()){
+            else if(etSystolic.getText().toString().trim().isEmpty() && !etDiastolic.getText().toString().trim().isEmpty()){
                 diastolicError = true;
                 collectErrors+="- Systolic pressure must not be empty while diastolic pressure is filled.\n";
             }
@@ -273,12 +278,12 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
             }
 
             //HEART RATE VALIDATION IN HEALTH ACTIVITY PAGE
-            if(Float.valueOf(heartRate.getText().toString()) < 20 && Float.valueOf(heartRate.getText().toString()) > 0){
+            if(Float.valueOf(etHeartRate.getText().toString()) < 20 && Float.valueOf(etHeartRate.getText().toString()) > 0){
                 heartRateError = true;
                 collectErrors+="- Heart rate is not valid.\n";
 
             }
-            else if(Float.valueOf(heartRate.getText().toString()) == 0 && !heartRate.getText().toString().trim().isEmpty()){
+            else if(Float.valueOf(etHeartRate.getText().toString()) == 0 && !etHeartRate.getText().toString().trim().isEmpty()){
                 heartRateError = true;
                 collectErrors+="- Heart rate must not be 0.\n";
             }
@@ -291,18 +296,6 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
             errorDialog.setMessage("Please enter a valid input.");
         }
 
-        if(collectErrors.trim().length() == 0 && heartRateError==false && bodyTemperatureError==false && systolicError==false && diastolicError==false) {
-            areAllInputsValid = true; //All inputs can be saved if they are valid
-        }
-        else{
-            errorDialog.setTitle("Error")
-                    .setMessage("Health activity is not complete due to the following errors:\n\n" + collectErrors)
-                    .show();
-            collectErrors = ""; //Reset errors
-            areAllInputsValid = false; //All inputs will not be saved if one or more inputs are not valid
-        }
-
-        /*
         if(collectErrors.trim().length() > 0 && heartRateError==true && bodyTemperatureError==true && systolicError==true && diastolicError==true) {
             errorDialog.setTitle("Error")
                     .setMessage("Health activity is not complete due to the following errors:\n\n" + collectErrors)
@@ -312,9 +305,10 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
         }
         else{
             areAllInputsValid = true; //All inputs can be saved if they are valid
-        }*/
+        }
 
         if(areAllInputsValid==true){
+
             if (mClient == null) {
                 return;
             }
@@ -322,61 +316,76 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
             // Create a new item
             final ActivityTable item = new ActivityTable();
 
-            item.setActivityTitle(titleInput.getText().toString());
-            if(pintSpin.getSelectedItem().toString().contains("Most Painful")){
+            item.setActivityTitle(etTitle.getText().toString());
+            if(spPainIntensity.getSelectedItem().toString().contains("Most Painful")){
                 item.setPainIntensity(10);
             }
             else{
-                String getNumber = pintSpin.getSelectedItem().toString().substring(0,1);
+                String getNumber = spPainIntensity.getSelectedItem().toString().substring(0,1);
                 float painNumber = Float.valueOf(getNumber);
                 item.setPainIntensity(painNumber);
             }
-            if(weightSpin.getSelectedItem().toString().equals("lbs")){
-                item.setWeightLbs(Float.valueOf(weightInput.getText().toString()));
+            if(spWeight.getSelectedItem().toString().equals("lbs")){
+                item.setWeightLbs(Float.valueOf(etWeight.getText().toString()));
+                float lbsToKg = convertLbsToKg(Float.valueOf(etWeight.getText().toString()));
+                item.setWeightKg(lbsToKg);
             }
-            else{
-                float kgToLbs = convertKgToLbs(Float.valueOf(weightInput.getText().toString()));
+            else if(spWeight.getSelectedItem().toString().equals("kg")){
+                item.setWeightKg(Float.valueOf(etWeight.getText().toString()));
+                float kgToLbs = convertKgToLbs(Float.valueOf(etWeight.getText().toString()));
                 item.setWeightLbs(kgToLbs);
             }
-            if(weightSpin.getSelectedItem().toString().equals("kg")){
-                item.setWeightKg(Float.valueOf(weightInput.getText().toString()));
+            if(etMedicationBrand.getText().toString().isEmpty()){
+                item.setMedicationBrand(null);
             }
             else{
-                float lbsToKg = convertLbsToKg(Float.valueOf(weightInput.getText().toString()));
-                item.setWeightLbs(lbsToKg);
+                item.setMedicationBrand(etMedicationBrand.getText().toString());
             }
-            if(!medName.getText().toString().trim().isEmpty()){
-                item.setMedicationBrand(medName.getText().toString());
+            if(etMedicationDosage.getText().toString().isEmpty()){
+                item.setMedicationDosage(null);
             }
-            if(!medDose.getText().toString().trim().isEmpty()){
-                String dosageAmount = medDose.getText().toString();
-                String dosageUnit = doseSpin.getSelectedItem().toString();
+            else{
+                String dosageAmount = etMedicationDosage.getText().toString();
+                String dosageUnit = spMedicationDosage.getSelectedItem().toString();
                 item.setMedicationDosage(dosageAmount+dosageUnit);
             }
-            if(temperatureSpin.getSelectedItem().toString().contains(("C"))){
-                item.setBodyTemperatureCelsius(Float.valueOf(temperatureInput.getText().toString()));
+            if(etBodyTemperature.getText().toString().isEmpty()) {
+                item.setBodyTemperatureCelsius(Float.parseFloat(null));
+                item.setBodyTemperatureFahrenheit(Float.parseFloat(null));
+                
             }
             else{
-                float fahToCel = convertFahrenheitToCelsius(Float.valueOf(temperatureInput.getText().toString()));
-                item.setBodyTemperatureCelsius(fahToCel);
+                if (spBodyTemperature.getSelectedItem().toString().contains(("C"))) {
+                    item.setBodyTemperatureCelsius(Float.valueOf(etBodyTemperature.getText().toString()));
+                    float celToFah = convertCelsiusToFahrenheit(Float.valueOf(etBodyTemperature.getText().toString()));
+                    item.setBodyTemperatureFahrenheit(celToFah);
+                } else if (spBodyTemperature.getSelectedItem().toString().contains(("F"))) {
+                    float fahToCel = convertFahrenheitToCelsius(Float.valueOf(etBodyTemperature.getText().toString()));
+                    item.setBodyTemperatureCelsius(fahToCel);
+                    item.setBodyTemperatureFahrenheit(Float.valueOf(etBodyTemperature.getText().toString()));
+                }
             }
-            if(temperatureSpin.getSelectedItem().toString().contains(("F"))){
-                item.setBodyTemperatureFahrenheit(Float.valueOf(temperatureInput.getText().toString()));
+            if(etSystolic.getText().toString().isEmpty()){
+                item.setSystolic(Float.parseFloat(null));
             }
             else{
-                float celToFah = convertCelsiusToFahrenheit(Float.valueOf(temperatureInput.getText().toString()));
-                item.setBodyTemperatureCelsius(celToFah);
+                item.setSystolic(Float.valueOf(etSystolic.getText().toString()));
             }
-            if(!systolicInput.getText().toString().trim().isEmpty()){
-                item.setSystolic(Float.valueOf(systolicInput.getText().toString()));
+            if(etDiastolic.getText().toString().isEmpty()){
+                item.setDiastolic(Float.parseFloat(null));
             }
-            if(!diastolicInput.getText().toString().trim().isEmpty()){
-                item.setDiastolic(Float.valueOf(diastolicInput.getText().toString()));
+            else{
+                item.setDiastolic(Float.valueOf(etDiastolic.getText().toString()));
             }
-            if(!heartRate.getText().toString().trim().isEmpty()){
-                item.setHeartRate(Float.valueOf(heartRate.getText().toString()));
+            if(etHeartRate.getText().toString().isEmpty()){
+                item.setHeartRate(Float.parseFloat(null));
             }
-            item.setDescription(healthDescription.getText().toString());
+            else{
+                item.setHeartRate(Float.valueOf(etHeartRate.getText().toString()));
+            }
+
+            item.setDescription(etDescription.getText().toString());
+
 
             // Insert the new item
             AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>(){
@@ -401,20 +410,21 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
             runAsyncTask(task);
 
             errorDialog.setTitle("Health Activity Added")
-                    .setMessage(titleInput.getText().toString() + " has been successfully added to List.")
+                    .setMessage(etTitle.getText().toString() + " has been successfully added to List.")
                     .show();
 
-            titleInput.setText("");
-            weightInput.setText("");
-            medName.setText("");
-            medDose.setText("");
-            temperatureInput.setText("");
-            systolicInput.setText("");
-            diastolicInput.setText("");
-            heartRate.setText("");
-            healthDescription.setText("");
+            etTitle.setText("");
+            etWeight.setText("");
+            etMedicationBrand.setText("");
+            etMedicationDosage.setText("");
+            etBodyTemperature.setText("");
+            etSystolic.setText("");
+            etDiastolic.setText("");
+            etHeartRate.setText("");
+            etDescription.setText("");
         }
     }
+
 
     public ActivityTable addItemInTable(ActivityTable item) throws ExecutionException, InterruptedException {
         ActivityTable entity = mActivityTable.insert(item).get();
@@ -432,9 +442,6 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
 
                 try {
                     final List<ActivityTable> results = refreshItemsFromMobileServiceTable();
-
-                    //Offline Sync
-                    //final List<ActivityTable> results = refreshItemsFromMobileServiceTableSyncTable();
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -458,7 +465,6 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
     }
 
     private List<ActivityTable> refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException, MobileServiceException {
-        //return mActivityTable.where().field("complete").eq(val(false)).execute().get();
         return mActivityTable.execute().get();
     }
 
@@ -541,11 +547,7 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
             return task.execute();
         }
     }
-
-    /**
-     * NEEDS CHANGE?
-     * MAY APPLY TO LIST
-     */
+    
     private class ProgressFilter implements ServiceFilter {
 
         @Override

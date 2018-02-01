@@ -44,6 +44,9 @@ public class ActivityTable {
     @com.google.gson.annotations.SerializedName("bmi")
     private float mBmi;
 
+    @com.google.gson.annotations.SerializedName("activity_location")
+    private String mLocation;
+
     /**
      * Activity id
      * NEEDS CONFIGURATION AND RESEARCH
@@ -67,7 +70,7 @@ public class ActivityTable {
 
     public ActivityTable(String title, float painLevel,
                          float temperatureCelsius, float temperatureFahrenheit,
-                         String description,
+                         String description, String location,
                          float weightLbs, float weightKg, float bmi,
                          String medBrand, String medDosage,
                          float systolic, float diastolic,
@@ -77,6 +80,7 @@ public class ActivityTable {
         this.setBodyTemperatureCelsius(temperatureCelsius);
         this.setBodyTemperatureFahrenheit(temperatureFahrenheit);
         this.setDescription(description);
+        this.setLocation(location);
         this.setWeightLbs(weightLbs);
         this.setWeightKg(weightKg);
         this.setBmi(bmi);
@@ -104,6 +108,8 @@ public class ActivityTable {
         return mDescription;
     }
     public final void setDescription(String description){ mDescription = description; }
+    public String getLocation() { return mLocation; }
+    public final void setLocation(String location) { mLocation = location; }
     public float getWeightLbs(){
         return mWeightLbs;
     }

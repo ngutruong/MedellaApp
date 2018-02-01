@@ -101,7 +101,7 @@
     </string-array>
 
     <!-- Strings for ListActivity -->
-    <string name="title_activity_list">List</string>
+    <string name="title_activity_list">Activity List</string>
 
     <!-- Strings for ResultsActivity -->
     <string name="title_activity_results">Results</string>
