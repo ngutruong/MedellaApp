@@ -80,8 +80,6 @@ public class HomeActivity extends AppCompatActivity
             Intent iHealth = new Intent(this, HealthActivity.class);
             startActivity(iHealth);
         }else if (id == R.id.nav_amList) {
-            //TESTING ONLY
-            //LIST ACTIVITY NOT OFFICIAL
             Intent iList = new Intent(this, ListActivity.class);
             startActivity(iList);
 

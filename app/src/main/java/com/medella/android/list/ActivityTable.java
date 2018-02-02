@@ -1,4 +1,4 @@
-package com.medella.android.database;
+package com.medella.android.list;
 
 /**
  * Represents an item in a ToDo list

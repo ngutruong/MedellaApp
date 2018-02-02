@@ -1,22 +1,30 @@
 package com.medella.android.activities;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import com.medella.android.R;
-import com.medella.android.database.ActivityTable;
-import com.medella.android.database.ActivityTableAdapter;
+import com.medella.android.list.ActivityTable;
+import com.medella.android.list.ActivityTableAdapter;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.MobileServiceException;
 import com.microsoft.windowsazure.mobileservices.http.NextServiceFilterCallback;
@@ -40,7 +48,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-public class ListActivity extends AppCompatActivity {
+public class ListActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener{
     MaterialSearchView searchView;
     //ListView testListview;
     private MobileServiceClient mClient;
@@ -61,6 +70,17 @@ public class ListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_list);
+        navigationView.setNavigationItemSelectedListener(this);
 
         mProgressBar = (ProgressBar) findViewById(R.id.loadListProgressBar);
 
@@ -96,12 +116,6 @@ public class ListActivity extends AppCompatActivity {
             //Init local storage
             initLocalStore().get();
 
-            // Create an adapter to bind the items with the view
-            /*
-            mAdapter = new ActivityTableAdapter1(this, R.layout.row_list_to_do);
-            ListView listViewToDo = (ListView) findViewById(R.id.listViewToDo);
-            listViewToDo.setAdapter(mAdapter);
-            */
             mAdapter = new ActivityTableAdapter(this, R.layout.activity_card_view);
             ListView listViewToDo = (ListView) findViewById(R.id.listViewToDo);
             listViewToDo.setAdapter(mAdapter);
@@ -238,6 +252,72 @@ public class ListActivity extends AppCompatActivity {
         }
     }
 
+    public void refreshList(View view) {
+        refreshItemsFromTable();
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_list,menu);
+        //MenuItem item = menu.findItem(R.id.action_search);
+        //searchView.setMenuItem(item);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        //DRAWER NAVIGATION IN HOME PAGE
+        if (id == R.id.nav_amHome) {
+            Intent iHome = new Intent(this, HomeActivity.class);
+            startActivity(iHome);
+        } else if (id == R.id.nav_amActivity) {
+            Intent iHealth = new Intent(this, HealthActivity.class);
+            startActivity(iHealth);
+        }else if (id == R.id.nav_amList) {
+            //Intent is not needed as the List button leads to this page
+
+        } else if (id == R.id.nav_amResults) {
+            Intent iResults = new Intent(this, ResultsActivity.class);
+            startActivity(iResults);
+
+        } else if (id == R.id.nav_amLogout) {
+            //Logout is not available at this moment
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
     private class ProgressFilter implements ServiceFilter {
 
         @Override
@@ -278,13 +358,5 @@ public class ListActivity extends AppCompatActivity {
 
             return resultFuture;
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_list,menu);
-        MenuItem item = menu.findItem(R.id.action_search);
-        searchView.setMenuItem(item);
-        return true;
     }
 }

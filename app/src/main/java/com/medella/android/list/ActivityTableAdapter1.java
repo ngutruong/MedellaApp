@@ -23,7 +23,7 @@ import com.medella.android.activities.HealthActivity;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
+public class ActivityTableAdapter1 extends ArrayAdapter<ActivityTable> {
 
     /**
      * Adapter context
@@ -35,7 +35,7 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
      */
     int mLayoutResourceId;
 
-    public ActivityTableAdapter(Context context, int layoutResourceId) {
+    public ActivityTableAdapter1(Context context, int layoutResourceId) {
         super(context, layoutResourceId);
 
         mContext = context;
@@ -58,12 +58,12 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
         }
 
         row.setTag(currentItem);
-        final CheckBox checkBox = (CheckBox) row.findViewById(R.id.checkToDoItem);
-        checkBox.setText(currentItem.getActivityTitle()+"\n"+currentItem.getDescription()+"\n"+currentItem.getWeightLbs());
-        checkBox.setChecked(false);
-        checkBox.setEnabled(true);
+        //final CheckBox checkBox = (CheckBox) row.findViewById(R.id.checkToDoItem);
+        //checkBox.setText(currentItem.getActivityTitle()+"\n"+currentItem.getDescription()+"\n"+currentItem.getWeightLbs());
+        //checkBox.setChecked(false);
+        //checkBox.setEnabled(true);
 
-        checkBox.setOnClickListener(new View.OnClickListener() {
+        /*checkBox.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
@@ -74,8 +74,8 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
                         //activity.checkItem(currentItem);
                     }
                 }*/
-            }
-        });
+            //}
+        //});
 
         return row;
     }
