@@ -1,8 +1,11 @@
 package com.medella.android.list;
 
 import android.app.AlertDialog;
+import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,13 +14,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import com.medella.android.R;
-
-/**
- * Created by User on 4/4/2017.
- */
 
 public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
 
@@ -35,8 +35,10 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
         TextView title;
         ImageView image;*/
         protected TextView tvActivityTitle;
+        protected TextView tvActivityDescription;
         protected TextView tvActivityDetails;
         protected TextView tvBmiStatus;
+        protected TextView tvLocation;
         protected TextView tvDateAdded;
         protected View cardView;
     }
@@ -100,7 +102,9 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
             */
             holder.tvActivityTitle = (TextView)row.findViewById(R.id.activity_title_text);
             holder.tvActivityDetails = (TextView)row.findViewById(R.id.activity_details_text);
+            holder.tvActivityDescription = (TextView)row.findViewById(R.id.activity_description_text);
             holder.tvBmiStatus = (TextView)row.findViewById(R.id.bmi_status_text);
+            holder.tvLocation = (TextView)row.findViewById(R.id.activity_location_text);
             holder.tvDateAdded = (TextView)row.findViewById(R.id.activity_date_added_text);
             holder.cardView = row.findViewById(R.id.activity_card_view);
 
@@ -120,7 +124,22 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
 
         //holder.title.setText(title);
             holder.tvActivityTitle.setText(currentItem.getActivityTitle());
-            holder.tvActivityDetails.setText(currentItem.getDescription());
+            String acWeight = "Weight: "+String.valueOf(currentItem.getWeightLbs())+"lbs"+" ("+String.valueOf(currentItem.getWeightKg())+"kg"+")";
+            String acPainInt = "Pain Intensity: "+String.valueOf(currentItem.getPainIntensity());
+            String acMedication = "Medication: "+currentItem.getMedicationBrand()+" "+currentItem.getMedicationDosage();
+            String acBodyTemp = "Body Temperature: "+String.valueOf(currentItem.getBodyTemperatureCelsius())+"C ("+String.valueOf(currentItem.getBodyTemperatureFahrenheit())+"F)";
+            String acBloodPressure = "Body Pressure: "+String.valueOf(currentItem.getSystolic())+"/"+String.valueOf(currentItem.getDiastolic())+" mm Hg";
+            String acHeartRate = "Heart Rate: "+String.valueOf(currentItem.getHeartRate())+"bpm";
+            holder.tvActivityDetails.setText(
+                    acWeight+" | "
+                    +acPainInt+" | "
+                    +acMedication+" | "
+                    +acBodyTemp+" | "
+                    +acBloodPressure+" | "
+                    +acHeartRate
+            );
+            holder.tvActivityDescription.setText(currentItem.getDescription());
+            holder.tvLocation.setText(currentItem.getLocation());
             String addedDate = currentItem.getCreatedAt().substring(0,10)+" ";
             String addedTime = currentItem.getCreatedAt().substring(11,19);
             holder.tvDateAdded.setText("Created: "+addedDate+addedTime);
@@ -134,7 +153,7 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
                 public boolean onLongClick(View v) {
                     ArrayList<String> entries = new ArrayList<String>();
                     entries.add("Share Activity");
-                    entries.add("Rename Activity");
+                    entries.add("Edit Activity");
                     entries.add("Delete Activity");
 
                     final CharSequence[] items = entries.toArray(new CharSequence[entries.size()]);
@@ -145,13 +164,17 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
                     builder.setTitle("Choose one:");
                     builder.setItems(items, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int item) {
-                        /*if (item == 0) {
-                            shareFileDialog(holder.getPosition());
-                        } if (item == 1) {
-                            //renameFileDialog(holder.getPosition());
-                        } else if (item == 2) {
-                            //deleteFileDialog(holder.getPosition());
-                        }*/
+                            /*if (item == 0) {
+                                //shareActivityDialog(holder.getPosition());
+
+                            } if (item == 1) {
+                                //renameFileDialog(holder.getPosition());
+                            } else if (item == 2) {
+                                if(mContext instanceof ListActivity){
+                                    ListActivity activity = (ListActivity) mContext;
+                                    activity.deleteHealthActivity(currentItem);
+                                }
+                            }*/
                         }
                     });
                     builder.setCancelable(true);
@@ -193,4 +216,5 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
         }
 
     }
+
 }

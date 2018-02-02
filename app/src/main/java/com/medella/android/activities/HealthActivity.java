@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -51,7 +54,16 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-public class HealthActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.location.places.ui.PlacePicker;
+
+public class HealthActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
 
     public boolean areAllInputsValid = false;
     
@@ -73,12 +85,17 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
     private EditText etSystolic;
     private EditText etDiastolic;
     private EditText etHeartRate;
+    private EditText etLocation;
     private EditText etDescription;
     private Spinner spWeight;
     private Spinner spBodyTemperature;
     private Spinner spMedicationDosage;
     private Spinner spPainIntensity;
     private ProgressBar mProgressBar;
+    private ImageButton ibPickLocation;
+
+    private GoogleApiClient mGoogleApiClient;
+    private int PLACE_PICKER_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,11 +152,13 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
             etSystolic = (EditText)findViewById(R.id.txtSystolic);
             etDiastolic = (EditText)findViewById(R.id.txtDiastolic);
             etHeartRate = (EditText)findViewById(R.id.txtHrate);
+            etLocation = (EditText)findViewById(R.id.txtLocation);
             etDescription = (EditText)findViewById(R.id.txtDesc);
             spWeight = (Spinner)findViewById(R.id.weightSpinner);
             spBodyTemperature = (Spinner)findViewById(R.id.tempSpinner);
             spMedicationDosage = (Spinner)findViewById(R.id.doseSpinner);
             spPainIntensity = (Spinner)findViewById(R.id.pintSpinner);
+            ibPickLocation = (ImageButton)findViewById(R.id.btnLocation);
 
             // Create an adapter to bind the items with the view
             //mAdapter = new ActivityTableAdapter1(this, R.layout.row_list_to_do);
@@ -155,6 +174,25 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
         } catch (Exception e){
             createAndShowDialog(e, "Error");
         }
+
+        mGoogleApiClient = new GoogleApiClient
+                .Builder(this)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .enableAutoManage(this, this)
+                .build();
+
+        ibPickLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                try {
+                    startActivityForResult(builder.build(HealthActivity.this), PLACE_PICKER_REQUEST);
+                } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private float convertCelsiusToFahrenheit(float celsiusTemp)
@@ -386,6 +424,7 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
             }
 
             item.setDescription(etDescription.getText().toString());
+            item.setLocation(etLocation.getText().toString());
 
 
             // Insert the new item
@@ -423,6 +462,7 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
             etDiastolic.setText("");
             etHeartRate.setText("");
             etDescription.setText("");
+            etLocation.setText("");
         }
     }
 
@@ -490,6 +530,7 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
                     tableDefinition.put("bodytemperature_celsius", ColumnDataType.Real);
                     tableDefinition.put("bodytemperature_fahrenheit", ColumnDataType.Real);
                     tableDefinition.put("activity_description", ColumnDataType.String);
+                    tableDefinition.put("activity_location", ColumnDataType.String);
                     tableDefinition.put("weight_lbs", ColumnDataType.Real);
                     tableDefinition.put("weight_kg", ColumnDataType.Real);
                     tableDefinition.put("medication_brand", ColumnDataType.String);
@@ -548,7 +589,40 @@ public class HealthActivity extends AppCompatActivity implements NavigationView.
             return task.execute();
         }
     }
-    
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Snackbar.make(ibPickLocation, connectionResult.getErrorMessage() + "", Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_PICKER_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlacePicker.getPlace(data, this);
+                StringBuilder stBuilder = new StringBuilder();
+                String placename = String.format("%s", place.getName());
+                String address = String.format("%s", place.getAddress());
+                stBuilder.append(placename);
+                stBuilder.append(", ");
+                stBuilder.append(address);
+                etLocation.setText(stBuilder.toString());
+            }
+        }
+    }
+
     private class ProgressFilter implements ServiceFilter {
 
         @Override

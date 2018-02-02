@@ -129,8 +129,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignStart="@+id/hrateText"
-            android:layout_below="@+id/txtHrate"
-            android:layout_marginTop="18dp"
+            android:layout_below="@+id/txtLocation"
+            android:layout_marginTop="12dp"
             android:text="Medical Description"
             android:textStyle="bold" />
 
@@ -290,6 +290,35 @@
             android:layout_alignBottom="@+id/btnHfinish"
             android:layout_below="@+id/txtDesc"
             android:layout_toStartOf="@+id/btnHfinish" />
+
+        <TextView
+            android:id="@+id/locationText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/descText"
+            android:layout_below="@+id/txtHrate"
+            android:text="Location"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/txtLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/descText"
+            android:layout_below="@+id/locationText"
+            android:layout_toStartOf="@+id/btnHfinish"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:hint="Enter location or click 'Add Location' button to detect location automatically"
+            android:textSize="12sp" />
+
+        <ImageButton
+            android:id="@+id/btnLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/txtLocation"
+            android:layout_alignEnd="@+id/txtDesc"
+            app:srcCompat="@drawable/ic_add_location" />
 
     </RelativeLayout>
 

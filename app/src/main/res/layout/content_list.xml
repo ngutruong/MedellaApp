@@ -20,6 +20,13 @@
         tools:showIn="@layout/app_bar_list">
 
         <Button
+            android:id="@+id/btnAddActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="goToHealth"
+            android:text="Add Activity" />
+
+        <Button
             android:id="@+id/btnRefreshList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

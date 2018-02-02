@@ -48,6 +48,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import static com.microsoft.windowsazure.mobileservices.table.query.QueryOperations.val;
+
 public class ListActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
     MaterialSearchView searchView;
@@ -167,9 +169,9 @@ public class ListActivity extends AppCompatActivity
     }
 
     private List<ActivityTable> refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException, MobileServiceException {
-        //return mActivityTable.where().field("complete").
-        //eq(val(false)).execute().get();
-        return mActivityTable.execute().get();
+        return mActivityTable.where().field("deleted").eq(val(false)).execute().get();
+
+        //return mActivityTable.execute().get();
     }
 
     private AsyncTask<Void, Void, Void> initLocalStore() throws MobileServiceLocalStoreException, ExecutionException, InterruptedException {
@@ -188,11 +190,13 @@ public class ListActivity extends AppCompatActivity
 
                     Map<String, ColumnDataType> tableDefinition = new HashMap<String, ColumnDataType>();
                     tableDefinition.put("id", ColumnDataType.String);
+                    tableDefinition.put("deleted", ColumnDataType.Boolean);
                     tableDefinition.put("activity_title", ColumnDataType.String);
                     tableDefinition.put("pain_intensity", ColumnDataType.Real);
                     tableDefinition.put("bodytemperature_celsius", ColumnDataType.Real);
                     tableDefinition.put("bodytemperature_fahrenheit", ColumnDataType.Real);
                     tableDefinition.put("activity_description", ColumnDataType.String);
+                    tableDefinition.put("activity_location", ColumnDataType.String);
                     tableDefinition.put("weight_lbs", ColumnDataType.Real);
                     tableDefinition.put("weight_kg", ColumnDataType.Real);
                     tableDefinition.put("medication_brand", ColumnDataType.String);
@@ -316,6 +320,44 @@ public class ListActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void goToHealth(View view) {
+        Intent iHealth = new Intent(this, HealthActivity.class);
+        startActivity(iHealth);
+    }
+
+    public void deleteHealthActivity(final ActivityTable item) {
+        if (mClient == null) {
+            return;
+        }
+
+        // Set the item as completed and update it in the table
+        item.setDelete(true);
+
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>(){
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (item.isDeleted()) {
+                                mAdapter.remove(item);
+                            }
+                        }
+                    });
+                } catch (final Exception e) {
+                    createAndShowDialogFromTask(e, "Error");
+                }
+
+                return null;
+            }
+        };
+
+        runAsyncTask(task);
+
     }
 
     private class ProgressFilter implements ServiceFilter {
