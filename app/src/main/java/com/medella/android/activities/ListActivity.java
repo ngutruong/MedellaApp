@@ -340,6 +340,7 @@ public class ListActivity extends AppCompatActivity
             protected Void doInBackground(Void... params) {
                 try {
 
+                    deleteItemInTable(item);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -358,6 +359,10 @@ public class ListActivity extends AppCompatActivity
 
         runAsyncTask(task);
 
+    }
+
+    public void deleteItemInTable(ActivityTable item) throws ExecutionException, InterruptedException {
+        mActivityTable.update(item).get();
     }
 
     private class ProgressFilter implements ServiceFilter {

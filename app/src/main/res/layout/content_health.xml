@@ -51,6 +51,7 @@
             android:layout_toEndOf="@+id/hrateText"
             android:ems="10"
             android:inputType="textPersonName"
+            android:selectAllOnFocus="true"
             android:textSize="12sp" />
 
         <EditText
@@ -62,6 +63,7 @@
             android:ems="10"
             android:hint="Add weight number here"
             android:inputType="number"
+            android:selectAllOnFocus="true"
             android:textAlignment="center"
             android:textSize="12sp" />
 
@@ -199,6 +201,7 @@
             android:layout_toEndOf="@+id/descText"
             android:ems="10"
             android:inputType="number"
+            android:text="120"
             android:textAlignment="center"
             android:textSize="12sp" />
 
@@ -210,6 +213,7 @@
             android:layout_below="@+id/txtSystolic"
             android:ems="10"
             android:inputType="number"
+            android:text="80"
             android:textAlignment="center"
             android:textSize="12sp" />
 
@@ -271,6 +275,7 @@
             android:layout_below="@+id/descText"
             android:ems="10"
             android:inputType="textMultiLine"
+            android:selectAllOnFocus="true"
             android:textSize="12sp" />
 
         <Spinner

@@ -423,6 +423,9 @@ public class HealthActivity extends AppCompatActivity
                 item.setHeartRate(Float.valueOf(etHeartRate.getText().toString()));
             }
 
+            float heightInMeters = (float) 1.81;
+            item.setBmi(calculateBmi(item.getWeightKg(), heightInMeters));
+
             item.setDescription(etDescription.getText().toString());
             item.setLocation(etLocation.getText().toString());
 

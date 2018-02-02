@@ -5,19 +5,27 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import com.medella.android.R;
+import com.medella.android.fragments.ActivityDialogFragment;
 
 public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
 
@@ -31,9 +39,6 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
      * Holds variables in a View
      */
     private static class ActivityViewHolder {
-        /*
-        TextView title;
-        ImageView image;*/
         protected TextView tvActivityTitle;
         protected TextView tvActivityDescription;
         protected TextView tvActivityDetails;
@@ -43,12 +48,6 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
         protected View cardView;
     }
 
-    /*
-    public ActivityTableAdapter(Context context, int resource, ArrayList<ActivityTable> objects) {
-        super(context, resource, objects);
-        mContext = context;
-        mResource = resource;
-    }*/
     public ActivityTableAdapter(Context context, int resource) {
         super(context, resource);
         mContext = context;
@@ -61,160 +60,135 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
         View row = convertView;
         final ActivityTable currentItem = getItem(position);
 
-        //get the persons information
-        //String title = getItem(position).getTitle();
-        //String imgUrl = getItem(position).getImgURL();
-
 
         try{
 
+            ActivityViewHolder holder;
 
-        //create the view result for showing the animation
-        //final View result;
+            if(row == null){
+                LayoutInflater inflater = LayoutInflater.from(mContext);
+                row = inflater.inflate(mResource, parent, false);
+                holder = new ActivityViewHolder();
 
-        //ViewHolder object
-        ActivityViewHolder holder;
+                holder.tvActivityTitle = (TextView)row.findViewById(R.id.activity_title_text);
+                holder.tvActivityDetails = (TextView)row.findViewById(R.id.activity_details_text);
+                holder.tvActivityDescription = (TextView)row.findViewById(R.id.activity_description_text);
+                holder.tvBmiStatus = (TextView)row.findViewById(R.id.bmi_status_text);
+                holder.tvLocation = (TextView)row.findViewById(R.id.activity_location_text);
+                holder.tvDateAdded = (TextView)row.findViewById(R.id.activity_date_added_text);
+                holder.cardView = row.findViewById(R.id.activity_card_view);
 
-        /*
-        if(convertView == null){
-            LayoutInflater inflater = LayoutInflater.from(mContext);
-            convertView = inflater.inflate(mResource, parent, false);
-            holder = new ViewHolder();
-            holder.title = (TextView) convertView.findViewById(R.id.cardTitle);
-            holder.image = (ImageView) convertView.findViewById(R.id.cardImage);
+                row.setTag(holder);
+            }
+            else{
+                holder = (ActivityViewHolder) row.getTag();
+            }
 
-            //result = convertView;
+            lastPosition = position;
 
-            convertView.setTag(holder);
-        }
-        else{
-            holder = (ViewHolder) convertView.getTag();
-            //result = convertView;
-        }*/
-
-        if(row == null){
-            LayoutInflater inflater = LayoutInflater.from(mContext);
-            row = inflater.inflate(mResource, parent, false);
-            holder = new ActivityViewHolder();
-            /*
-            holder.title = (TextView) convertView.findViewById(R.id.cardTitle);
-            holder.image = (ImageView) convertView.findViewById(R.id.cardImage);
-            */
-            holder.tvActivityTitle = (TextView)row.findViewById(R.id.activity_title_text);
-            holder.tvActivityDetails = (TextView)row.findViewById(R.id.activity_details_text);
-            holder.tvActivityDescription = (TextView)row.findViewById(R.id.activity_description_text);
-            holder.tvBmiStatus = (TextView)row.findViewById(R.id.bmi_status_text);
-            holder.tvLocation = (TextView)row.findViewById(R.id.activity_location_text);
-            holder.tvDateAdded = (TextView)row.findViewById(R.id.activity_date_added_text);
-            holder.cardView = row.findViewById(R.id.activity_card_view);
-
-            //result = convertView;
-
-            row.setTag(holder);
-        }
-        else{
-            holder = (ActivityViewHolder) row.getTag();
-            //result = convertView;
-        }
-
-        //Animation animation = AnimationUtils.loadAnimation(mContext,
-        //        (position > lastPosition) ? R.anim.load_down_anim : R.anim.load_up_anim);
-        //result.startAnimation(animation);
-        lastPosition = position;
-
-        //holder.title.setText(title);
-            holder.tvActivityTitle.setText(currentItem.getActivityTitle());
-            String acWeight = "Weight: "+String.valueOf(currentItem.getWeightLbs())+"lbs"+" ("+String.valueOf(currentItem.getWeightKg())+"kg"+")";
-            String acPainInt = "Pain Intensity: "+String.valueOf(currentItem.getPainIntensity());
-            String acMedication = "Medication: "+currentItem.getMedicationBrand()+" "+currentItem.getMedicationDosage();
-            String acBodyTemp = "Body Temperature: "+String.valueOf(currentItem.getBodyTemperatureCelsius())+"C ("+String.valueOf(currentItem.getBodyTemperatureFahrenheit())+"F)";
-            String acBloodPressure = "Body Pressure: "+String.valueOf(currentItem.getSystolic())+"/"+String.valueOf(currentItem.getDiastolic())+" mm Hg";
-            String acHeartRate = "Heart Rate: "+String.valueOf(currentItem.getHeartRate())+"bpm";
-            holder.tvActivityDetails.setText(
-                    acWeight+" | "
-                    +acPainInt+" | "
-                    +acMedication+" | "
-                    +acBodyTemp+" | "
-                    +acBloodPressure+" | "
-                    +acHeartRate
-            );
-            holder.tvActivityDescription.setText(currentItem.getDescription());
-            holder.tvLocation.setText(currentItem.getLocation());
-            String addedDate = currentItem.getCreatedAt().substring(0,10)+" ";
-            String addedTime = currentItem.getCreatedAt().substring(11,19);
-            holder.tvDateAdded.setText("Created: "+addedDate+addedTime);
-            /*holder.tvDateAdded.setText(DateUtils.formatDateTime(
-                    mContext,
-                    currentItem.getCreatedAt(),
-                    DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NUMERIC_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_YEAR
-            ));*/
-            holder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    ArrayList<String> entries = new ArrayList<String>();
-                    entries.add("Share Activity");
-                    entries.add("Edit Activity");
-                    entries.add("Delete Activity");
-
-                    final CharSequence[] items = entries.toArray(new CharSequence[entries.size()]);
-
-
-                    // File delete confirm
-                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                    builder.setTitle("Choose one:");
-                    builder.setItems(items, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int item) {
-                            /*if (item == 0) {
-                                //shareActivityDialog(holder.getPosition());
-
-                            } if (item == 1) {
-                                //renameFileDialog(holder.getPosition());
-                            } else if (item == 2) {
-                                if(mContext instanceof ListActivity){
-                                    ListActivity activity = (ListActivity) mContext;
-                                    activity.deleteHealthActivity(currentItem);
-                                }
-                            }*/
-                        }
-                    });
-                    builder.setCancelable(true);
-                    builder.setNegativeButton("Cancel",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
-
-                    AlertDialog alert = builder.create();
-                    alert.show();
-
-                    return false;
+                holder.tvActivityTitle.setText(currentItem.getActivityTitle());
+                String acWeight = "Weight: "+String.valueOf(currentItem.getWeightLbs())+"lbs"+" ("+String.valueOf(currentItem.getWeightKg())+"kg"+")";
+                String acPainInt = "Pain Intensity: "+String.valueOf(currentItem.getPainIntensity());
+                String acMedication = "Medication: "+currentItem.getMedicationBrand()+" "+currentItem.getMedicationDosage();
+                String acBodyTemp = "Body Temperature: "+String.valueOf(currentItem.getBodyTemperatureCelsius())+"C ("+String.valueOf(currentItem.getBodyTemperatureFahrenheit())+"F)";
+                String acBloodPressure = "Body Pressure: "+String.valueOf(currentItem.getSystolic())+"/"+String.valueOf(currentItem.getDiastolic())+" mmHg";
+                String acHeartRate = "Heart Rate: "+String.valueOf(currentItem.getHeartRate())+"bpm";
+                holder.tvActivityDetails.setText(
+                        acWeight+" | "
+                        +acPainInt+" | "
+                        +acMedication+" | "
+                        +acBodyTemp+" | "
+                        +acBloodPressure+" | "
+                        +acHeartRate
+                );
+                if(currentItem.getBmi() > 0 && currentItem.getBmi() < 18.5){
+                    holder.tvBmiStatus.setText("BMI: "+String.valueOf(currentItem.getBmi())+" (Underweight)");
+                    holder.tvBmiStatus.setTextColor(Color.parseColor("#22A7F2"));
                 }
-            });
+                else if(currentItem.getBmi() >= 18.5 && currentItem.getBmi() < 25){
+                    holder.tvBmiStatus.setText("BMI: "+String.valueOf(currentItem.getBmi())+" (Normal)");
+                    holder.tvBmiStatus.setTextColor(Color.GREEN);
+                    holder.tvBmiStatus.setTypeface(null, Typeface.BOLD);
+                }
+                else if(currentItem.getBmi() >= 25 && currentItem.getBmi() < 30){
+                    holder.tvBmiStatus.setText("BMI: "+String.valueOf(currentItem.getBmi())+" (Overweight)");
+                    holder.tvBmiStatus.setTextColor(Color.parseColor("#F28622"));
+                }
+                else if(currentItem.getBmi() >= 30){
+                    holder.tvBmiStatus.setText("BMI: "+String.valueOf(currentItem.getBmi())+" (Obese)");
+                    holder.tvBmiStatus.setTextColor(Color.RED);
+                    holder.tvBmiStatus.setTypeface(null, Typeface.BOLD);
+                }
+                else{
+                    holder.tvBmiStatus.setText("0");
+                    holder.tvBmiStatus.setTextColor(Color.GRAY);
+                    holder.tvBmiStatus.setTypeface(null, Typeface.NORMAL);
+                }
+                holder.tvActivityDescription.setText(currentItem.getDescription());
+                holder.tvLocation.setText(currentItem.getLocation());
+                String addedDate = currentItem.getCreatedAt().substring(0,10)+" ";
+                String addedTime = currentItem.getCreatedAt().substring(11,19);
+                holder.tvDateAdded.setText("Created: "+addedDate+addedTime);
 
-        //create the imageloader object
-        //ImageLoader imageLoader = ImageLoader.getInstance();
+                holder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        ArrayList<String> entries = new ArrayList<String>();
+                        entries.add("Share Activity");
+                        entries.add("Edit Activity");
+                        entries.add("Delete Activity");
 
-        //int defaultImage = mContext.getResources().getIdentifier("@drawable/image_failed",null,mContext.getPackageName());
+                        final CharSequence[] items = entries.toArray(new CharSequence[entries.size()]);
 
-        //create display options
-        //DisplayImageOptions options = new DisplayImageOptions.Builder().cacheInMemory(true)
-          //      .cacheOnDisc(true).resetViewBeforeLoading(true)
-            //    .showImageForEmptyUri(defaultImage)
-              //  .showImageOnFail(defaultImage)
-                //.showImageOnLoading(defaultImage).build();
+                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                        builder.setTitle("Choose one:");
+                        builder.setItems(items, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int item) {
+                                if (item == 0) {
+                                    String acTitle = currentItem.getActivityTitle()+"\n\n";
+                                    String acWeight = "Weight: "+String.valueOf(currentItem.getWeightLbs())+"lbs"+" ("+String.valueOf(currentItem.getWeightKg())+"kg"+")"+"\n";
+                                    String acMedication = "Medication: "+currentItem.getMedicationBrand()+" "+currentItem.getMedicationDosage()+"\n";
+                                    String acBodyTemp = "Body Temperature: "+String.valueOf(currentItem.getBodyTemperatureCelsius())+"C ("+String.valueOf(currentItem.getBodyTemperatureFahrenheit())+"F)"+"\n";
+                                    String acBloodPressure = "Body Pressure: "+String.valueOf(currentItem.getSystolic())+"/"+String.valueOf(currentItem.getDiastolic())+" mmHg"+"\n";
+                                    String acHeartRate = "Heart Rate: "+String.valueOf(currentItem.getHeartRate())+"bpm"+"\n\n";
+                                    String acDescription = currentItem.getDescription();
 
-        //download and display image from url
-        //imageLoader.displayImage(imgUrl, holder.image, options);
+                                    Intent iShare = new Intent(Intent.ACTION_SEND);
+                                    iShare.setType("text/plain");
 
-        //return convertView;
-            return row;
+                                    String shareBody = "Your body here"; //shareBody does not show up - possibly due to update?
+                                    String shareSub = acTitle+acWeight+acMedication+acBodyTemp+acBloodPressure+acHeartRate+acDescription;
+
+                                    iShare.putExtra(Intent.EXTRA_TEXT, shareBody);
+                                    iShare.putExtra(Intent.EXTRA_TEXT, shareSub);
+                                    mContext.startActivity(Intent.createChooser(iShare, "Share your health activity via"));
+                                } if (item == 1) {
+                                    Toast.makeText(mContext, "Edit/update not available", Toast.LENGTH_SHORT).show();
+                                } else if (item == 2) {
+                                    Toast.makeText(mContext, "Delete not available", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                        builder.setCancelable(true);
+                        builder.setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+                        AlertDialog alert = builder.create();
+                        alert.show();
+
+                        return false;
+                    }
+                });
+
+                return row;
         }catch (IllegalArgumentException e){
             Log.e(TAG, "getView: IllegalArgumentException: " + e.getMessage() );
-            //return convertView;
             return row;
         }
 
     }
-
 }
