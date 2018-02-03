@@ -161,7 +161,6 @@ public class HealthActivity extends AppCompatActivity
             ibPickLocation = (ImageButton)findViewById(R.id.btnLocation);
 
             // Create an adapter to bind the items with the view
-            //mAdapter = new ActivityTableAdapter1(this, R.layout.row_list_to_do);
             mAdapter = new ActivityTableAdapter(this, R.layout.activity_card_view);
             ListView listViewToDo = (ListView) findViewById(R.id.listViewToDo);
             listViewToDo.setAdapter(mAdapter);
@@ -720,7 +719,7 @@ public class HealthActivity extends AppCompatActivity
             Intent iResults = new Intent(this, ResultsActivity.class);
             startActivity(iResults);
 
-        } else if (id == R.id.nav_amLogout) {
+        }else if (id == R.id.nav_amLogout) {
             //Logout is not available at this moment
         }
 

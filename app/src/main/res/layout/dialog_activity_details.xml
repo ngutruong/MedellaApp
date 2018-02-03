@@ -83,25 +83,14 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/systolicTextDialog"
+        android:id="@+id/bloodPressureTextDialog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/temperatureTextDialog"
         android:layout_weight="1"
-        android:text="Systolic: "
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/diastolicTextDialog"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/systolicTextDialog"
-        android:layout_weight="1"
-        android:text="Diastolic: "
+        android:text="Blood Pressure: "
         android:textStyle="bold" />
 
     <TextView
@@ -110,7 +99,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/diastolicTextDialog"
+        android:layout_below="@+id/bloodPressureTextDialog"
         android:layout_weight="1"
         android:text="Heart Rate: "
         android:textStyle="bold" />
@@ -207,23 +196,13 @@
         android:textAlignment="textEnd" />
 
     <TextView
-        android:id="@+id/systolicDialogInfo"
+        android:id="@+id/bloodPressureDialogInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/bodyTempDialogInfo"
-        android:layout_toEndOf="@+id/systolicTextDialog"
-        android:text="systolic_pressure"
-        android:textAlignment="textEnd" />
-
-    <TextView
-        android:id="@+id/diastolicDialogInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/bodyTempDialogInfo"
-        android:layout_below="@+id/systolicDialogInfo"
-        android:layout_toEndOf="@+id/diastolicTextDialog"
-        android:text="diastolic_pressure"
+        android:layout_toEndOf="@+id/bloodPressureTextDialog"
+        android:text="systolic/diastolic mm Hg"
         android:textAlignment="textEnd" />
 
     <TextView
@@ -231,7 +210,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/diastolicDialogInfo"
+        android:layout_below="@+id/bloodPressureDialogInfo"
         android:layout_toEndOf="@+id/heartrateTextDialog"
         android:text="heart_rate"
         android:textAlignment="textEnd" />

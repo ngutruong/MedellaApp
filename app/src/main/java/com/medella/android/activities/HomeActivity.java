@@ -87,7 +87,7 @@ public class HomeActivity extends AppCompatActivity
             Intent iResults = new Intent(this, ResultsActivity.class);
             startActivity(iResults);
 
-        } else if (id == R.id.nav_amLogout) {
+        }else if (id == R.id.nav_amLogout) {
             //Logout is not available at this moment
         }
 
@@ -116,7 +116,6 @@ public class HomeActivity extends AppCompatActivity
         startActivity(iHealth);
     }
 
-    //TESTING ONLY
     //It will send user to List page
     public void goList(View view){
         Intent iList = new Intent(this, ListActivity.class);

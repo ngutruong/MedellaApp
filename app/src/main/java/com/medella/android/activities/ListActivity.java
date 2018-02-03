@@ -38,7 +38,6 @@ import com.microsoft.windowsazure.mobileservices.table.sync.localstore.ColumnDat
 import com.microsoft.windowsazure.mobileservices.table.sync.localstore.MobileServiceLocalStoreException;
 import com.microsoft.windowsazure.mobileservices.table.sync.localstore.SQLiteLocalStore;
 import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.SimpleSyncHandler;
-import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.net.MalformedURLException;
@@ -52,21 +51,10 @@ import static com.microsoft.windowsazure.mobileservices.table.query.QueryOperati
 
 public class ListActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
-    MaterialSearchView searchView;
-    //ListView testListview;
     private MobileServiceClient mClient;
     private MobileServiceTable<ActivityTable> mActivityTable;
-    //private ActivityTableAdapter1 mAdapter;
     private ActivityTableAdapter mAdapter;
     private ProgressBar mProgressBar;
-
-    /*String[] testingListSource = {
-            "Glaucoma",
-            "Fibromyalgia",
-            "Joint pain",
-            "Osteoporosis",
-            "Tinnitus"
-    };*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,8 +158,6 @@ public class ListActivity extends AppCompatActivity
 
     private List<ActivityTable> refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException, MobileServiceException {
         return mActivityTable.where().field("deleted").eq(val(false)).execute().get();
-
-        //return mActivityTable.execute().get();
     }
 
     private AsyncTask<Void, Void, Void> initLocalStore() throws MobileServiceLocalStoreException, ExecutionException, InterruptedException {
@@ -273,8 +259,6 @@ public class ListActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_list,menu);
-        //MenuItem item = menu.findItem(R.id.action_search);
-        //searchView.setMenuItem(item);
         return true;
     }
 
@@ -313,7 +297,8 @@ public class ListActivity extends AppCompatActivity
             Intent iResults = new Intent(this, ResultsActivity.class);
             startActivity(iResults);
 
-        } else if (id == R.id.nav_amLogout) {
+        }
+        else if (id == R.id.nav_amLogout) {
             //Logout is not available at this moment
         }
 

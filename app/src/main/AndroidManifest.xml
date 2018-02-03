@@ -24,6 +24,7 @@
     <!-- Permissions to allow read-and-write for external storage -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="true"
@@ -33,7 +34,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.medella.android.activities.HomeActivity"
+            android:name=".activities.HomeActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -43,27 +44,29 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.medella.android.activities.LoginActivity"
+            android:name=".activities.LoginActivity"
             android:label="@string/title_activity_login" />
         <activity
-            android:name="com.medella.android.activities.HealthActivity"
+            android:name=".activities.HealthActivity"
             android:label="@string/title_activity_health"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.medella.android.activities.ProfileActivity"
+            android:name=".activities.ProfileActivity"
             android:label="@string/title_activity_profile"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.medella.android.activities.ResultsActivity"
+            android:name=".activities.ResultsActivity"
             android:label="@string/title_activity_results"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.medella.android.activities.ListActivity"
+            android:name=".activities.ListActivity"
             android:label="@string/title_activity_list"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCpDJYWMrXpIsR3lMwvfIclPz0jMs3-ATY"/>
+            android:value="AIzaSyCpDJYWMrXpIsR3lMwvfIclPz0jMs3-ATY" />
+
     </application>
 
 </manifest>

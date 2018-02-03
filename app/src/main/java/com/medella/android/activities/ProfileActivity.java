@@ -329,7 +329,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         final Intent iHome = new Intent(ProfileActivity.this, HomeActivity.class);
         final Intent iHealth = new Intent(ProfileActivity.this, HealthActivity.class);
         final Intent iResults = new Intent(ProfileActivity.this, ResultsActivity.class);
-        final Intent iList = new Intent(ProfileActivity.this, ListActivity.class); //ListActivity isn't available yet; don't know why it's available
+        final Intent iList = new Intent(ProfileActivity.this, ListActivity.class);
 
         //Warning message when user selects an option from navigation drawer
         AlertDialog.Builder warningDialog = new AlertDialog.Builder(this);
@@ -418,7 +418,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             else{
                 startActivity(iResults);  //Will redirect to Results page when all fields are empty
             }
-        } else if (id == R.id.nav_amLogout) {
+        }else if (id == R.id.nav_amLogout) {
             //Logout is not available at this moment
             //Logout must not appear while registering account
         }

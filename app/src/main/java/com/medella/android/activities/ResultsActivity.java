@@ -126,7 +126,7 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
         } else if (id == R.id.nav_amResults) {
             //Intent is not needed as the Result button leads to this page
 
-        } else if (id == R.id.nav_amLogout) {
+        }else if (id == R.id.nav_amLogout) {
             //Logout is not available at this moment
         }
 
