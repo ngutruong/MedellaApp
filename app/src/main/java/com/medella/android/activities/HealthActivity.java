@@ -620,7 +620,13 @@ public class HealthActivity extends AppCompatActivity
                 stBuilder.append(placename);
                 stBuilder.append(", ");
                 stBuilder.append(address);
-                etLocation.setText(stBuilder.toString());
+
+                // Original
+                //etLocation.setText(stBuilder.toString());
+
+                String coordinatesRegex = "([0-9]{1,2})[:|°]([0-9]{1,2})[:|'|′]?([0-9]{1,2}(?:\\.[0-9]+){0,1})?[\"|″]([N|S])\\s([0-9]{1,3})[:|°]([0-9]{1,2})[:|'|′]?([0-9]{1,2}(?:\\.[0-9]+){0,1})?[\"|″]([E|W]),\\s";
+                String addressOutput = stBuilder.toString().replaceAll(coordinatesRegex, ""); // Remove DMS coordinates
+                etLocation.setText(addressOutput);
             }
         }
     }

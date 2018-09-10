@@ -28,6 +28,18 @@
         android:layout_alignStart="@+id/btnCreateProfile"
         android:layout_alignEnd="@+id/btnCreateProfile" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@id/btnList"
+        android:layout_alignEnd="@id/btnList"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="40dp"
+        android:text="@string/login_status_false"
+        android:textAlignment="center"
+        android:textStyle="italic" />
+
     <Button
         android:id="@+id/btnCreateProfile"
         android:layout_width="wrap_content"
