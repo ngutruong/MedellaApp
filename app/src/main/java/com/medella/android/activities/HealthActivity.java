@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -609,24 +610,60 @@ public class HealthActivity extends AppCompatActivity
         Snackbar.make(ibPickLocation, connectionResult.getErrorMessage() + "", Snackbar.LENGTH_LONG).show();
     }
 
+    /**
+     * Add or remove coordinates to Location field
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == RESULT_OK) {
                 Place place = PlacePicker.getPlace(data, this);
-                StringBuilder stBuilder = new StringBuilder();
+                final StringBuilder stBuilder = new StringBuilder();
                 String placename = String.format("%s", place.getName());
-                String address = String.format("%s", place.getAddress());
+                final String address = String.format("%s", place.getAddress());
                 stBuilder.append(placename);
                 stBuilder.append(", ");
                 stBuilder.append(address);
 
-                // Original
-                //etLocation.setText(stBuilder.toString());
+                // Regular expression for DMS coordinates
+                final String coordinatesRegex = "([0-9]{1,2})[:|°]([0-9]{1,2})[:|'|′]?([0-9]{1,2}(?:\\.[0-9]+){0,1})?[\"|″]([N|S])\\s([0-9]{1,3})[:|°]([0-9]{1,2})[:|'|′]?([0-9]{1,2}(?:\\.[0-9]+){0,1})?[\"|″]([E|W]),\\s";
 
-                String coordinatesRegex = "([0-9]{1,2})[:|°]([0-9]{1,2})[:|'|′]?([0-9]{1,2}(?:\\.[0-9]+){0,1})?[\"|″]([N|S])\\s([0-9]{1,3})[:|°]([0-9]{1,2})[:|'|′]?([0-9]{1,2}(?:\\.[0-9]+){0,1})?[\"|″]([E|W]),\\s";
-                String addressOutput = stBuilder.toString().replaceAll(coordinatesRegex, ""); // Remove DMS coordinates
-                etLocation.setText(addressOutput);
+                AlertDialog.Builder coordinatesDialog = new AlertDialog.Builder(this); // Create alert dialog where user has the option to add or remove DMS coordinates
+                coordinatesDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() { // Coordinates will not be removed if user selects Yes
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String addressString = stBuilder.toString(); // Address string with coordinates
+                        etLocation.setText(addressString); // Address and coordinates will be added to Location field
+                    }
+                });
+                coordinatesDialog.setNegativeButton("No", new DialogInterface.OnClickListener() { // Coordinates will be removed if user selects No
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String addressString = stBuilder.toString(); // Address string with coordinates
+                        String addressWithoutCoordinates = addressString.replaceAll(coordinatesRegex, ""); // Remove DMS coordinates
+                        etLocation.setText(addressWithoutCoordinates); //Address will only be added to Location field
+                    }
+                });
+                coordinatesDialog.setNeutralButton("Cancel", new DialogInterface.OnClickListener() { // Location field will not be affected if user selects Cancel
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
+                });
+
+                // Set title and message for coordinatesDialog
+                coordinatesDialog.setTitle("Coordinates detected")
+                        .setMessage("Coordinates have been detected. Do you wish to add coordinates next to the selected address?");
+
+                if(Pattern.compile(coordinatesRegex).matcher(stBuilder.toString()).find()){
+                    coordinatesDialog.show(); // coordinatesDialog will show if stBuilder contains DMS coordinates
+                }
+                else if (stBuilder.toString().equals(", ")) {
+                    etLocation.setText(""); // Location field will not be affected if location is missing or empty
+                }
+                else { // Address strings can apply to business locations including restaurants, banks, etc.
+                    String addressString = stBuilder.toString(); // Address that does not initially include DMS coordinates
+                    etLocation.setText(addressString); // Location with no DMS coordinates will be automatically added to Location field
+                }
             }
         }
     }
