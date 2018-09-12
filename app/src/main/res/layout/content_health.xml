@@ -130,9 +130,8 @@
             android:id="@+id/descText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/hrateText"
-            android:layout_below="@+id/txtLocation"
-            android:layout_marginTop="12dp"
+            android:layout_alignStart="@+id/titleText"
+            android:layout_below="@+id/btnLocation"
             android:text="Medical Description"
             android:textStyle="bold" />
 
@@ -311,18 +310,19 @@
             android:layout_height="wrap_content"
             android:layout_alignStart="@+id/descText"
             android:layout_below="@+id/locationText"
+            android:layout_marginEnd="-120dp"
             android:layout_toStartOf="@+id/btnHfinish"
             android:ems="10"
+            android:hint="Tap the map pin below or enter location manually"
             android:inputType="textPersonName"
-            android:hint="Enter location or click 'Add Location' button to detect location automatically"
             android:textSize="12sp" />
 
         <ImageButton
             android:id="@+id/btnLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/txtLocation"
-            android:layout_alignEnd="@+id/txtDesc"
+            android:layout_alignStart="@+id/titleText"
+            android:layout_below="@+id/txtLocation"
             app:srcCompat="@drawable/ic_add_location" />
 
     </RelativeLayout>
