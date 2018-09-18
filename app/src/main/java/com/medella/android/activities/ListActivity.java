@@ -82,7 +82,7 @@ public class ListActivity extends AppCompatActivity
 
             // Mobile Service URL and key
             mClient = new MobileServiceClient(
-                    "https://medellaapp.azurewebsites.net",
+                    "https://medellapp.azurewebsites.net",
                     this).withFilter(new ProgressFilter());
 
             // Extend timeout from default of 10s to 20s
