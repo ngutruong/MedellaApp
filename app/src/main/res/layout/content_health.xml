@@ -131,7 +131,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignStart="@+id/titleText"
-            android:layout_below="@+id/btnLocation"
+            android:layout_below="@+id/btnCamera"
             android:text="Medical Description"
             android:textStyle="bold" />
 
@@ -324,6 +324,21 @@
             android:layout_alignStart="@+id/titleText"
             android:layout_below="@+id/txtLocation"
             app:srcCompat="@drawable/ic_add_location" />
+
+        <ImageButton
+            android:id="@+id/btnCamera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/btnLocation"
+            android:layout_below="@+id/btnLocation"
+            android:onClick="cameraClick"
+            app:srcCompat="@drawable/ic_menu_camera" />
+
+        <ImageView
+            android:id="@+id/cameraImage"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="9" />
 
     </RelativeLayout>
 

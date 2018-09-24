@@ -2,9 +2,11 @@ package com.medella.android.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -19,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -94,6 +97,7 @@ public class HealthActivity extends AppCompatActivity
     private Spinner spPainIntensity;
     private ProgressBar mProgressBar;
     private ImageButton ibPickLocation;
+    private ImageView imageCameraView;
 
     private GoogleApiClient mGoogleApiClient;
     private int PLACE_PICKER_REQUEST = 1;
@@ -105,6 +109,7 @@ public class HealthActivity extends AppCompatActivity
 
         mProgressBar = (ProgressBar)findViewById(R.id.loadingProgressBar);
         mProgressBar.setVisibility(ProgressBar.GONE);
+        imageCameraView = (ImageView)findViewById(R.id.cameraImage);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -231,6 +236,11 @@ public class HealthActivity extends AppCompatActivity
     }
     
     private static String collectErrors = "";
+
+    public void cameraClick(View view) {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE_SECURE);
+        startActivityForResult(intent,0);
+    }
 
     public void finishClick(View view) {
 
@@ -615,6 +625,13 @@ public class HealthActivity extends AppCompatActivity
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // This is for camera image
+        // MUST BE FIXED
+        Bitmap bitmap = (Bitmap)data.getExtras().get("data");
+        imageCameraView.setImageBitmap(bitmap);
+
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == RESULT_OK) {
                 Place place = PlacePicker.getPlace(data, this);
