@@ -1,23 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/listFrame"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.medella.android.activities.ListActivity"
-    tools:showIn="@layout/app_bar_list"-->
+    tools:showIn="@layout/activity_list">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
+    <!--TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/text_margin"
+        android:text="@string/large_text" /-->
+
+    <LinearLayout
         android:id="@+id/listFrame"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
         tools:context="com.medella.android.activities.ListActivity"
         tools:showIn="@layout/app_bar_list">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:id="@+id/loadListProgressBar"/>
 
         <Button
             android:id="@+id/btnAddActivity"
@@ -33,50 +42,19 @@
             android:onClick="refreshList"
             android:text="Refresh List" />
 
-        <ProgressBar
-            style="?android:attr/progressBarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/loadListProgressBar"/>
-
         <ListView
             android:id="@+id/listViewToDo"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:stackFromBottom="true"
+            android:layout_height="600dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginBottom="0dp"
+            android:padding="6dip"
+            android:stackFromBottom="false"
             android:transcriptMode="normal"
-            tools:listitem="@layout/activity_card_view"
-            android:padding="6dip" >
-        </ListView>
+            tools:listitem="@layout/activity_card_view"></ListView>
 
     </LinearLayout>
-<!--/RelativeLayout-->
 
-<!--?xml version="1.0" encoding="utf-8"?-->
-<!--android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.medella.android.activities.ListActivity"
-    tools:showIn="@layout/activity_list">
-    
-</android.support.constraint.ConstraintLayout-->
-
-<!-- For cardview - DON'T LOSE IT -->
-<!--RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_list_viewer"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    tools:context="com.medella.android.activities.ListActivity">
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/activityRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-</RelativeLayout-->
+</android.support.v4.widget.NestedScrollView>

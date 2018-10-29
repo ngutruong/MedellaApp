@@ -110,4 +110,5 @@
     <!-- Strings for ResultsActivity -->
     <string name="title_activity_results">Results</string>
     <string name="title_activity_voice_memo">VoiceMemoActivity</string>
+    <string name="title_activity_camera">CameraActivity</string>
 </resources>

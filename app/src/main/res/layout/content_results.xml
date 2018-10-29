@@ -7,12 +7,19 @@
     android:layout_height="match_parent"
     tools:context="com.medella.android.activities.ResultsActivity">
 
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/lineChart"
+        android:layout_width="match_parent"
+        android:layout_height="323dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"></com.github.mikephil.charting.charts.LineChart>
+
     <Button
         android:id="@+id/btnShare"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="168dp"
+        android:layout_marginBottom="44dp"
         android:onClick="shareClick"
         android:text="Share your results"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -26,8 +33,9 @@
         android:id="@+id/resultsLayout"
         android:layout_width="0dp"
         android:layout_height="147dp"
-        android:layout_marginTop="63dp"
+        android:layout_marginTop="328dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -35,32 +43,32 @@
             android:id="@+id/bmiText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:layout_alignStart="@+id/pintText"
+            android:layout_alignParentTop="true"
             android:text="BMI:" />
 
         <TextView
             android:id="@+id/pintText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/weightText"
             android:layout_below="@+id/bmiText"
+            android:layout_alignStart="@+id/weightText"
             android:text="Pain Intensity:" />
 
         <TextView
             android:id="@+id/weightText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/systolicText"
             android:layout_below="@+id/pintText"
+            android:layout_alignStart="@+id/systolicText"
             android:text="Weight:" />
 
         <TextView
             android:id="@+id/btempText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
             android:layout_below="@+id/weightText"
+            android:layout_alignParentStart="true"
             android:layout_marginStart="13dp"
             android:text="Body Temperature:" />
 
@@ -69,24 +77,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/txtSystolicResult"
-            android:layout_alignBottom="@+id/txtSystolicResult"
             android:layout_alignStart="@+id/btempText"
+            android:layout_alignBottom="@+id/txtSystolicResult"
             android:text="Systolic Pressure:" />
 
         <TextView
             android:id="@+id/diastolicText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/systolicText"
             android:layout_below="@+id/systolicText"
+            android:layout_alignStart="@+id/systolicText"
             android:text="Diastolic Pressure:" />
 
         <TextView
             android:id="@+id/hrateText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/diastolicText"
             android:layout_below="@+id/diastolicText"
+            android:layout_alignStart="@+id/diastolicText"
             android:text="Heart Rate:" />
 
         <TextView

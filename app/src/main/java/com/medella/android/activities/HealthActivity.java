@@ -6,8 +6,8 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
@@ -69,6 +69,7 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 public class HealthActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
 
+    private ListView listViewToDo;
     public boolean areAllInputsValid = false;
     
     public boolean bodyTemperatureError = true;
@@ -83,12 +84,17 @@ public class HealthActivity extends AppCompatActivity
     
     private EditText etTitle;
     private EditText etWeight;
+    @Nullable
     private EditText etMedicationBrand;
+    @Nullable
     private EditText etMedicationDosage;
+    @Nullable
     private EditText etBodyTemperature;
     private EditText etSystolic;
     private EditText etDiastolic;
+    @Nullable
     private EditText etHeartRate;
+    @Nullable
     private EditText etLocation;
     private EditText etDescription;
     private Spinner spWeight;
@@ -106,6 +112,8 @@ public class HealthActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_health);
+
+        listViewToDo = (ListView) findViewById(R.id.listViewToDo);
 
         mProgressBar = (ProgressBar)findViewById(R.id.loadingProgressBar);
         mProgressBar.setVisibility(ProgressBar.GONE);
@@ -130,7 +138,7 @@ public class HealthActivity extends AppCompatActivity
 
             // Mobile Service URL and key
             mClient = new MobileServiceClient(
-                    "https://medellaapp.azurewebsites.net",
+                    "https://medellapp.azurewebsites.net",
                     this).withFilter(new ProgressFilter());
 
             // Extend timeout from default of 10s to 20s
@@ -168,7 +176,7 @@ public class HealthActivity extends AppCompatActivity
 
             // Create an adapter to bind the items with the view
             mAdapter = new ActivityTableAdapter(this, R.layout.activity_card_view);
-            ListView listViewToDo = (ListView) findViewById(R.id.listViewToDo);
+            //ListView listViewToDo = (ListView) findViewById(R.id.listViewToDo);
             listViewToDo.setAdapter(mAdapter);
 
             // Load the items from the Mobile Service
@@ -238,8 +246,8 @@ public class HealthActivity extends AppCompatActivity
     private static String collectErrors = "";
 
     public void cameraClick(View view) {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE_SECURE);
-        startActivityForResult(intent,0);
+        Intent iCamera = new Intent(this, CameraActivity.class);
+        startActivityForResult(iCamera,0);
     }
 
     public void finishClick(View view) {
@@ -399,9 +407,10 @@ public class HealthActivity extends AppCompatActivity
                 item.setMedicationDosage(dosageAmount+dosageUnit);
             }
             if(etBodyTemperature.getText().toString().isEmpty()) {
-                item.setBodyTemperatureCelsius(Float.parseFloat(null));
-                item.setBodyTemperatureFahrenheit(Float.parseFloat(null));
-                
+                /*item.setBodyTemperatureCelsius(Float.parseFloat(null));
+                item.setBodyTemperatureFahrenheit(Float.parseFloat(null));*/
+                item.setBodyTemperatureCelsius(-1);
+                item.setBodyTemperatureFahrenheit(-1);
             }
             else{
                 if (spBodyTemperature.getSelectedItem().toString().contains(("C"))) {
@@ -415,29 +424,36 @@ public class HealthActivity extends AppCompatActivity
                 }
             }
             if(etSystolic.getText().toString().isEmpty()){
-                item.setSystolic(Float.parseFloat(null));
+                item.setSystolic(-1);
             }
             else{
                 item.setSystolic(Float.valueOf(etSystolic.getText().toString()));
             }
             if(etDiastolic.getText().toString().isEmpty()){
-                item.setDiastolic(Float.parseFloat(null));
+                item.setDiastolic(-1);
             }
             else{
                 item.setDiastolic(Float.valueOf(etDiastolic.getText().toString()));
             }
-            if(etHeartRate.getText().toString().isEmpty()){
-                item.setHeartRate(Float.parseFloat(null));
+            if(etHeartRate.getText().toString().matches("")){
+                item.setHeartRate(-1);
             }
             else{
                 item.setHeartRate(Float.valueOf(etHeartRate.getText().toString()));
             }
 
+            // Height must be gathered from user's data
+            // MUST GET FIXED
             float heightInMeters = (float) 1.81;
             item.setBmi(calculateBmi(item.getWeightKg(), heightInMeters));
 
             item.setDescription(etDescription.getText().toString());
-            item.setLocation(etLocation.getText().toString());
+            if(etLocation.getText().toString().matches("")) {
+                item.setLocation(null);
+            }
+            else{
+                item.setLocation(etLocation.getText().toString());
+            }
 
 
             // Insert the new item
@@ -628,7 +644,7 @@ public class HealthActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
 
         // This is for camera image
-        // MUST BE FIXED
+        // MUST GET FIXED
         Bitmap bitmap = (Bitmap)data.getExtras().get("data");
         imageCameraView.setImageBitmap(bitmap);
 
@@ -675,7 +691,7 @@ public class HealthActivity extends AppCompatActivity
                     coordinatesDialog.show(); // coordinatesDialog will show if stBuilder contains DMS coordinates
                 }
                 else if (stBuilder.toString().equals(", ")) {
-                    etLocation.setText(""); // Location field will not be affected if location is missing or empty
+                    etLocation.setText(null); // Location field will not be affected if location is missing or empty
                 }
                 else { // Address strings can apply to business locations including restaurants, banks, etc.
                     String addressString = stBuilder.toString(); // Address that does not initially include DMS coordinates

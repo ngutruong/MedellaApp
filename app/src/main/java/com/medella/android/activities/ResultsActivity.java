@@ -1,26 +1,172 @@
 package com.medella.android.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.DashPathEffect;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IFillFormatter;
+import com.github.mikephil.charting.interfaces.dataprovider.LineDataProvider;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.utils.Utils;
 import com.medella.android.R;
 
+import java.util.ArrayList;
+
 public class ResultsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    private LineChart bmiLineChart;
+    private float bmiAverage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
+
+        /** ------------!!!!!!!!!!!!!!!!!!!!!!----------------- */
+        /** ------------- GRAPH PART - START ------------------ */
+        bmiLineChart = (LineChart)findViewById(R.id.lineChart);
+
+        // NEW - from Examples
+        bmiLineChart.setBackgroundColor(Color.WHITE);
+        bmiLineChart.getDescription().setEnabled(false);
+        bmiLineChart.setTouchEnabled(true); //May need to switch to false
+        bmiLineChart.setDrawGridBackground(false);
+        bmiLineChart.setDragEnabled(true);
+        bmiLineChart.setScaleEnabled(true);
+        bmiLineChart.setPinchZoom(true);
+        XAxis xAxis;
+        {
+            xAxis = bmiLineChart.getXAxis();
+            xAxis.enableGridDashedLine(10f,10f,0f);
+        }
+        YAxis yAxis;
+        {
+            yAxis = bmiLineChart.getAxisLeft();
+            bmiLineChart.getAxisRight().setEnabled(false);
+            yAxis.enableGridDashedLine(10f,10f,0f);
+            yAxis.setAxisMaximum(50);
+            yAxis.setAxisMinimum(0);
+        }
+        ArrayList<Entry> bmiValues = new ArrayList<>();
+        float bmiOne = (float) 20.6;
+        float bmiTwo = (float) 28.6;
+        float bmiThree = (float) 21.1;
+        bmiValues.add(new Entry(0, bmiOne));
+        bmiValues.add(new Entry(1, bmiTwo));
+        bmiValues.add(new Entry(2, bmiThree));
+        bmiAverage+=bmiOne; //Testing
+        bmiAverage+=bmiTwo; //Testing
+        bmiAverage+=bmiThree; //Testing
+        bmiAverage = bmiAverage/3; //Testing
+
+        TextView tvBmiResult = (TextView)findViewById(R.id.txtBmiResult); //Testing
+        tvBmiResult.setText(String.valueOf(bmiAverage)); //Testing
+        if(bmiAverage > 18 && bmiAverage <= 25){
+            tvBmiResult.setTextColor(Color.GREEN); //Testing - see if color for TextView changes
+        }
+        LineDataSet bmiLds;
+        if(bmiLineChart.getData() != null && bmiLineChart.getData().getDataSetCount() > 0){
+            bmiLds = (LineDataSet) bmiLineChart.getData().getDataSetByIndex(0);
+            bmiLds.setValues(bmiValues);
+            bmiLds.notifyDataSetChanged();
+            bmiLineChart.getData().notifyDataChanged();
+            bmiLineChart.notifyDataSetChanged();
+        }
+        else{
+            bmiLds = new LineDataSet(bmiValues, "BMI");
+            bmiLds.setDrawIcons(false);
+            bmiLds.enableDashedLine(10f,0f,0f); //spaceLength is 0 so lines are not dashed
+            bmiLds.setColor(Color.BLACK);
+            bmiLds.setCircleColor(Color.BLACK);
+            bmiLds.setLineWidth(1f);
+            bmiLds.setCircleRadius(2.5f);
+            bmiLds.setDrawCircleHole(false);
+            bmiLds.setFormLineWidth(1f);
+            bmiLds.setFormLineDashEffect(new DashPathEffect(new float[]{10f,5f},0f));
+            bmiLds.setFormSize(15f);
+            bmiLds.setValueTextSize(9f);
+            bmiLds.enableDashedHighlightLine(10f,0f,0f);
+            bmiLds.setDrawFilled(true);
+            bmiLds.setFillFormatter(new IFillFormatter() {
+                @Override
+                public float getFillLinePosition(ILineDataSet dataSet, LineDataProvider dataProvider) {
+                    return bmiLineChart.getAxisLeft().getAxisMinimum();
+                }
+            });
+            if(Utils.getSDKInt() >= 18){
+                Drawable drawable = ContextCompat.getDrawable(this, R.drawable.fade_orange);
+                bmiLds.setFillDrawable(drawable);
+            } else {
+                bmiLds.setFillColor(Color.BLACK);
+            }
+            ArrayList<ILineDataSet> bmiDatasets = new ArrayList<>();
+            bmiDatasets.add(bmiLds);
+            LineData bmiData = new LineData(bmiDatasets);
+            bmiLineChart.setData(bmiData);
+        }
+        bmiLineChart.animateX(1500);
+        Legend legend = bmiLineChart.getLegend();
+        legend.setForm(Legend.LegendForm.LINE);
+
+        /*
+        ArrayList<String> xAXES = new ArrayList<>();
+        ArrayList<Entry> yAXES_1 = new ArrayList<>();
+        ArrayList<Entry> yAXES_2 = new ArrayList<>();
+        float x = 0;
+        float x1 = 0;
+        double xAll = 0;
+        int numDataPoints = 30;
+        for(int i=0;i<numDataPoints;i++){
+            if(x%7 != 0){
+                x = x + 5;
+                x1 = x*2/3;
+            }
+            else{
+                x = x-(x+(i-3));
+                x1 = x1 + 5;
+            }
+            xAll = xAll + 1;
+            yAXES_1.add(new Entry(x,i));
+            yAXES_2.add(new Entry(x1,i));
+            xAXES.add(i, String.valueOf(xAll));
+        }
+        String[] xaxes = new String[xAXES.size()];
+        for(int i=0;i<xAXES.size();i++){
+            xaxes[i] = xAXES.get(i).toString();
+        }
+        ArrayList<ILineDataSet> lineDataSets = new ArrayList<>();
+        LineDataSet lineDataSet1 = new LineDataSet(yAXES_1, "lab1");
+        lineDataSet1.setDrawCircles(false);
+        lineDataSet1.setColor(Color.BLUE);
+        LineDataSet lineDataSet2 = new LineDataSet(yAXES_2, "lab2");
+        lineDataSet2.setDrawCircles(false);
+        lineDataSet2.setColor(Color.RED);
+        lineDataSets.add(lineDataSet1);
+        lineDataSets.add(lineDataSet2);
+        bmiLineChart.setData(new LineData(lineDataSets));
+        */
+        /** ------------!!!!!!!!!!!!!!!!!!!!!!----------------- */
+        /** ------------- GRAPH PART - END ------------------ */
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

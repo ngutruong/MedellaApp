@@ -2,9 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.medella.android">
 
-    <uses-sdk
-        android:minSdkVersion="8"
-        android:targetSdkVersion="18" />
+    <uses-sdk android:targetSdkVersion="21" />
 
     <!-- Internet permission -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -20,6 +18,9 @@
 
     <!-- Permissions to allow audio recording (for voice memo) -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- Camera permission -->
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <!-- Permissions to allow read-and-write for external storage -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -67,6 +68,16 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCpDJYWMrXpIsR3lMwvfIclPz0jMs3-ATY" />
 
+        <activity
+            android:name=".activities.CameraActivity"
+            android:label="@string/title_activity_camera"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
