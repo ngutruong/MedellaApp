@@ -14,7 +14,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -34,6 +33,7 @@ import com.microsoft.windowsazure.mobileservices.http.ServiceFilter;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterRequest;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
+import com.microsoft.windowsazure.mobileservices.table.query.QueryOrder;
 import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncContext;
 import com.microsoft.windowsazure.mobileservices.table.sync.localstore.ColumnDataType;
 import com.microsoft.windowsazure.mobileservices.table.sync.localstore.MobileServiceLocalStoreException;
@@ -158,7 +158,8 @@ public class ListActivity extends AppCompatActivity
     }
 
     private List<ActivityTable> refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException, MobileServiceException {
-        return mActivityTable.where().field("deleted").eq(val(false)).execute().get();
+        //return mActivityTable.where().field("deleted").eq(val(false)).orderBy("createdAt", QueryOrder.Descending).execute().get();
+        return mActivityTable.orderBy("createdAt", QueryOrder.Descending).execute().get();
     }
 
     private AsyncTask<Void, Void, Void> initLocalStore() throws MobileServiceLocalStoreException, ExecutionException, InterruptedException {
@@ -319,20 +320,21 @@ public class ListActivity extends AppCompatActivity
         }
 
         // Set the item as completed and update it in the table
-        item.setDelete(true);
+        // FOR deleteHealthActivity, DON'T NEED EXTRA LINE OF CODE; use it for reference
+        //item.setDelete(true);
 
         AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>(){
             @Override
             protected Void doInBackground(Void... params) {
                 try {
-
                     deleteItemInTable(item);
+                    //checkItemInTable(item);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (item.isDeleted()) {
+                            //if (item.isDeleted()) {
                                 mAdapter.remove(item);
-                            }
+                            //}
                         }
                     });
                 } catch (final Exception e) {
@@ -347,8 +349,12 @@ public class ListActivity extends AppCompatActivity
 
     }
 
-    public void deleteItemInTable(ActivityTable item) throws ExecutionException, InterruptedException {
+    public void checkItemInTable(ActivityTable item) throws ExecutionException, InterruptedException {
         mActivityTable.update(item).get();
+    }
+
+    public void deleteItemInTable(ActivityTable item) {
+        mActivityTable.delete(item);
     }
 
     private class ProgressFilter implements ServiceFilter {

@@ -18,6 +18,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import com.medella.android.R;
+import com.medella.android.activities.ListActivity;
 
 public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
 
@@ -52,7 +53,6 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
         View row = convertView;
         final ActivityTable currentItem = getItem(position);
 
-
         try {
 
             ActivityViewHolder holder;
@@ -86,6 +86,9 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
             String acBodyTemp;
             float currentTempCels = currentItem.getBodyTemperatureCelsius();
             float currentTempFahr = currentItem.getBodyTemperatureFahrenheit();
+            String acBloodPressure;
+            float currentSystolic = currentItem.getSystolic();
+            float currentDiastolic = currentItem.getDiastolic();
             String acHeartRate;
             float currentHeartRate = currentItem.getHeartRate();
             float currentBmi = currentItem.getBmi();
@@ -106,8 +109,10 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
                 acBodyTemp = "Body Temperature: " + String.valueOf(currentTempCels) + "C (" + String.valueOf(currentTempFahr) + "F)\n";
                 activityDetails.append(acBodyTemp);
             }
-            String acBloodPressure = "Body Pressure: " + String.valueOf(currentItem.getSystolic()) + "/" + String.valueOf(currentItem.getDiastolic()) + " mmHg\n";
-            activityDetails.append(acBloodPressure);
+            if (currentSystolic > 0 || currentDiastolic > 0) {
+                acBloodPressure = "Body Pressure: " + String.valueOf(currentSystolic) + "/" + String.valueOf(currentDiastolic) + " mmHg\n";
+                activityDetails.append(acBloodPressure);
+            }
             if (currentHeartRate > 0) {
                 acHeartRate = "Heart Rate: " + String.valueOf(currentHeartRate) + "bpm\n";
                 activityDetails.append(acHeartRate);
@@ -135,6 +140,7 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
             holder.tvActivityDescription.setText(currentDescription + "\n");
             if (currentLocation != null) {
                 holder.tvLocation.setText(currentLocation);
+                activityDetails.append("Location: " + currentLocation + "\n");
             } else {
                 holder.tvLocation.setText("No location");
             }
@@ -158,31 +164,41 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
                     builder.setItems(items, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int item) {
                             if (item == 0) {
-                                    /*
-                                    String acTitle = currentItem.getActivityTitle()+"\n\n";
-                                    String acWeight = "Weight: "+String.valueOf(currentItem.getWeightLbs())+"lbs"+" ("+String.valueOf(currentItem.getWeightKg())+"kg"+")"+"\n";
-                                    String acMedication = "Medication: "+currentItem.getMedicationBrand()+" "+currentItem.getMedicationDosage()+"\n";
-                                    String acBodyTemp = "Body Temperature: "+String.valueOf(currentItem.getBodyTemperatureCelsius())+"C ("+String.valueOf(currentItem.getBodyTemperatureFahrenheit())+"F)"+"\n";
-                                    String acBloodPressure = "Body Pressure: "+String.valueOf(currentItem.getSystolic())+"/"+String.valueOf(currentItem.getDiastolic())+" mmHg"+"\n";
-                                    String acHeartRate = "Heart Rate: "+String.valueOf(currentItem.getHeartRate())+"bpm"+"\n\n";
-                                    String acDescription = currentItem.getDescription();*/
-
-
                                 Intent iShare = new Intent(Intent.ACTION_SEND);
                                 iShare.setType("text/plain");
 
-                                String shareBody = "Your body here"; //shareBody does not show up - possibly due to update? MUST GET FIXED
-                                //String shareSub = acTitle+acWeight+acMedication+acBodyTemp+acBloodPressure+acHeartRate+acDescription;
-                                String shareSub = currentTitle + "\n" + activityDetails.toString() + "\n" + currentLocation + "\n" + currentDescription;
+                                String shareBody = currentTitle + "\n" + activityDetails.toString() + "\n" + currentDescription;
 
+                                iShare.putExtra(Intent.EXTRA_SUBJECT, currentTitle);
                                 iShare.putExtra(Intent.EXTRA_TEXT, shareBody);
-                                iShare.putExtra(Intent.EXTRA_TEXT, shareSub);
                                 mContext.startActivity(Intent.createChooser(iShare, "Share your health activity via"));
                             }
                             if (item == 1) {
                                 Toast.makeText(mContext, "Edit/update not available", Toast.LENGTH_SHORT).show();
                             } else if (item == 2) {
-                                Toast.makeText(mContext, "Delete not available", Toast.LENGTH_SHORT).show();
+                                if(mContext instanceof ListActivity) {
+                                    final ListActivity activity = (ListActivity) mContext;
+                                    AlertDialog.Builder confirmDeleteDialog = new AlertDialog.Builder(mContext); //Create AlertDialog to confirm deletion
+
+                                    // Will delete Health Activity if user taps "Yes"
+                                    confirmDeleteDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            activity.deleteHealthActivity(currentItem);
+                                            Toast.makeText(mContext, currentTitle + " has been deleted", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                    // Will not delete Health Activity if user taps "No"
+                                    confirmDeleteDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                        }
+                                    });
+                                    confirmDeleteDialog.setTitle("Confirm Delete")
+                                            .setMessage("Are you sure you want to delete this? It will not be retrieved.")
+                                            .show();
+                                }
                             }
                         }
                     });
