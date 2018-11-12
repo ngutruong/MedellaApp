@@ -82,7 +82,7 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
         TextView tvBmiResult = (TextView)findViewById(R.id.txtBmiResult); //Testing
         tvBmiResult.setText(String.valueOf(bmiAverage)); //Testing
         if(bmiAverage > 18 && bmiAverage <= 25){
-            tvBmiResult.setTextColor(Color.GREEN); //Testing - see if color for TextView changes
+            tvBmiResult.setTextColor(Color.parseColor("#3ebc70")); //Testing - see if color for TextView changes
         }
         LineDataSet bmiLds;
         if(bmiLineChart.getData() != null && bmiLineChart.getData().getDataSetCount() > 0){
