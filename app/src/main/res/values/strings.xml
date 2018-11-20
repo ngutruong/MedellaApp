@@ -111,4 +111,16 @@
     <string name="title_activity_results">Results</string>
     <string name="title_activity_voice_memo">VoiceMemoActivity</string>
     <string name="title_activity_camera">CameraActivity</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!-- Array of weight units for SettingsActivity -->
+    <string-array name="weight_settings_array">
+        <item>Pounds (lbs)</item>
+        <item>Kilograms (kg)</item>
+    </string-array>
+    <!-- Array of temperature units for SettingsActivity -->
+    <string-array name="btemp_settings_array">
+        <item>Celsius (°C)</item>
+        <item>Fahrenheit (°F)</item>
+    </string-array>
 </resources>

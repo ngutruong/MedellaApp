@@ -24,7 +24,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import com.medella.android.R;
 import com.medella.android.list.ActivityTable;
-import com.medella.android.list.ActivityTableAdapter;
+import com.medella.android.list.ListActivityAdapter;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.MobileServiceException;
 import com.microsoft.windowsazure.mobileservices.http.NextServiceFilterCallback;
@@ -42,6 +42,8 @@ import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.SimpleSy
 import com.squareup.okhttp.OkHttpClient;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +56,9 @@ public class ListActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
     private MobileServiceClient mClient;
     private MobileServiceTable<ActivityTable> mActivityTable;
-    private ActivityTableAdapter mAdapter;
+    //Offline Sync
+    //private MobileServiceSyncTable<ActivityTable> mActivityTable;
+    private ListActivityAdapter mAdapter;
     private ProgressBar mProgressBar;
 
     @Override
@@ -98,8 +102,7 @@ public class ListActivity extends AppCompatActivity
             });
 
             // Get the Mobile Service Table instance to use
-
-            mActivityTable = mClient.getTable(ActivityTable.class);
+            mActivityTable = mClient.getTable("ActivityTable", ActivityTable.class);
 
             // Offline Sync
             //mActivityTable = mClient.getSyncTable("ActivityTable", ActivityTable.class);
@@ -107,7 +110,7 @@ public class ListActivity extends AppCompatActivity
             //Init local storage
             initLocalStore().get();
 
-            mAdapter = new ActivityTableAdapter(this, R.layout.activity_card_view);
+            mAdapter = new ListActivityAdapter(this, R.layout.activity_card_view);
             ListView listViewToDo = (ListView) findViewById(R.id.listViewToDo);
             listViewToDo.setAdapter(mAdapter);
 
@@ -162,6 +165,19 @@ public class ListActivity extends AppCompatActivity
         return mActivityTable.orderBy("createdAt", QueryOrder.Descending).execute().get();
     }
 
+    //Offline Sync
+    /**
+     * Refresh the list with the items in the Mobile Service Sync Table
+     */
+    /*private List<ActivityTable> refreshItemsFromMobileServiceTableSyncTable() throws ExecutionException, InterruptedException {
+        //sync the data
+        sync().get();
+        //Query query = QueryOperations.field("complete").
+        //        eq(val(false));
+        Query query = QueryOperations.field("deleted").eq(val(false)).orderBy("createdAt",QueryOrder.Descending);
+        return mActivityTable.read(query).get();
+    }*/
+
     private AsyncTask<Void, Void, Void> initLocalStore() throws MobileServiceLocalStoreException, ExecutionException, InterruptedException {
 
         AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
@@ -210,6 +226,29 @@ public class ListActivity extends AppCompatActivity
 
         return runAsyncTask(task);
     }
+
+    //Offline Sync
+    /**
+     * Sync the current context and the Mobile Service Sync Table
+     * @return
+     */
+    /*private AsyncTask<Void, Void, Void> sync() {
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>(){
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    MobileServiceSyncContext syncContext = mClient.getSyncContext();
+                    syncContext.push().get();
+                    mActivityTable.pull(null).get();
+                } catch (final Exception e) {
+                    //createAndShowDialogFromTask(e, "Error"); //Hide error when running offline
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        };
+        return runAsyncTask(task);
+    }*/
 
     private void createAndShowDialogFromTask(final Exception exception, String title) {
         runOnUiThread(new Runnable() {
@@ -300,6 +339,10 @@ public class ListActivity extends AppCompatActivity
             startActivity(iResults);
 
         }
+        else if (id == R.id.nav_amSettings) {
+            Intent iSettings = new Intent(this, SettingsActivity.class);
+            startActivity(iSettings);
+        }
         else if (id == R.id.nav_amLogout) {
             //Logout is not available at this moment
         }
@@ -328,13 +371,10 @@ public class ListActivity extends AppCompatActivity
             protected Void doInBackground(Void... params) {
                 try {
                     deleteItemInTable(item);
-                    //checkItemInTable(item);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            //if (item.isDeleted()) {
-                                mAdapter.remove(item);
-                            //}
+                            mAdapter.remove(item);
                         }
                     });
                 } catch (final Exception e) {
@@ -349,7 +389,7 @@ public class ListActivity extends AppCompatActivity
 
     }
 
-    public void checkItemInTable(ActivityTable item) throws ExecutionException, InterruptedException {
+    public void updateItemInTable(ActivityTable item) throws ExecutionException, InterruptedException {
         mActivityTable.update(item).get();
     }
 

@@ -1,7 +1,7 @@
 package com.medella.android.list;
 
 /**
- * Represents an item in a ToDo list
+ * Represents an item in an ActivityTable list
  */
 public class ActivityTable {
 

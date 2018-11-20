@@ -32,7 +32,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import com.medella.android.R;
 import com.medella.android.list.ActivityTable;
-import com.medella.android.list.ActivityTableAdapter;
+import com.medella.android.list.ListActivityAdapter;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.MobileServiceException;
 import com.microsoft.windowsazure.mobileservices.http.NextServiceFilterCallback;
@@ -80,7 +80,7 @@ public class HealthActivity extends AppCompatActivity
     private MobileServiceClient mClient;
     private MobileServiceTable<ActivityTable> mActivityTable;
 
-    private ActivityTableAdapter mAdapter;
+    private ListActivityAdapter mListActivityAdapter;
     
     private EditText etTitle;
     private EditText etWeight;
@@ -175,9 +175,9 @@ public class HealthActivity extends AppCompatActivity
             ibPickLocation = (ImageButton)findViewById(R.id.btnLocation);
 
             // Create an adapter to bind the items with the view
-            mAdapter = new ActivityTableAdapter(this, R.layout.activity_card_view);
+            mListActivityAdapter = new ListActivityAdapter(this, R.layout.activity_card_view);
             //ListView listViewToDo = (ListView) findViewById(R.id.listViewToDo);
-            listViewToDo.setAdapter(mAdapter);
+            listViewToDo.setAdapter(mListActivityAdapter);
 
             // Load the items from the Mobile Service
             refreshItemsFromTable();
@@ -185,7 +185,8 @@ public class HealthActivity extends AppCompatActivity
         } catch (MalformedURLException e) {
             createAndShowDialog(new Exception("There was an error creating the Mobile Service. Verify the URL"), "Error");
         } catch (Exception e){
-            createAndShowDialog(e, "Error");
+            //createAndShowDialog(e, "Error"); //Hide obsolete error message
+            e.printStackTrace();
         }
 
         mGoogleApiClient = new GoogleApiClient
@@ -466,7 +467,7 @@ public class HealthActivity extends AppCompatActivity
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                mAdapter.add(entity);
+                                mListActivityAdapter.add(entity);
                             }
                         });
                     } catch (final Exception e) {
@@ -516,10 +517,10 @@ public class HealthActivity extends AppCompatActivity
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mAdapter.clear();
+                            mListActivityAdapter.clear();
 
                             for (ActivityTable item : results) {
-                                mAdapter.add(item);
+                                mListActivityAdapter.add(item);
                             }
                         }
                     });
@@ -790,12 +791,15 @@ public class HealthActivity extends AppCompatActivity
         } else if (id == R.id.nav_amList) {
             Intent iList = new Intent(this, ListActivity.class);
             startActivity(iList);
-
         } else if (id == R.id.nav_amResults) {
             Intent iResults = new Intent(this, ResultsActivity.class);
             startActivity(iResults);
-
-        }else if (id == R.id.nav_amLogout) {
+        }
+        else if (id == R.id.nav_amSettings) {
+            Intent iSettings = new Intent(this, SettingsActivity.class);
+            startActivity(iSettings);
+        }
+        else if (id == R.id.nav_amLogout) {
             //Logout is not available at this moment
         }
 

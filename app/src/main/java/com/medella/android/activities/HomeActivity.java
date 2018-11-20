@@ -87,7 +87,12 @@ public class HomeActivity extends AppCompatActivity
             Intent iResults = new Intent(this, ResultsActivity.class);
             startActivity(iResults);
 
-        }else if (id == R.id.nav_amLogout) {
+        }
+        else if (id == R.id.nav_amSettings) {
+            Intent iSettings = new Intent(this, SettingsActivity.class);
+            startActivity(iSettings);
+        }
+        else if (id == R.id.nav_amLogout) {
             //Logout is not available at this moment
         }
 

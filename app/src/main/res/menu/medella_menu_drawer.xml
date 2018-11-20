@@ -17,6 +17,9 @@
         <item android:title="Go to Voice Memos"
             android:id="@+id/nav_amVoiceMemos"
             android:icon="@drawable/ic_mic"/>
+        <item android:title="Settings"
+            android:id="@+id/nav_amSettings"
+            android:icon="@drawable/app_icon"/>
         <item android:title="Log Out"
             android:id="@+id/nav_amLogout"
             android:icon="@android:drawable/ic_menu_revert"/>

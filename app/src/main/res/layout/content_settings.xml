@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/settingsFrame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.medella.android.activities.SettingsActivity">
+
+    <TextView
+        android:id="@+id/txtWeightOptions"
+        android:layout_width="123dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="27dp"
+        android:layout_marginTop="89dp"
+        android:layout_marginEnd="27dp"
+        android:text="Weight Unit:"
+        android:textAlignment="viewStart"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/spnWeightOptions"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/spnWeightOptions"
+        android:layout_width="163dp"
+        android:layout_height="33dp"
+        android:layout_marginTop="89dp"
+        android:layout_marginEnd="44dp"
+        android:background="@color/cast_intro_overlay_button_background_color"
+        android:entries="@array/weight_settings_array"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtTemperatureOptions"
+        android:layout_width="123dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="27dp"
+        android:layout_marginEnd="27dp"
+        android:layout_marginBottom="358dp"
+        android:text="Temperature Unit:"
+        android:textAlignment="viewStart"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/spnTemperatureOptions"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtWeightOptions" />
+
+    <Spinner
+        android:id="@+id/spnTemperatureOptions"
+        android:layout_width="163dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="44dp"
+        android:layout_marginBottom="358dp"
+        android:background="@color/cast_intro_overlay_button_background_color"
+        android:entries="@array/btemp_settings_array"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spnWeightOptions" />
+
+    <Button
+        android:id="@+id/btnSaveSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="147dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="149dp"
+        android:onClick="saveClick"
+        android:text="Save"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spnTemperatureOptions" />
+
+</android.support.constraint.ConstraintLayout>
+
+<!--android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/settingsFrame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".activities.SettingsActivity"
+    tools:showIn="@layout/activity_settings"-->
+
+<!--/android.support.constraint.ConstraintLayout-->

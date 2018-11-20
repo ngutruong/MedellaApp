@@ -18,15 +18,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.medella.android.R;
 import com.medella.android.activities.ListActivity;
 
-import org.w3c.dom.Text;
+public class ListActivityAdapter extends ArrayAdapter<ActivityTable> {
 
-public class HealthActivityAdapter extends ArrayAdapter<ActivityTable> {
-
-    private static final String TAG = "HealthActivityAdapter";
+    private static final String TAG = "ListActivityAdapter";
 
     private Context mContext;
     private int mResource;
@@ -45,17 +44,7 @@ public class HealthActivityAdapter extends ArrayAdapter<ActivityTable> {
         protected View cardView;
     }
 
-    /*private static class ResultsViewHolder {
-        protected TextView tvBmiResults;
-        protected TextView tvPintResults;
-        protected TextView tvWeightResults;
-        protected TextView tvBodyTempResults;
-        protected TextView tvSystolicResults;
-        protected TextView tvDiastolicResults;
-        protected TextView tvHrateResults;
-    }*/
-
-    public HealthActivityAdapter(Context context, int resource) {
+    public ListActivityAdapter(Context context, int resource) {
         super(context, resource);
         mContext = context;
         mResource = resource;
@@ -69,14 +58,12 @@ public class HealthActivityAdapter extends ArrayAdapter<ActivityTable> {
 
         try {
             ActivityViewHolder activityViewHolder;
-            //ResultsViewHolder resultsViewHolder;
 
             if (row == null) {
                 //LayoutInflater inflater = LayoutInflater.from(mContext);
                 LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
                 row = inflater.inflate(mResource, parent, false);
                 activityViewHolder = new ActivityViewHolder();
-                //resultsViewHolder = new ResultsViewHolder();
 
                 // Initialize the views for ListActivity
                 activityViewHolder.tvActivityTitle = (TextView) row.findViewById(R.id.activity_title_text);
@@ -87,20 +74,9 @@ public class HealthActivityAdapter extends ArrayAdapter<ActivityTable> {
                 activityViewHolder.tvDateAdded = (TextView) row.findViewById(R.id.activity_date_added_text);
                 activityViewHolder.cardView = row.findViewById(R.id.activity_card_view);
 
-                // Initialize the views for ResultsActivity
-                /*resultsViewHolder.tvBmiResults = (TextView)row.findViewById(R.id.txtBmiResult);
-                resultsViewHolder.tvPintResults = (TextView)row.findViewById(R.id.txtPintResult);
-                resultsViewHolder.tvWeightResults = (TextView)row.findViewById(R.id.txtWeightResult);
-                resultsViewHolder.tvBodyTempResults = (TextView)row.findViewById(R.id.txtBtempResult);
-                resultsViewHolder.tvSystolicResults = (TextView)row.findViewById(R.id.txtSystolicResult);
-                resultsViewHolder.tvDiastolicResults = (TextView)row.findViewById(R.id.txtDiastolicResult);
-                resultsViewHolder.tvHrateResults = (TextView)row.findViewById(R.id.txtHrateResult);*/
-
                 row.setTag(activityViewHolder);
-                //row.setTag(resultsViewHolder); //For ResultsActivity
             } else {
                 activityViewHolder = (ActivityViewHolder) row.getTag();
-                //resultsViewHolder = (ResultsViewHolder) row.getTag(); //For ResultsActivity
             }
 
             lastPosition = position;
@@ -121,6 +97,58 @@ public class HealthActivityAdapter extends ArrayAdapter<ActivityTable> {
             float currentBmi = currentItem.getBmi();
             final String currentLocation = currentItem.getLocation();
             final String currentDescription = currentItem.getDescription();
+
+            List<Float> bmiList = new ArrayList<>(); //BMI list
+            List<Float> pintList = new ArrayList<>(); //Pain Intensity list
+            List<Float> weightLbsList = new ArrayList<>(); //Weight pounds list
+            List<Float> weightKgList = new ArrayList<>(); //Weight kilograms list
+            List<Float> tempCelsList = new ArrayList<>(); //Temperature Celsius list
+            List<Float> tempFahrList = new ArrayList<>(); //Temperature Fahrenheit list
+            List<Float> heartRateList = new ArrayList<>(); //Heart rate list
+            List<Float> systolicList = new ArrayList<>(); //Systolic list
+            List<Float> diastolicList = new ArrayList<>(); //Diastolic list
+
+            for(int i=0;i<getCount();i++){
+                bmiList.add(getItem(i).getBmi());
+                pintList.add(getItem(i).getPainIntensity());
+                weightLbsList.add(getItem(i).getWeightLbs());
+                weightKgList.add(getItem(i).getWeightKg());
+                if(getItem(i).getBodyTemperatureCelsius() > 0 && getItem(i).getBodyTemperatureFahrenheit() > 0){
+                    tempCelsList.add(getItem(i).getBodyTemperatureCelsius());
+                    tempFahrList.add(getItem(i).getBodyTemperatureFahrenheit());
+                }
+                if(getItem(i).getHeartRate() > 0){
+                    heartRateList.add(getItem(i).getHeartRate());
+                }
+                if(getItem(i).getSystolic() > 0 && getItem(i).getDiastolic() > 0){
+                    systolicList.add(getItem(i).getSystolic());
+                    diastolicList.add(getItem(i).getDiastolic());
+                }
+            }
+            // Body mass index
+            ResultsCollection.setBmiAverage(getContext(), resultsAverage(bmiList));
+            ResultsCollection.setBmiDifference(getContext(), resultsDifference(bmiList));
+            // Pain intensity
+            ResultsCollection.setPainIntensityAverage(getContext(), resultsAverage(pintList));
+            ResultsCollection.setPainIntensityDifference(getContext(), resultsDifference(pintList));
+            // Weight
+            ResultsCollection.setWeightLbsAverage(getContext(), resultsAverage(weightLbsList));
+            ResultsCollection.setWeightLbsDifference(getContext(), resultsDifference(weightLbsList));
+            ResultsCollection.setWeightKgAverage(getContext(), resultsAverage(weightKgList));
+            ResultsCollection.setWeightKgDifference(getContext(), resultsDifference(weightKgList));
+            // Body temperature
+            ResultsCollection.setTemperatureCelsiusAverage(getContext(), resultsAverage(tempCelsList));
+            ResultsCollection.setTemperatureCelsiusDifference(getContext(), resultsDifference(tempCelsList));
+            ResultsCollection.setTemperatureFahrAverage(getContext(), resultsAverage(tempFahrList));
+            ResultsCollection.setTemperatureFahrDifference(getContext(), resultsDifference(tempFahrList));
+            // Blood pressure
+            ResultsCollection.setSystolicAverage(getContext(), resultsAverage(systolicList));
+            ResultsCollection.setDiastolicAverage(getContext(),resultsAverage(diastolicList));
+            ResultsCollection.setSystolicDifference(getContext(), resultsDifference(systolicList));
+            ResultsCollection.setDiastolicDifference(getContext(), resultsDifference(diastolicList));
+            // Heart rate
+            ResultsCollection.setHeartRateAverage(getContext(),resultsAverage(heartRateList));
+            ResultsCollection.setHeartRateDifference(getContext(),resultsDifference(heartRateList));
 
             /** Create a card view for ListActivity */
             activityViewHolder.tvActivityTitle.setText(currentTitle);
@@ -246,6 +274,19 @@ public class HealthActivityAdapter extends ArrayAdapter<ActivityTable> {
             Log.e(TAG, "getView: IllegalArgumentException: " + e.getMessage());
             return row;
         }
+    }
 
+    public float resultsAverage(List<Float> resultsList){
+        float sum = 0;
+        for(float result : resultsList){
+            sum += result;
+        }
+        return sum/resultsList.size();
+    }
+
+    public float resultsDifference(List<Float> resultsList){
+        float latest = resultsList.get(0);
+        float penultimate = resultsList.get(1);
+        return latest-penultimate;
     }
 }
