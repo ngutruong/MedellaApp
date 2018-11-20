@@ -1,5 +1,6 @@
 package com.medella.android.list;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -7,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,9 +22,11 @@ import java.util.ArrayList;
 import com.medella.android.R;
 import com.medella.android.activities.ListActivity;
 
-public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
+import org.w3c.dom.Text;
 
-    private static final String TAG = "ActivityTableAdapter";
+public class HealthActivityAdapter extends ArrayAdapter<ActivityTable> {
+
+    private static final String TAG = "HealthActivityAdapter";
 
     private Context mContext;
     private int mResource;
@@ -41,7 +45,17 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
         protected View cardView;
     }
 
-    public ActivityTableAdapter(Context context, int resource) {
+    /*private static class ResultsViewHolder {
+        protected TextView tvBmiResults;
+        protected TextView tvPintResults;
+        protected TextView tvWeightResults;
+        protected TextView tvBodyTempResults;
+        protected TextView tvSystolicResults;
+        protected TextView tvDiastolicResults;
+        protected TextView tvHrateResults;
+    }*/
+
+    public HealthActivityAdapter(Context context, int resource) {
         super(context, resource);
         mContext = context;
         mResource = resource;
@@ -54,26 +68,39 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
         final ActivityTable currentItem = getItem(position);
 
         try {
-
-            ActivityViewHolder holder;
+            ActivityViewHolder activityViewHolder;
+            //ResultsViewHolder resultsViewHolder;
 
             if (row == null) {
-                LayoutInflater inflater = LayoutInflater.from(mContext);
+                //LayoutInflater inflater = LayoutInflater.from(mContext);
+                LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
                 row = inflater.inflate(mResource, parent, false);
-                holder = new ActivityViewHolder();
+                activityViewHolder = new ActivityViewHolder();
+                //resultsViewHolder = new ResultsViewHolder();
 
                 // Initialize the views for ListActivity
-                holder.tvActivityTitle = (TextView) row.findViewById(R.id.activity_title_text);
-                holder.tvActivityDetails = (TextView) row.findViewById(R.id.activity_details_text);
-                holder.tvActivityDescription = (TextView) row.findViewById(R.id.activity_description_text);
-                holder.tvBmiStatus = (TextView) row.findViewById(R.id.bmi_status_text);
-                holder.tvLocation = (TextView) row.findViewById(R.id.activity_location_text);
-                holder.tvDateAdded = (TextView) row.findViewById(R.id.activity_date_added_text);
-                holder.cardView = row.findViewById(R.id.activity_card_view);
+                activityViewHolder.tvActivityTitle = (TextView) row.findViewById(R.id.activity_title_text);
+                activityViewHolder.tvActivityDetails = (TextView) row.findViewById(R.id.activity_details_text);
+                activityViewHolder.tvActivityDescription = (TextView) row.findViewById(R.id.activity_description_text);
+                activityViewHolder.tvBmiStatus = (TextView) row.findViewById(R.id.bmi_status_text);
+                activityViewHolder.tvLocation = (TextView) row.findViewById(R.id.activity_location_text);
+                activityViewHolder.tvDateAdded = (TextView) row.findViewById(R.id.activity_date_added_text);
+                activityViewHolder.cardView = row.findViewById(R.id.activity_card_view);
 
-                row.setTag(holder);
+                // Initialize the views for ResultsActivity
+                /*resultsViewHolder.tvBmiResults = (TextView)row.findViewById(R.id.txtBmiResult);
+                resultsViewHolder.tvPintResults = (TextView)row.findViewById(R.id.txtPintResult);
+                resultsViewHolder.tvWeightResults = (TextView)row.findViewById(R.id.txtWeightResult);
+                resultsViewHolder.tvBodyTempResults = (TextView)row.findViewById(R.id.txtBtempResult);
+                resultsViewHolder.tvSystolicResults = (TextView)row.findViewById(R.id.txtSystolicResult);
+                resultsViewHolder.tvDiastolicResults = (TextView)row.findViewById(R.id.txtDiastolicResult);
+                resultsViewHolder.tvHrateResults = (TextView)row.findViewById(R.id.txtHrateResult);*/
+
+                row.setTag(activityViewHolder);
+                //row.setTag(resultsViewHolder); //For ResultsActivity
             } else {
-                holder = (ActivityViewHolder) row.getTag();
+                activityViewHolder = (ActivityViewHolder) row.getTag();
+                //resultsViewHolder = (ResultsViewHolder) row.getTag(); //For ResultsActivity
             }
 
             lastPosition = position;
@@ -96,7 +123,7 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
             final String currentDescription = currentItem.getDescription();
 
             /** Create a card view for ListActivity */
-            holder.tvActivityTitle.setText(currentTitle);
+            activityViewHolder.tvActivityTitle.setText(currentTitle);
             String acWeight = "Weight: " + String.valueOf(currentItem.getWeightLbs()) + "lbs" + " (" + String.valueOf(currentItem.getWeightKg()) + "kg" + ")\n";
             activityDetails.append(acWeight);
             String acPainInt = "Pain Intensity: " + String.valueOf(currentItem.getPainIntensity()) + "\n";
@@ -117,39 +144,37 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
                 acHeartRate = "Heart Rate: " + String.valueOf(currentHeartRate) + "bpm\n";
                 activityDetails.append(acHeartRate);
             }
-            holder.tvActivityDetails.setText(activityDetails);
+            activityViewHolder.tvActivityDetails.setText(activityDetails);
             if (currentBmi > 0 && currentBmi < 18.5) {
-                holder.tvBmiStatus.setText("BMI: " + String.valueOf(currentBmi) + " (Underweight)");
-                holder.tvBmiStatus.setTextColor(Color.parseColor("#22A7F2"));
+                activityViewHolder.tvBmiStatus.setText("BMI: " + String.valueOf(currentBmi) + " (Underweight)");
+                activityViewHolder.tvBmiStatus.setTextColor(Color.parseColor("#22A7F2"));
             } else if (currentBmi >= 18.5 && currentBmi < 25) {
-                holder.tvBmiStatus.setText("BMI: " + String.valueOf(currentBmi) + " (Normal)");
-                holder.tvBmiStatus.setTextColor(Color.GREEN);
-                holder.tvBmiStatus.setTypeface(null, Typeface.BOLD);
+                activityViewHolder.tvBmiStatus.setText("BMI: " + String.valueOf(currentBmi) + " (Normal)");
+                activityViewHolder.tvBmiStatus.setTextColor(Color.parseColor("#3ebc70"));
+                activityViewHolder.tvBmiStatus.setTypeface(null, Typeface.BOLD);
             } else if (currentBmi >= 25 && currentBmi < 30) {
-                holder.tvBmiStatus.setText("BMI: " + String.valueOf(currentBmi) + " (Overweight)");
-                holder.tvBmiStatus.setTextColor(Color.parseColor("#F28622"));
+                activityViewHolder.tvBmiStatus.setText("BMI: " + String.valueOf(currentBmi) + " (Overweight)");
+                activityViewHolder.tvBmiStatus.setTextColor(Color.parseColor("#F28622"));
             } else if (currentBmi >= 30) {
-                holder.tvBmiStatus.setText("BMI: " + String.valueOf(currentBmi) + " (Obese)");
-                holder.tvBmiStatus.setTextColor(Color.RED);
-                holder.tvBmiStatus.setTypeface(null, Typeface.BOLD);
+                activityViewHolder.tvBmiStatus.setText("BMI: " + String.valueOf(currentBmi) + " (Obese)");
+                activityViewHolder.tvBmiStatus.setTextColor(Color.RED);
             } else {
-                holder.tvBmiStatus.setText("0");
-                holder.tvBmiStatus.setTextColor(Color.GRAY);
-                holder.tvBmiStatus.setTypeface(null, Typeface.NORMAL);
+                activityViewHolder.tvBmiStatus.setText("0");
+                activityViewHolder.tvBmiStatus.setTextColor(Color.GRAY);
             }
-            holder.tvActivityDescription.setText(currentDescription + "\n");
+            activityViewHolder.tvActivityDescription.setText(currentDescription + "\n");
             if (currentLocation != null) {
-                holder.tvLocation.setText(currentLocation);
+                activityViewHolder.tvLocation.setText(currentLocation);
                 activityDetails.append("Location: " + currentLocation + "\n");
             } else {
-                holder.tvLocation.setText("No location");
+                activityViewHolder.tvLocation.setText("No location");
             }
             String addedDate = currentItem.getCreatedAt().substring(0, 10) + " ";
             String addedTime = currentItem.getCreatedAt().substring(11, 19);
-            holder.tvDateAdded.setText("Created: " + addedDate + addedTime);
+            activityViewHolder.tvDateAdded.setText("Created: " + addedDate + addedTime);
 
             /** When the user taps and holds a card view on ListActivity*/
-            holder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
+            activityViewHolder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     ArrayList<String> entries = new ArrayList<String>();
@@ -196,7 +221,7 @@ public class ActivityTableAdapter extends ArrayAdapter<ActivityTable> {
                                         }
                                     });
                                     confirmDeleteDialog.setTitle("Confirm Delete")
-                                            .setMessage("Are you sure you want to delete this? It will not be retrieved.")
+                                            .setMessage(Html.fromHtml("Are you sure you want to delete <b>" + currentTitle + "</b>? This activity will not be restored."))
                                             .show();
                                 }
                             }

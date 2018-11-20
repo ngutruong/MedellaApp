@@ -31,7 +31,7 @@
 
     <RelativeLayout
         android:id="@+id/resultsLayout"
-        android:layout_width="0dp"
+        android:layout_width="381dp"
         android:layout_height="147dp"
         android:layout_marginTop="328dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -95,6 +95,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/diastolicText"
             android:layout_alignStart="@+id/diastolicText"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="2dp"
             android:text="Heart Rate:" />
 
         <TextView
@@ -178,6 +180,103 @@
             android:text="0"
             android:textColor="@android:color/darker_gray"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtBmiDifference"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/txtBmiResult"
+            android:layout_alignBottom="@+id/txtBmiResult"
+            android:layout_toEndOf="@+id/txtBmiResult"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="0dp"
+            android:text="(0.0)"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtPintDifference"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/txtPintResult"
+            android:layout_alignBottom="@+id/txtPintResult"
+            android:layout_toEndOf="@+id/txtPintResult"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="18dp"
+            android:text="(0.0)"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtWeightDifference"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/txtWeightResult"
+            android:layout_alignBottom="@+id/txtWeightResult"
+            android:layout_toEndOf="@+id/txtWeightResult"
+            android:layout_marginStart="5dp"
+            android:text="(0.0)"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtBtempDifference"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/txtBtempResult"
+            android:layout_alignBottom="@+id/txtBtempResult"
+            android:layout_toEndOf="@+id/txtBtempResult"
+            android:layout_marginStart="5dp"
+            android:text="(0.0)"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtSystolicDifference"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/txtSystolicResult"
+            android:layout_alignBottom="@+id/txtSystolicResult"
+            android:layout_toEndOf="@+id/txtSystolicResult"
+            android:layout_marginStart="5dp"
+            android:text="(0.0)"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtDiastolicDifference"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/txtDiastolicResult"
+            android:layout_alignBottom="@+id/txtDiastolicResult"
+            android:layout_toEndOf="@+id/txtDiastolicResult"
+            android:layout_marginStart="5dp"
+            android:text="(0.0)"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtHrateDifference"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/txtHrateResult"
+            android:layout_alignBottom="@+id/txtHrateResult"
+            android:layout_toEndOf="@+id/txtHrateResult"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="112dp"
+            android:text="(0.0)"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="bold" />
+
+
     </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/loadResultsProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        tools:layout_editor_absoluteX="286dp"
+        tools:layout_editor_absoluteY="475dp" />
 
 </android.support.constraint.ConstraintLayout>
