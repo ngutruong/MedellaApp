@@ -111,7 +111,7 @@
     <string name="title_activity_results">Results</string>
     <string name="title_activity_voice_memo">VoiceMemoActivity</string>
     <string name="title_activity_camera">CameraActivity</string>
-    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_settings">Settings</string>
 
     <!-- Array of weight units for SettingsActivity -->
     <string-array name="weight_settings_array">

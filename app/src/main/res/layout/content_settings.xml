@@ -7,71 +7,68 @@
     android:layout_height="match_parent"
     tools:context="com.medella.android.activities.SettingsActivity">
 
-    <TextView
-        android:id="@+id/txtWeightOptions"
-        android:layout_width="123dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="27dp"
-        android:layout_marginTop="89dp"
-        android:layout_marginEnd="27dp"
-        android:text="Weight Unit:"
-        android:textAlignment="viewStart"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/spnWeightOptions"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Spinner
-        android:id="@+id/spnWeightOptions"
-        android:layout_width="163dp"
-        android:layout_height="33dp"
-        android:layout_marginTop="89dp"
-        android:layout_marginEnd="44dp"
-        android:background="@color/cast_intro_overlay_button_background_color"
-        android:entries="@array/weight_settings_array"
+    <LinearLayout
+        android:layout_width="368dp"
+        android:layout_height="403dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="24dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/btnSaveSettings"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/txtTemperatureOptions"
-        android:layout_width="123dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="27dp"
-        android:layout_marginEnd="27dp"
-        android:layout_marginBottom="358dp"
-        android:text="Temperature Unit:"
-        android:textAlignment="viewStart"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/spnTemperatureOptions"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtWeightOptions" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <Spinner
-        android:id="@+id/spnTemperatureOptions"
-        android:layout_width="163dp"
-        android:layout_height="32dp"
-        android:layout_marginEnd="44dp"
-        android:layout_marginBottom="358dp"
-        android:background="@color/cast_intro_overlay_button_background_color"
-        android:entries="@array/btemp_settings_array"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spnWeightOptions" />
+        <TextView
+            android:id="@+id/txtWeightOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Weight Units:"
+            android:layout_marginLeft="8dp" />
+
+        <Spinner
+            android:id="@+id/spnWeightOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/weight_settings_array"
+            android:layout_marginBottom="10dp"/>
+
+        <TextView
+            android:id="@+id/txtTemperatureOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Body Temperature Units:"
+            android:layout_marginLeft="8dp" />
+
+        <Spinner
+            android:id="@+id/spnTemperatureOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/btemp_settings_array"
+            android:layout_marginBottom="10dp" />
+
+        <Switch
+            android:id="@+id/swCoordinates"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:text="Allow coordinates when adding activity" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/btnSaveSettings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="147dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="149dp"
-        android:onClick="saveClick"
+        android:layout_marginStart="148dp"
+        android:layout_marginEnd="148dp"
+        android:layout_marginBottom="28dp"
         android:text="Save"
+        android:onClick="saveClick"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spnTemperatureOptions" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
 

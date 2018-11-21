@@ -128,27 +128,36 @@ public class ListActivityAdapter extends ArrayAdapter<ActivityTable> {
             // Body mass index
             ResultsCollection.setBmiAverage(getContext(), resultsAverage(bmiList));
             ResultsCollection.setBmiDifference(getContext(), resultsDifference(bmiList));
+            ResultsCollection.setBmiList(bmiList);
             // Pain intensity
             ResultsCollection.setPainIntensityAverage(getContext(), resultsAverage(pintList));
             ResultsCollection.setPainIntensityDifference(getContext(), resultsDifference(pintList));
+            ResultsCollection.setPintList(pintList);
             // Weight
             ResultsCollection.setWeightLbsAverage(getContext(), resultsAverage(weightLbsList));
             ResultsCollection.setWeightLbsDifference(getContext(), resultsDifference(weightLbsList));
+            ResultsCollection.setWeightLbsList(weightLbsList);
             ResultsCollection.setWeightKgAverage(getContext(), resultsAverage(weightKgList));
             ResultsCollection.setWeightKgDifference(getContext(), resultsDifference(weightKgList));
+            ResultsCollection.setWeightKgList(weightKgList);
             // Body temperature
             ResultsCollection.setTemperatureCelsiusAverage(getContext(), resultsAverage(tempCelsList));
             ResultsCollection.setTemperatureCelsiusDifference(getContext(), resultsDifference(tempCelsList));
+            ResultsCollection.setTempCelsiusList(tempCelsList);
             ResultsCollection.setTemperatureFahrAverage(getContext(), resultsAverage(tempFahrList));
             ResultsCollection.setTemperatureFahrDifference(getContext(), resultsDifference(tempFahrList));
+            ResultsCollection.setTempFahrenheitList(tempFahrList);
             // Blood pressure
             ResultsCollection.setSystolicAverage(getContext(), resultsAverage(systolicList));
             ResultsCollection.setDiastolicAverage(getContext(),resultsAverage(diastolicList));
             ResultsCollection.setSystolicDifference(getContext(), resultsDifference(systolicList));
             ResultsCollection.setDiastolicDifference(getContext(), resultsDifference(diastolicList));
+            ResultsCollection.setSystolicList(systolicList);
+            ResultsCollection.setDiastolicList(diastolicList);
             // Heart rate
             ResultsCollection.setHeartRateAverage(getContext(),resultsAverage(heartRateList));
             ResultsCollection.setHeartRateDifference(getContext(),resultsDifference(heartRateList));
+            ResultsCollection.setHeartRateList(heartRateList);
 
             /** Create a card view for ListActivity */
             activityViewHolder.tvActivityTitle.setText(currentTitle);

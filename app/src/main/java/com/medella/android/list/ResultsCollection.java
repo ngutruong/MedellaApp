@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import java.util.List;
-import java.util.Set;
 
 public class ResultsCollection {
     /**
@@ -34,6 +33,13 @@ public class ResultsCollection {
         SharedPreferences bmiPref = PreferenceManager.getDefaultSharedPreferences(context);
         return bmiPref.getFloat("bmiAverage", 0);
     }
+    private static List<Float> bmiList;
+    public static List<Float> getBmiList(){
+        return bmiList;
+    }
+    public static void setBmiList(List<Float> floatList){
+        bmiList = floatList;
+    }
 
     /**
      * Pain Intensity
@@ -60,6 +66,13 @@ public class ResultsCollection {
     public static float getPainIntensityDifference(Context context){
         SharedPreferences pintPref = PreferenceManager.getDefaultSharedPreferences(context);
         return pintPref.getFloat("pintDiff", 0);
+    }
+    private static List<Float> pintList;
+    public static List<Float> getPintList(){
+        return pintList;
+    }
+    public static void setPintList(List<Float> pList){
+        pintList = pList;
     }
 
     /**
@@ -108,6 +121,13 @@ public class ResultsCollection {
         SharedPreferences weightPref = PreferenceManager.getDefaultSharedPreferences(context);
         return weightPref.getFloat("weightKgDiff", 0);
     }
+    private static List<Float> weightLbsList;
+    private static List<Float> weightKgList;
+    public static List<Float> getWeightLbsList(){ return weightLbsList; }
+    public static void setWeightLbsList(List<Float> lbsList){ weightLbsList = lbsList; }
+    public static List<Float> getWeightKgList(){ return weightKgList; }
+    public static void setWeightKgList(List<Float> kgList){ weightKgList = kgList; }
+
 
     /**
      * Temperature (Celsius and Fahrenheit)
@@ -155,6 +175,12 @@ public class ResultsCollection {
         SharedPreferences tempPref = PreferenceManager.getDefaultSharedPreferences(context);
         return tempPref.getFloat("tempFahrDiff", 0);
     }
+    private static List<Float> tempCelsiusList;
+    private static List<Float> tempFahrenheitList;
+    public static List<Float> getTempCelsiusList(){ return tempCelsiusList; }
+    public static void setTempCelsiusList(List<Float> celsiusList){ tempCelsiusList = celsiusList; }
+    public static List<Float> getTempFahrenheitList(){ return tempFahrenheitList; }
+    public static void setTempFahrenheitList(List<Float> fahrenheitList){ tempFahrenheitList = fahrenheitList; }
 
     /**
      * Blood Pressure: SYSTOLIC
@@ -178,10 +204,14 @@ public class ResultsCollection {
         editor.putFloat("sysDiff", sysDiff);
         editor.apply();
     }
-    // Unused for now...
     public static float getSystolicDifference(Context context){
         SharedPreferences sysPref = PreferenceManager.getDefaultSharedPreferences(context);
         return sysPref.getFloat("sysDiff", 0);
+    }
+    private static List<Float> systolicList;
+    public static List<Float> getSystolicList(){ return systolicList; }
+    public static void setSystolicList(List<Float> sysList){
+        systolicList = sysList;
     }
 
     /**
@@ -210,6 +240,11 @@ public class ResultsCollection {
         SharedPreferences diasPref = PreferenceManager.getDefaultSharedPreferences(context);
         return diasPref.getFloat("diasDiff", 0);
     }
+    private static List<Float> diastolicList;
+    public static List<Float> getDiastolicList(){ return diastolicList; }
+    public static void setDiastolicList(List<Float> diasList){
+        diastolicList = diasList;
+    }
 
     /**
      * Heart Rate
@@ -237,4 +272,7 @@ public class ResultsCollection {
         SharedPreferences hRatePref = PreferenceManager.getDefaultSharedPreferences(context);
         return hRatePref.getFloat("hRateDiff", 0);
     }
+    private static List<Float> heartRateList;
+    public static List<Float> getHeartRateList(){ return heartRateList; }
+    public static void setHeartRateList(List<Float> hRateList){ heartRateList = hRateList; }
 }
