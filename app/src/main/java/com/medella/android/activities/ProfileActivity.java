@@ -30,21 +30,21 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        CheckBox feetAndInches = (CheckBox)findViewById(R.id.chkFeetInches);
-        final EditText editHeight = (EditText)findViewById(R.id.txtHeight);
-        final Spinner spinHeight = (Spinner)findViewById(R.id.heightSpinner);
-        final EditText editFeet = (EditText)findViewById(R.id.txtFeet);
-        final EditText editInches = (EditText)findViewById(R.id.txtInches);
-        final TextView feetLabel = (TextView)findViewById(R.id.feetText);
-        final TextView inchesLabel = (TextView)findViewById(R.id.inchesText);
+        CheckBox feetAndInches = findViewById(R.id.chkFeetInches);
+        final EditText editHeight = findViewById(R.id.txtHeight);
+        final Spinner spinHeight = findViewById(R.id.heightSpinner);
+        final EditText editFeet = findViewById(R.id.txtFeet);
+        final EditText editInches = findViewById(R.id.txtInches);
+        final TextView feetLabel = findViewById(R.id.feetText);
+        final TextView inchesLabel = findViewById(R.id.inchesText);
 
         editFeet.setVisibility(View.GONE);
         editInches.setVisibility(View.GONE);
@@ -80,7 +80,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             }
         });
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_profile);
+        NavigationView navigationView = findViewById(R.id.nav_view_profile);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -97,18 +97,18 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     private static String collectErrors = "";
 
     public void nextClick(View view) {
-        EditText nameInput = (EditText)findViewById(R.id.txtNameEdit);
-        EditText emailInput = (EditText)findViewById(R.id.txtEmailEdit);
-        EditText passwordInput = (EditText)findViewById(R.id.txtCreatePassword);
-        EditText confirmPassword = (EditText)findViewById(R.id.txtConfirmEdit);
-        EditText securityAnswer1 = (EditText)findViewById(R.id.txtSq1Answer);
-        EditText securityAnswer2 = (EditText)findViewById(R.id.txtSq2Answer);
-        EditText securityAnswer3 = (EditText)findViewById(R.id.txtSq3Answer);
-        EditText birthdateInput = (EditText)findViewById(R.id.txtBirthdate);
-        EditText heightInput = (EditText)findViewById(R.id.txtHeight);
-        EditText feetInput = (EditText)findViewById(R.id.txtFeet);
-        EditText inchesInput = (EditText)findViewById(R.id.txtInches);
-        Spinner heightSpin = (Spinner)findViewById(R.id.heightSpinner);
+        EditText nameInput = findViewById(R.id.txtNameEdit);
+        EditText emailInput = findViewById(R.id.txtEmailEdit);
+        EditText passwordInput = findViewById(R.id.txtCreatePassword);
+        EditText confirmPassword = findViewById(R.id.txtConfirmEdit);
+        EditText securityAnswer1 = findViewById(R.id.txtSq1Answer);
+        EditText securityAnswer2 = findViewById(R.id.txtSq2Answer);
+        EditText securityAnswer3 = findViewById(R.id.txtSq3Answer);
+        EditText birthdateInput = findViewById(R.id.txtBirthdate);
+        EditText heightInput = findViewById(R.id.txtHeight);
+        EditText feetInput = findViewById(R.id.txtFeet);
+        EditText inchesInput = findViewById(R.id.txtInches);
+        Spinner heightSpin = findViewById(R.id.heightSpinner);
 
         String checkNameInput = nameInput.getText().toString();
         String checkEmailInput = emailInput.getText().toString();
@@ -131,12 +131,12 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         });
 
         try {
-            //NAME VALIDATION IN PROFILE PAGE
+            /** NAME VALIDATION IN PROFILE PAGE */
             if(checkNameInput.trim().length() == 0){
                 collectErrors+="- Name is empty.\n";
             }
 
-            //EMAIL VALIDATION IN PROFILE PAGE -- incomplete
+            /**  EMAIL VALIDATION IN PROFILE PAGE -- incomplete */
             if(checkEmailInput.trim().length() == 0){
                 collectErrors+="- E-mail address is empty.\n";
             }
@@ -144,7 +144,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 collectErrors+="- E-mail address is not valid.\n";
             }
 
-            //PASSWORD VALIDATION IN PROFILE PAGE
+            /** PASSWORD VALIDATION IN PROFILE PAGE */
             if(checkPasswordInput.trim().length() == 0){
                 collectErrors+="- Password is empty.\n";
             }
@@ -163,7 +163,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 collectErrors+="- Passwords do not match.\n";
             }
 
-            //SECURITY ANSWER VALIDATION IN PROFILE PAGE
+            /** SECURITY ANSWER VALIDATION IN PROFILE PAGE */
             if(checkAnswer1Input.trim().isEmpty()){
                 collectErrors+="- Answer for Security Question 1 is empty.\n";
             }
@@ -183,7 +183,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 collectErrors+="- Answer for Security Question 3 is less than 5 characters.\n";
             }
 
-            //HEIGHT VALIDATION IN PROFILE PAGE
+            /** HEIGHT VALIDATION IN PROFILE PAGE */
             if(heightSpin.getSelectedItem().toString().equals("cm.") && Double.parseDouble(checkHeightInput) < 50){
                 collectErrors+="- Height cannot be less than 50 cm.";
             }
@@ -216,17 +216,17 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
     @Override
     public void onBackPressed() {
-        EditText nameInput = (EditText)findViewById(R.id.txtNameEdit);
-        EditText emailInput = (EditText)findViewById(R.id.txtEmailEdit);
-        EditText passwordInput = (EditText)findViewById(R.id.txtCreatePassword);
-        EditText confirmPassword = (EditText)findViewById(R.id.txtConfirmEdit);
-        EditText securityAnswer1 = (EditText)findViewById(R.id.txtSq1Answer);
-        EditText securityAnswer2 = (EditText)findViewById(R.id.txtSq2Answer);
-        EditText securityAnswer3 = (EditText)findViewById(R.id.txtSq3Answer);
-        EditText birthdateInput = (EditText)findViewById(R.id.txtBirthdate);
-        EditText heightInput = (EditText)findViewById(R.id.txtHeight);
-        EditText feetInput = (EditText)findViewById(R.id.txtFeet);
-        EditText inchesInput = (EditText)findViewById(R.id.txtInches);
+        EditText nameInput = findViewById(R.id.txtNameEdit);
+        EditText emailInput = findViewById(R.id.txtEmailEdit);
+        EditText passwordInput = findViewById(R.id.txtCreatePassword);
+        EditText confirmPassword = findViewById(R.id.txtConfirmEdit);
+        EditText securityAnswer1 = findViewById(R.id.txtSq1Answer);
+        EditText securityAnswer2 = findViewById(R.id.txtSq2Answer);
+        EditText securityAnswer3 = findViewById(R.id.txtSq3Answer);
+        EditText birthdateInput = findViewById(R.id.txtBirthdate);
+        EditText heightInput = findViewById(R.id.txtHeight);
+        EditText feetInput = findViewById(R.id.txtFeet);
+        EditText inchesInput = findViewById(R.id.txtInches);
 
         boolean emptyName = nameInput.getText().toString().trim().isEmpty();
         boolean emptyEmail = emailInput.getText().toString().trim().isEmpty();
@@ -240,7 +240,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         boolean emptyFeet = feetInput.getText().toString().trim().isEmpty();
         boolean emptyInches = inchesInput.getText().toString().trim().isEmpty();
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -263,8 +263,10 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             warningDialog.setTitle("Registration Incomplete")
                     .setMessage("Are you sure you want to exit?");
 
-            //Warning message must show when one or more fields are not empty
-            //Validations for birthdate, feet and inches are not available yet
+            /**
+             * Warning message must show when one or more fields are not empty
+             * Validations for birthdate, feet and inches are not available yet
+             */
             if(!emptyName || !emptyEmail || !emptyPassword || !emptyConfirm || !emptyFirstAnswer || !emptySecondAnswer || !emptyThirdAnswer || !emptyHeight) {
                 warningDialog.show(); //Warning message will show when user clicks the Back button
             }
@@ -302,17 +304,17 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        EditText nameInput = (EditText)findViewById(R.id.txtNameEdit);
-        EditText emailInput = (EditText)findViewById(R.id.txtEmailEdit);
-        EditText passwordInput = (EditText)findViewById(R.id.txtCreatePassword);
-        EditText confirmPassword = (EditText)findViewById(R.id.txtConfirmEdit);
-        EditText securityAnswer1 = (EditText)findViewById(R.id.txtSq1Answer);
-        EditText securityAnswer2 = (EditText)findViewById(R.id.txtSq2Answer);
-        EditText securityAnswer3 = (EditText)findViewById(R.id.txtSq3Answer);
-        EditText birthdateInput = (EditText)findViewById(R.id.txtBirthdate);
-        EditText heightInput = (EditText)findViewById(R.id.txtHeight);
-        EditText feetInput = (EditText)findViewById(R.id.txtFeet);
-        EditText inchesInput = (EditText)findViewById(R.id.txtInches);
+        EditText nameInput = findViewById(R.id.txtNameEdit);
+        EditText emailInput = findViewById(R.id.txtEmailEdit);
+        EditText passwordInput = findViewById(R.id.txtCreatePassword);
+        EditText confirmPassword = findViewById(R.id.txtConfirmEdit);
+        EditText securityAnswer1 = findViewById(R.id.txtSq1Answer);
+        EditText securityAnswer2 = findViewById(R.id.txtSq2Answer);
+        EditText securityAnswer3 = findViewById(R.id.txtSq3Answer);
+        EditText birthdateInput = findViewById(R.id.txtBirthdate);
+        EditText heightInput = findViewById(R.id.txtHeight);
+        EditText feetInput = findViewById(R.id.txtFeet);
+        EditText inchesInput = findViewById(R.id.txtInches);
 
         boolean emptyName = nameInput.getText().toString().trim().isEmpty();
         boolean emptyEmail = emailInput.getText().toString().trim().isEmpty();
@@ -330,6 +332,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         final Intent iHealth = new Intent(ProfileActivity.this, HealthActivity.class);
         final Intent iResults = new Intent(ProfileActivity.this, ResultsActivity.class);
         final Intent iList = new Intent(ProfileActivity.this, ListActivity.class);
+        final Intent iSettings = new Intent(ProfileActivity.this, SettingsActivity.class);
 
         //Warning message when user selects an option from navigation drawer
         AlertDialog.Builder warningDialog = new AlertDialog.Builder(this);
@@ -353,8 +356,10 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 }
             });
 
-            //Warning message must show when one or more fields are not empty
-            //Validations for birthdate, feet and inches are not available yet
+            /**
+             * Warning message must show when one or more fields are not empty
+             * Validations for birth date, feet and inches are not available yet
+             */
             if(!emptyName || !emptyEmail || !emptyPassword || !emptyConfirm || !emptyFirstAnswer || !emptySecondAnswer || !emptyThirdAnswer || !emptyHeight) {
                 warningDialog.show(); //Warning message will show when user selects the Home option
             }
@@ -372,8 +377,10 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 }
             });
 
-            //Warning message must show when one or more fields are not empty
-            //Validations for birthdate, feet and inches are not available yet
+            /**
+             * Warning message must show when one or more fields are not empty
+             * Validations for birth date, feet and inches are not available yet
+             */
             if(!emptyName || !emptyEmail || !emptyPassword || !emptyConfirm || !emptyFirstAnswer || !emptySecondAnswer || !emptyThirdAnswer || !emptyHeight) {
                 warningDialog.show(); //Warning message will show when user selects the Activity option
             }
@@ -391,8 +398,10 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 }
             });
 
-            //Warning message must show when one or more fields are not empty
-            //Validations for birthdate, feet and inches are not available yet
+            /**
+             * Warning message must show when one or more fields are not empty
+             * Validations for birth date, feet and inches are not available yet
+             */
             if(!emptyName || !emptyEmail || !emptyPassword || !emptyConfirm || !emptyFirstAnswer || !emptySecondAnswer || !emptyThirdAnswer || !emptyHeight) {
                 warningDialog.show(); //Warning message will show when user selects the Results option
             }
@@ -410,20 +419,42 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 }
             });
 
-            //Warning message must show when one or more fields are not empty
-            //Validations for birthdate, feet and inches are not available yet
+            /**
+             * Warning message must show when one or more fields are not empty
+             * Validations for birth date, feet and inches are not available yet
+             */
             if(!emptyName || !emptyEmail || !emptyPassword || !emptyConfirm || !emptyFirstAnswer || !emptySecondAnswer || !emptyThirdAnswer || !emptyHeight) {
                 warningDialog.show(); //Warning message will show when user selects the Results option
             }
             else{
                 startActivity(iResults);  //Will redirect to Results page when all fields are empty
             }
-        }else if (id == R.id.nav_amLogout) {
+        }
+        else if (id == R.id.nav_amSettings){
+            warningDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startActivity(iSettings);
+                }
+            });
+
+            /**
+             * Warning message must show when one or more fields are not empty
+             * Validations for birth date, feet and inches are not available yet
+             */
+            if(!emptyName || !emptyEmail || !emptyPassword || !emptyConfirm || !emptyFirstAnswer || !emptySecondAnswer || !emptyThirdAnswer || !emptyHeight) {
+                warningDialog.show(); //Warning message will show when user selects the Results option
+            }
+            else{
+                startActivity(iSettings);  //Will redirect to Settings page when all fields are empty
+            }
+        }
+        else if (id == R.id.nav_amLogout) {
             //Logout is not available at this moment
             //Logout must not appear while registering account
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

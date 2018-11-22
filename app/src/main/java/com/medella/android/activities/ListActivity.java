@@ -66,18 +66,18 @@ public class ListActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_list);
+        NavigationView navigationView = findViewById(R.id.nav_view_list);
         navigationView.setNavigationItemSelectedListener(this);
 
-        mProgressBar = (ProgressBar) findViewById(R.id.loadListProgressBar);
+        mProgressBar = findViewById(R.id.loadListProgressBar);
 
         // Initialize the progress bar
         mProgressBar.setVisibility(ProgressBar.GONE);
@@ -111,7 +111,7 @@ public class ListActivity extends AppCompatActivity
             initLocalStore().get();
 
             mAdapter = new ListActivityAdapter(this, R.layout.activity_card_view);
-            ListView listViewToDo = (ListView) findViewById(R.id.listViewToDo);
+            ListView listViewToDo = findViewById(R.id.listViewToDo);
             listViewToDo.setAdapter(mAdapter);
 
             // Load the items from the Mobile Service
@@ -160,7 +160,7 @@ public class ListActivity extends AppCompatActivity
         runAsyncTask(task);
     }
 
-    private List<ActivityTable> refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException, MobileServiceException {
+    private List<ActivityTable> refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException {
         //return mActivityTable.where().field("deleted").eq(val(false)).orderBy("createdAt", QueryOrder.Descending).execute().get();
         return mActivityTable.orderBy("createdAt", QueryOrder.Descending).execute().get();
     }
@@ -178,7 +178,7 @@ public class ListActivity extends AppCompatActivity
         return mActivityTable.read(query).get();
     }*/
 
-    private AsyncTask<Void, Void, Void> initLocalStore() throws MobileServiceLocalStoreException, ExecutionException, InterruptedException {
+    private AsyncTask<Void, Void, Void> initLocalStore() {
 
         AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
@@ -289,7 +289,7 @@ public class ListActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -347,7 +347,7 @@ public class ListActivity extends AppCompatActivity
             //Logout is not available at this moment
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

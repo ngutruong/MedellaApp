@@ -117,24 +117,24 @@ public class HealthActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_health);
 
-        listViewToDo = (ListView) findViewById(R.id.listViewToDo);
+        listViewToDo = findViewById(R.id.listViewToDo);
 
-        mProgressBar = (ProgressBar)findViewById(R.id.loadingProgressBar);
+        mProgressBar = findViewById(R.id.loadingProgressBar);
         mProgressBar.setVisibility(ProgressBar.GONE);
-        imageCameraView = (ImageView)findViewById(R.id.cameraImage);
+        imageCameraView = findViewById(R.id.cameraImage);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_health);
+        NavigationView navigationView = findViewById(R.id.nav_view_health);
         navigationView.setNavigationItemSelectedListener(this);
 
-        Spinner dosageSpin = (Spinner)findViewById(R.id.doseSpinner);
+        Spinner dosageSpin = findViewById(R.id.doseSpinner);
         dosageSpin.setSelection(15); //Set mg (Milligram) as default item in Dosage spinner
 
         useLbsUnit = MedellaOptions.getPreferredWeightUnit(getApplicationContext());
@@ -165,21 +165,21 @@ public class HealthActivity extends AppCompatActivity
             //Init local storage
             initLocalStore().get();
 
-            etTitle = (EditText)findViewById(R.id.txtTitle);
-            etWeight = (EditText)findViewById(R.id.txtWeight);
-            etMedicationBrand = (EditText)findViewById(R.id.txtMedName);
-            etMedicationDosage = (EditText)findViewById(R.id.txtDosage);
-            etBodyTemperature = (EditText)findViewById(R.id.txtTemperature);
-            etSystolic = (EditText)findViewById(R.id.txtSystolic);
-            etDiastolic = (EditText)findViewById(R.id.txtDiastolic);
-            etHeartRate = (EditText)findViewById(R.id.txtHrate);
-            etLocation = (EditText)findViewById(R.id.txtLocation);
-            etDescription = (EditText)findViewById(R.id.txtDesc);
-            spWeight = (Spinner)findViewById(R.id.weightSpinner);
-            spBodyTemperature = (Spinner)findViewById(R.id.tempSpinner);
-            spMedicationDosage = (Spinner)findViewById(R.id.doseSpinner);
-            spPainIntensity = (Spinner)findViewById(R.id.pintSpinner);
-            ibPickLocation = (ImageButton)findViewById(R.id.btnLocation);
+            etTitle = findViewById(R.id.txtTitle);
+            etWeight = findViewById(R.id.txtWeight);
+            etMedicationBrand = findViewById(R.id.txtMedName);
+            etMedicationDosage = findViewById(R.id.txtDosage);
+            etBodyTemperature = findViewById(R.id.txtTemperature);
+            etSystolic = findViewById(R.id.txtSystolic);
+            etDiastolic = findViewById(R.id.txtDiastolic);
+            etHeartRate = findViewById(R.id.txtHrate);
+            etLocation = findViewById(R.id.txtLocation);
+            etDescription = findViewById(R.id.txtDesc);
+            spWeight = findViewById(R.id.weightSpinner);
+            spBodyTemperature = findViewById(R.id.tempSpinner);
+            spMedicationDosage = findViewById(R.id.doseSpinner);
+            spPainIntensity = findViewById(R.id.pintSpinner);
+            ibPickLocation = findViewById(R.id.btnLocation);
 
             // Set selections for Weight and Temperature spinners based on user's preferences from Settings
             if(useLbsUnit)
@@ -564,7 +564,7 @@ public class HealthActivity extends AppCompatActivity
         return mActivityTable.execute().get();
     }
 
-    private AsyncTask<Void, Void, Void> initLocalStore() throws MobileServiceLocalStoreException, ExecutionException, InterruptedException {
+    private AsyncTask<Void, Void, Void> initLocalStore() {
 
         AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
@@ -771,7 +771,7 @@ public class HealthActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -828,7 +828,7 @@ public class HealthActivity extends AppCompatActivity
             //Logout is not available at this moment
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

@@ -357,7 +357,7 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
         /** ------------!!!!!!!!!!!!!!!!!!!!!!----------------- */
         /** ------------- GRAPH PART - START ------------------ */
 
-        resultsLineChart = (LineChart)findViewById(R.id.lineChart);
+        resultsLineChart = findViewById(R.id.lineChart);
         rgOption = ResultsGraphOptions.getResultsGraphOption(getApplicationContext());
 
         // NEW - from Examples
@@ -435,7 +435,6 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
         }
         else{
             ArrayList<Entry> valuesList;
-            //String[] graphOptions = getResources().getStringArray(R.array.graph_options_array);
             switch(rgOption) {
                 case 0:     valuesList = bmiValues;
                             break;
@@ -533,35 +532,35 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
         /** ------------!!!!!!!!!!!!!!!!!!!!!!----------------- */
         /** ------------- GRAPH PART - END ------------------ */
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_results);
+        NavigationView navigationView = findViewById(R.id.nav_view_results);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
     //Allow sharing options when users tap 'Share Your Results' button
     public void shareClick(View view){
-        TextView bmiLabel = (TextView)findViewById(R.id.bmiText);
-        TextView pintLabel = (TextView)findViewById(R.id.pintText);
-        TextView weightLabel = (TextView)findViewById(R.id.weightText);
-        TextView btempLabel = (TextView)findViewById(R.id.btempText);
-        TextView systolicLabel = (TextView)findViewById(R.id.systolicText);
-        TextView diastolicLabel = (TextView)findViewById(R.id.diastolicText);
-        TextView hrateLabel = (TextView)findViewById(R.id.hrateText);
+        TextView bmiLabel = findViewById(R.id.bmiText);
+        TextView pintLabel = findViewById(R.id.pintText);
+        TextView weightLabel = findViewById(R.id.weightText);
+        TextView btempLabel = findViewById(R.id.btempText);
+        TextView systolicLabel = findViewById(R.id.systolicText);
+        TextView diastolicLabel = findViewById(R.id.diastolicText);
+        TextView hrateLabel = findViewById(R.id.hrateText);
 
-        TextView bmiResult = (TextView)findViewById(R.id.txtBmiResult);
-        TextView pintResult = (TextView)findViewById(R.id.txtPintResult);
-        TextView weightResult = (TextView)findViewById(R.id.txtWeightResult);
-        TextView btempResult = (TextView)findViewById(R.id.txtBtempResult);
-        TextView systolicResult = (TextView)findViewById(R.id.txtSystolicResult);
-        TextView diastolicResult = (TextView)findViewById(R.id.txtDiastolicResult);
-        TextView hrateResult = (TextView)findViewById(R.id.txtHrateResult);
+        TextView bmiResult = findViewById(R.id.txtBmiResult);
+        TextView pintResult = findViewById(R.id.txtPintResult);
+        TextView weightResult = findViewById(R.id.txtWeightResult);
+        TextView btempResult = findViewById(R.id.txtBtempResult);
+        TextView systolicResult = findViewById(R.id.txtSystolicResult);
+        TextView diastolicResult = findViewById(R.id.txtDiastolicResult);
+        TextView hrateResult = findViewById(R.id.txtHrateResult);
 
         String showBmi = bmiLabel.getText().toString() + bmiResult.getText().toString() + "\n";
         String showPint = pintLabel.getText().toString() + pintResult.getText().toString() + "\n";
@@ -586,7 +585,7 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -646,14 +645,13 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
             //Logout is not available at this moment
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
     public void switchGraph(View view) {
         final int graphOptionIndex = ResultsGraphOptions.getResultsGraphOption(getApplicationContext());
-        //final String[] graphOptions = getResources().getStringArray(R.array.graph_options_array);
 
         AlertDialog.Builder graphDialog = new AlertDialog.Builder(this);
         graphDialog.setTitle("Choose your options:");

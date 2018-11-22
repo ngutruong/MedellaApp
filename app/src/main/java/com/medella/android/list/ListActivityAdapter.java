@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.text.Html;
 import android.util.Log;
@@ -67,12 +66,12 @@ public class ListActivityAdapter extends ArrayAdapter<ActivityTable> {
                 activityViewHolder = new ActivityViewHolder();
 
                 // Initialize the views for ListActivity
-                activityViewHolder.tvActivityTitle = (TextView) row.findViewById(R.id.activity_title_text);
-                activityViewHolder.tvActivityDetails = (TextView) row.findViewById(R.id.activity_details_text);
-                activityViewHolder.tvActivityDescription = (TextView) row.findViewById(R.id.activity_description_text);
-                activityViewHolder.tvBmiStatus = (TextView) row.findViewById(R.id.bmi_status_text);
-                activityViewHolder.tvLocation = (TextView) row.findViewById(R.id.activity_location_text);
-                activityViewHolder.tvDateAdded = (TextView) row.findViewById(R.id.activity_date_added_text);
+                activityViewHolder.tvActivityTitle = row.findViewById(R.id.activity_title_text);
+                activityViewHolder.tvActivityDetails = row.findViewById(R.id.activity_details_text);
+                activityViewHolder.tvActivityDescription = row.findViewById(R.id.activity_description_text);
+                activityViewHolder.tvBmiStatus = row.findViewById(R.id.bmi_status_text);
+                activityViewHolder.tvLocation = row.findViewById(R.id.activity_location_text);
+                activityViewHolder.tvDateAdded = row.findViewById(R.id.activity_date_added_text);
                 activityViewHolder.cardView = row.findViewById(R.id.activity_card_view);
 
                 row.setTag(activityViewHolder);
