@@ -112,6 +112,18 @@
     <string name="title_activity_voice_memo">VoiceMemoActivity</string>
     <string name="title_activity_camera">CameraActivity</string>
     <string name="title_activity_settings">Settings</string>
+    <!-- Array of Graph Options for ResultsActivity -->
+    <string-array name="graph_options_array">
+        <item>BMI</item>
+        <item>Pain Intensity</item>
+        <item>Weight (lbs)</item>
+        <item>Weight (kg)</item>
+        <item>Body Temperature (°C)</item>
+        <item>Body Temperature (°F)</item>
+        <item>Systolic</item>
+        <item>Diastolic</item>
+        <item>Heart Rate</item>
+    </string-array>
 
     <!-- Array of weight units for SettingsActivity -->
     <string-array name="weight_settings_array">

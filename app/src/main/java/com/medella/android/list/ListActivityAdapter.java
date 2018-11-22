@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.medella.android.R;
@@ -128,35 +129,44 @@ public class ListActivityAdapter extends ArrayAdapter<ActivityTable> {
             // Body mass index
             ResultsCollection.setBmiAverage(getContext(), resultsAverage(bmiList));
             ResultsCollection.setBmiDifference(getContext(), resultsDifference(bmiList));
+            Collections.reverse(bmiList);
             ResultsCollection.setBmiList(bmiList);
             // Pain intensity
             ResultsCollection.setPainIntensityAverage(getContext(), resultsAverage(pintList));
             ResultsCollection.setPainIntensityDifference(getContext(), resultsDifference(pintList));
+            Collections.reverse(pintList);
             ResultsCollection.setPintList(pintList);
             // Weight
             ResultsCollection.setWeightLbsAverage(getContext(), resultsAverage(weightLbsList));
             ResultsCollection.setWeightLbsDifference(getContext(), resultsDifference(weightLbsList));
+            Collections.reverse(weightLbsList);
             ResultsCollection.setWeightLbsList(weightLbsList);
             ResultsCollection.setWeightKgAverage(getContext(), resultsAverage(weightKgList));
             ResultsCollection.setWeightKgDifference(getContext(), resultsDifference(weightKgList));
+            Collections.reverse(weightKgList);
             ResultsCollection.setWeightKgList(weightKgList);
             // Body temperature
             ResultsCollection.setTemperatureCelsiusAverage(getContext(), resultsAverage(tempCelsList));
             ResultsCollection.setTemperatureCelsiusDifference(getContext(), resultsDifference(tempCelsList));
+            Collections.reverse(tempCelsList);
             ResultsCollection.setTempCelsiusList(tempCelsList);
             ResultsCollection.setTemperatureFahrAverage(getContext(), resultsAverage(tempFahrList));
             ResultsCollection.setTemperatureFahrDifference(getContext(), resultsDifference(tempFahrList));
+            Collections.reverse(tempFahrList);
             ResultsCollection.setTempFahrenheitList(tempFahrList);
             // Blood pressure
             ResultsCollection.setSystolicAverage(getContext(), resultsAverage(systolicList));
             ResultsCollection.setDiastolicAverage(getContext(),resultsAverage(diastolicList));
             ResultsCollection.setSystolicDifference(getContext(), resultsDifference(systolicList));
             ResultsCollection.setDiastolicDifference(getContext(), resultsDifference(diastolicList));
+            Collections.reverse(systolicList);
+            Collections.reverse(diastolicList);
             ResultsCollection.setSystolicList(systolicList);
             ResultsCollection.setDiastolicList(diastolicList);
             // Heart rate
             ResultsCollection.setHeartRateAverage(getContext(),resultsAverage(heartRateList));
             ResultsCollection.setHeartRateDifference(getContext(),resultsDifference(heartRateList));
+            Collections.reverse(heartRateList);
             ResultsCollection.setHeartRateList(heartRateList);
 
             /** Create a card view for ListActivity */
@@ -188,7 +198,6 @@ public class ListActivityAdapter extends ArrayAdapter<ActivityTable> {
             } else if (currentBmi >= 18.5 && currentBmi < 25) {
                 activityViewHolder.tvBmiStatus.setText("BMI: " + String.valueOf(currentBmi) + " (Normal)");
                 activityViewHolder.tvBmiStatus.setTextColor(Color.parseColor("#3ebc70"));
-                activityViewHolder.tvBmiStatus.setTypeface(null, Typeface.BOLD);
             } else if (currentBmi >= 25 && currentBmi < 30) {
                 activityViewHolder.tvBmiStatus.setText("BMI: " + String.valueOf(currentBmi) + " (Overweight)");
                 activityViewHolder.tvBmiStatus.setTextColor(Color.parseColor("#F28622"));

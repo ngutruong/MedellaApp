@@ -30,6 +30,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
+import com.medella.android.MedellaOptions;
 import com.medella.android.R;
 import com.medella.android.list.ActivityTable;
 import com.medella.android.list.ListActivityAdapter;
@@ -108,6 +109,9 @@ public class HealthActivity extends AppCompatActivity
     private GoogleApiClient mGoogleApiClient;
     private int PLACE_PICKER_REQUEST = 1;
 
+    private boolean useLbsUnit;
+    private boolean useCelsiusUnit;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,6 +136,9 @@ public class HealthActivity extends AppCompatActivity
 
         Spinner dosageSpin = (Spinner)findViewById(R.id.doseSpinner);
         dosageSpin.setSelection(15); //Set mg (Milligram) as default item in Dosage spinner
+
+        useLbsUnit = MedellaOptions.getPreferredWeightUnit(getApplicationContext());
+        useCelsiusUnit = MedellaOptions.getPreferredBodyTemperatureUnit(getApplicationContext());
 
         try {
             // Create the Mobile Service Client instance, using the provided
@@ -173,6 +180,16 @@ public class HealthActivity extends AppCompatActivity
             spMedicationDosage = (Spinner)findViewById(R.id.doseSpinner);
             spPainIntensity = (Spinner)findViewById(R.id.pintSpinner);
             ibPickLocation = (ImageButton)findViewById(R.id.btnLocation);
+
+            // Set selections for Weight and Temperature spinners based on user's preferences from Settings
+            if(useLbsUnit)
+                spWeight.setSelection(0);
+            else
+                spWeight.setSelection(1);
+            if(useCelsiusUnit)
+                spBodyTemperature.setSelection(0);
+            else
+                spBodyTemperature.setSelection(1);
 
             // Create an adapter to bind the items with the view
             mListActivityAdapter = new ListActivityAdapter(this, R.layout.activity_card_view);
@@ -253,11 +270,28 @@ public class HealthActivity extends AppCompatActivity
 
     public void finishClick(View view) {
 
+        // Error dialog when user enters invalid input
         AlertDialog.Builder errorDialog = new AlertDialog.Builder(this);
         errorDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
+            }
+        });
+        // Success dialog when user enters valid input
+        AlertDialog.Builder successDialog = new AlertDialog.Builder(this);
+        successDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent iList = new Intent(HealthActivity.this, ListActivity.class);
+                startActivity(iList);
+            }
+        });
+        successDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                Intent iList = new Intent(HealthActivity.this, ListActivity.class);
+                startActivity(iList);
             }
         });
 
@@ -479,20 +513,11 @@ public class HealthActivity extends AppCompatActivity
 
             runAsyncTask(task);
 
-            errorDialog.setTitle("Health Activity Added")
+            successDialog.setTitle("Health Activity Added")
                     .setMessage(etTitle.getText().toString() + " has been successfully added to List.")
                     .show();
 
-            etTitle.setText("");
-            etWeight.setText("");
-            etMedicationBrand.setText("");
-            etMedicationDosage.setText("");
-            etBodyTemperature.setText("");
-            etSystolic.setText("");
-            etDiastolic.setText("");
-            etHeartRate.setText("");
-            etDescription.setText("");
-            etLocation.setText("");
+            // MAY BE BEST TO RESET SHARED PREFERENCES FOR HEALTH ACTIVITY HERE
         }
     }
 

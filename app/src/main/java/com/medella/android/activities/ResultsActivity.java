@@ -1,25 +1,24 @@
 package com.medella.android.activities;
 
-import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
@@ -32,181 +31,81 @@ import com.github.mikephil.charting.formatter.IFillFormatter;
 import com.github.mikephil.charting.interfaces.dataprovider.LineDataProvider;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.Utils;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.SettableFuture;
 import com.medella.android.MedellaOptions;
 import com.medella.android.R;
+import com.medella.android.ResultsGraphOptions;
 import com.medella.android.list.ResultsCollection;
-import com.medella.android.list.ActivityTable;
-import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
-import com.microsoft.windowsazure.mobileservices.MobileServiceException;
-import com.microsoft.windowsazure.mobileservices.http.NextServiceFilterCallback;
-import com.microsoft.windowsazure.mobileservices.http.OkHttpClientFactory;
-import com.microsoft.windowsazure.mobileservices.http.ServiceFilter;
-import com.microsoft.windowsazure.mobileservices.http.ServiceFilterRequest;
-import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
-import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
-import com.microsoft.windowsazure.mobileservices.table.query.QueryOrder;
-import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncContext;
-import com.microsoft.windowsazure.mobileservices.table.sync.localstore.ColumnDataType;
-import com.microsoft.windowsazure.mobileservices.table.sync.localstore.MobileServiceLocalStoreException;
-import com.microsoft.windowsazure.mobileservices.table.sync.localstore.SQLiteLocalStore;
-import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.SimpleSyncHandler;
-import com.squareup.okhttp.OkHttpClient;
 
-import java.net.MalformedURLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
-import static java.lang.Math.round;
 
 public class ResultsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private LineChart bmiLineChart;
+    private LineChart resultsLineChart;
     private float bmiAverage;
     private float bmiDifference;
+    private List<Float> bmiList;
 
     private float pintAverage;
     private float pintDifference;
-    private StringBuilder pintStringBuilder = new StringBuilder();
+    private List<Float> pintList;
 
     private float weightLbsAverage;
     private float weightLbsDifference;
     private float weightKgAverage;
     private float weightKgDifference;
-    private boolean weightPreference;
+    private boolean useLbsUnit;
     private StringBuilder weightStringBuilder = new StringBuilder();
+    private List<Float> weightLbsList;
+    private List<Float> weightKgList;
 
     private float tempCelsAverage;
     private float tempFahrAverage;
     private float tempCelsDifference;
     private float tempFahrDifference;
-    private boolean temperaturePreference;
+    private boolean useCelsiusUnit;
     private StringBuilder temperatureStringBuilder = new StringBuilder();
+    private List<Float> tempCelsList;
+    private List<Float> tempFahrList;
 
     private float systolicAverage;
     private float diastolicAverage;
     private float systolicDifference;
     private float diastolicDifference;
+    private List<Float> systolicList;
+    private List<Float> diastolicList;
 
     private float heartRateAverage;
     private float heartRateDifference;
+    private List<Float> heartRateList;
 
     private DecimalFormat df = new DecimalFormat("###.00");
 
-    private MobileServiceClient mClient;
-    private MobileServiceTable<ActivityTable> mActivityTable;
-    //Offline Sync
-    //private MobileServiceSyncTable<ActivityTable> mActivityTable;
-    private ProgressBar mProgressBar;
+    private String[] graphOptions;
+    private int rgOption;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
-
-        mProgressBar = (ProgressBar) findViewById(R.id.loadResultsProgressBar);
-        mProgressBar.setVisibility(ProgressBar.GONE);
-
-        try {
-            // Create the Mobile Service Client instance, using the provided
-
-            // Mobile Service URL and key
-            mClient = new MobileServiceClient(
-                    "https://medellapp.azurewebsites.net",
-                    this).withFilter(new ProgressFilter());
-
-            // Extend timeout from default of 10s to 20s
-            mClient.setAndroidHttpClientFactory(new OkHttpClientFactory() {
-                @Override
-                public OkHttpClient createOkHttpClient() {
-                    OkHttpClient client = new OkHttpClient();
-                    client.setReadTimeout(20, TimeUnit.SECONDS);
-                    client.setWriteTimeout(20, TimeUnit.SECONDS);
-                    return client;
-                }
-            });
-
-            // Get the Mobile Service Table instance to use
-            mActivityTable = mClient.getTable(ActivityTable.class);
-
-            // Offline Sync
-            //mActivityTable = mClient.getSyncTable("ActivityTable", ActivityTable.class);
-
-            //Init local storage
-            initLocalStore().get();
-
-            // MUST GET FIXED
-            //ListView listViewToDo = (ListView) findViewById(R.id.listViewToDo);
-            // MUST GET FIXED
-            //listViewToDo.setAdapter(mAdapter);
-
-            // Load the items from the Mobile Service
-            refreshItemsFromTable();
-
-        } catch (MalformedURLException e) {
-            createAndShowDialog(new Exception("There was an error creating the Mobile Service. Verify the URL"), "Error");
-        } catch (Exception e){
-            createAndShowDialog(e, "Error");
-        }
-
-        /** ------------!!!!!!!!!!!!!!!!!!!!!!----------------- */
-        /** ------------- GRAPH PART - START ------------------ */
-        bmiLineChart = (LineChart)findViewById(R.id.lineChart);
-
-        // NEW - from Examples
-        bmiLineChart.setBackgroundColor(Color.WHITE);
-        bmiLineChart.getDescription().setEnabled(false);
-        bmiLineChart.setTouchEnabled(true); //May need to switch to false
-        bmiLineChart.setDrawGridBackground(false);
-        bmiLineChart.setDragEnabled(true);
-        bmiLineChart.setScaleEnabled(true);
-        bmiLineChart.setPinchZoom(true);
-        XAxis xAxis;
-        {
-            xAxis = bmiLineChart.getXAxis();
-            xAxis.enableGridDashedLine(10f,10f,0f);
-        }
-        YAxis yAxis;
-        {
-            yAxis = bmiLineChart.getAxisLeft();
-            bmiLineChart.getAxisRight().setEnabled(false);
-            yAxis.enableGridDashedLine(10f,10f,0f);
-            yAxis.setAxisMaximum(50);
-            yAxis.setAxisMinimum(0);
-        }
-        ArrayList<Entry> bmiValues = new ArrayList<>();
-        List<Float> bmiCollection = new ArrayList<>(); //Testing
-        float bmiOne = (float) 20.6;
-        float bmiTwo = (float) 28.6;
-        float bmiThree = (float) 21.1;
-        bmiCollection.add(bmiOne); //Testing
-        bmiCollection.add(bmiTwo); //Testing
-        bmiCollection.add(bmiThree); //Testing
-        // JUST TESTING
-        for(int i=0;i<bmiCollection.size();i++) {
-            bmiValues.add(new Entry(i, bmiCollection.get(i)));
-            //bmiAverage += bmiCollection.get(i);
-        }
+        graphOptions = getResources().getStringArray(R.array.graph_options_array);
 
         //bmiAverage = Float.parseFloat(df.format(bmiAverage/bmiCollection.size())); //Testing
         bmiAverage = Float.parseFloat(df.format(ResultsCollection.getBmiAverage(getApplicationContext())));
         //bmiDifference = bmiCollection.get(bmiCollection.size()-1) - bmiCollection.get(bmiCollection.size()-2); //Testing
         bmiDifference = Float.parseFloat(df.format(ResultsCollection.getBmiDifference(getApplicationContext())));
+        bmiList = ResultsCollection.getBmiList();
+        float bmiMax = Collections.max(bmiList, null);
         TextView tvBmiResult = findViewById(R.id.txtBmiResult);
         TextView tvBmiDifference = findViewById(R.id.txtBmiDifference);
         tvBmiResult.setText(String.valueOf(bmiAverage));
-        // COLORING FOR BMI AVERAGE NOT FINISHED YET
+        // COLORING FOR BMI AVERAGE NOT FINISHED YET - START
         if(bmiAverage > 18 && bmiAverage <= 25){
             tvBmiResult.setTextColor(Color.parseColor("#3ebc70"));
         }
+        // COLORING BMI AVERAGE - END
         if(bmiDifference > 0) {
             tvBmiDifference.setText("(+" + bmiDifference + ")");
             tvBmiDifference.setTextColor(Color.parseColor("#F28622"));
@@ -219,12 +118,22 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
             tvBmiDifference.setText("("+bmiDifference+")");
             tvBmiDifference.setTextColor(Color.GRAY);
         }
+        // Collect BMI elements for graph
+        ArrayList<Entry> bmiValues = new ArrayList<>();
+        List<Float> bmiCollection = new ArrayList<>();
+        for(float bmiValue : bmiList){
+            bmiCollection.add(bmiValue);
+        }
+        for(int i=0;i<bmiCollection.size();i++) {
+            bmiValues.add(new Entry(i, bmiCollection.get(i)));
+        }
 
         pintAverage = Float.parseFloat(df.format(ResultsCollection.getPainIntensityAverage(getApplicationContext())));
-        pintStringBuilder.append(String.valueOf(pintAverage));
         pintDifference = Float.parseFloat(df.format(ResultsCollection.getPainIntensityDifference(getApplicationContext())));
+        pintList = ResultsCollection.getPintList();
+        float pintMax = Collections.max(pintList, null);
         TextView tvPintResult = findViewById(R.id.txtPintResult);
-        tvPintResult.setText(pintStringBuilder);
+        tvPintResult.setText(String.valueOf(pintAverage));
         TextView tvPintDiff = findViewById(R.id.txtPintDifference);
         if(pintDifference > 0){
             tvPintDiff.setText("(+" + pintDifference + ")");
@@ -236,14 +145,27 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
             tvPintDiff.setText("("+pintDifference+")");
             tvPintDiff.setTextColor(Color.GRAY);
         }
+        // Collect Pain Intensity elements for graph
+        ArrayList<Entry> pintValues = new ArrayList<>();
+        List<Float> pintCollection = new ArrayList<>();
+        for(float pintValue : pintList){
+            pintCollection.add(pintValue);
+        }
+        for(int i=0;i<pintCollection.size();i++){
+            pintValues.add(new Entry(i, pintCollection.get(i)));
+        }
 
         weightLbsAverage = Float.parseFloat(df.format(ResultsCollection.getWeightLbsAverage(getApplicationContext())));
         weightLbsDifference = Float.parseFloat(df.format(ResultsCollection.getWeightLbsDifference(getApplicationContext())));
         weightKgAverage = Float.parseFloat(df.format(ResultsCollection.getWeightKgAverage(getApplicationContext())));
         weightKgDifference = Float.parseFloat(df.format(ResultsCollection.getWeightKgDifference(getApplicationContext())));
-        weightPreference = MedellaOptions.getPreferredWeightUnit(getApplicationContext());
+        useLbsUnit = MedellaOptions.getPreferredWeightUnit(getApplicationContext());
+        weightLbsList = ResultsCollection.getWeightLbsList();
+        weightKgList = ResultsCollection.getWeightKgList();
+        float weightLbsMax = Collections.max(weightLbsList, null);
+        float weightKgMax = Collections.max(weightKgList, null);
         TextView tvWeightDifference = findViewById(R.id.txtWeightDifference);
-        if(weightPreference) {
+        if(useLbsUnit) {
             weightStringBuilder.append(String.valueOf(weightLbsAverage));
             weightStringBuilder.append(" lbs");
             if(weightLbsDifference > 0) {
@@ -277,14 +199,35 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
         }
         TextView tvWeightResult = findViewById(R.id.txtWeightResult);
         tvWeightResult.setText(weightStringBuilder);
+        // Collect weight elements for graph
+        ArrayList<Entry> weightLbsValues = new ArrayList<>();
+        ArrayList<Entry> weightKgValues = new ArrayList<>();
+        List<Float> weightLbsCollection = new ArrayList<>();
+        List<Float> weightKgCollection = new ArrayList<>();
+        for(float lbs : weightLbsList){
+            weightLbsCollection.add(lbs);
+        }
+        for(int i=0;i<weightLbsCollection.size();i++) {
+            weightLbsValues.add(new Entry(i, weightLbsCollection.get(i)));
+        }
+        for(float kg : weightKgList){
+            weightKgCollection.add(kg);
+        }
+        for(int i=0;i<weightKgCollection.size();i++) {
+            weightKgValues.add(new Entry(i, weightKgCollection.get(i)));
+        }
 
         tempCelsAverage = Float.parseFloat(df.format(ResultsCollection.getTemperatureCelsiusAverage(getApplicationContext())));
         tempCelsDifference = Float.parseFloat(df.format(ResultsCollection.getTemperatureCelsiusDifference(getApplicationContext())));
         tempFahrAverage = Float.parseFloat(df.format(ResultsCollection.getTemperatureFahrAverage(getApplicationContext())));
         tempFahrDifference = Float.parseFloat(df.format(ResultsCollection.getTemperatureFahrDifference(getApplicationContext())));
-        temperaturePreference = MedellaOptions.getPreferredBodyTemperatureUnit(getApplicationContext());
+        useCelsiusUnit = MedellaOptions.getPreferredBodyTemperatureUnit(getApplicationContext());
+        tempCelsList = ResultsCollection.getTempCelsiusList();
+        tempFahrList = ResultsCollection.getTempFahrenheitList();
+        float tempCelsMax = Collections.max(tempCelsList, null);
+        float tempFahrMax = Collections.max(tempFahrList, null);
         TextView tvTemperatureDifference = findViewById(R.id.txtBtempDifference);
-        if(temperaturePreference) {
+        if(useCelsiusUnit) {
             temperatureStringBuilder.append(String.valueOf(tempCelsAverage));
             temperatureStringBuilder.append("°C");
             if(tempCelsDifference > 0) {
@@ -307,7 +250,7 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
                 tvTemperatureDifference.setText("(+" + tempFahrDifference + ")");
                 tvTemperatureDifference.setTextColor(Color.parseColor("#F28622"));
             }
-            else if(weightKgDifference < 0){
+            else if(tempFahrDifference < 0){
                 tvTemperatureDifference.setText("(" + tempFahrDifference + ")");
                 tvTemperatureDifference.setTextColor(Color.parseColor("#228ef2"));
             }
@@ -318,11 +261,32 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
         }
         TextView tvTemperatureResult = findViewById(R.id.txtBtempResult);
         tvTemperatureResult.setText(temperatureStringBuilder);
+        // Collect temperature elements for graph
+        ArrayList<Entry> tempCelsValues = new ArrayList<>();
+        ArrayList<Entry> tempFahrValues = new ArrayList<>();
+        List<Float> tempCelsCollection = new ArrayList<>();
+        List<Float> tempFahrCollection = new ArrayList<>();
+        for(float cel : tempCelsList){
+            tempCelsCollection.add(cel);
+        }
+        for(int i=0;i<tempCelsCollection.size();i++) {
+            tempCelsValues.add(new Entry(i, tempCelsCollection.get(i)));
+        }
+        for(float fah : tempFahrList){
+            tempFahrCollection.add(fah);
+        }
+        for(int i=0;i<tempFahrCollection.size();i++) {
+            tempFahrValues.add(new Entry(i, tempFahrCollection.get(i)));
+        }
 
         systolicAverage = Float.parseFloat(df.format(ResultsCollection.getSystolicAverage(getApplicationContext())));
         diastolicAverage = Float.parseFloat(df.format(ResultsCollection.getDiastolicAverage(getApplicationContext())));
         systolicDifference = Float.parseFloat(df.format(ResultsCollection.getSystolicDifference(getApplicationContext())));
         diastolicDifference = Float.parseFloat(df.format(ResultsCollection.getDiastolicDifference(getApplicationContext())));
+        systolicList = ResultsCollection.getSystolicList();
+        diastolicList = ResultsCollection.getDiastolicList();
+        float systolicMax = Collections.max(systolicList, null);
+        float diastolicMax = Collections.max(diastolicList, null);
         TextView tvSystolicResult = findViewById(R.id.txtSystolicResult);
         TextView tvDiastolicResult = findViewById(R.id.txtDiastolicResult);
         TextView tvSystolicDifference = findViewById(R.id.txtSystolicDifference);
@@ -343,9 +307,28 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
             tvDiastolicDifference.setText("(" + diastolicDifference + ")");
         }
         tvDiastolicDifference.setTextColor(Color.GRAY);
+        // Collect blood pressure elements for graph
+        ArrayList<Entry> systolicValues = new ArrayList<>();
+        ArrayList<Entry> diastolicValues = new ArrayList<>();
+        List<Float> systolicCollection = new ArrayList<>();
+        List<Float> diastolicCollection = new ArrayList<>();
+        for(float sys : systolicList){
+            systolicCollection.add(sys);
+        }
+        for(int i=0;i<systolicCollection.size();i++) {
+            systolicValues.add(new Entry(i, systolicCollection.get(i)));
+        }
+        for(float dia : diastolicList){
+            diastolicCollection.add(dia);
+        }
+        for(int i=0;i<diastolicCollection.size();i++) {
+            diastolicValues.add(new Entry(i, diastolicCollection.get(i)));
+        }
 
         heartRateAverage = Float.parseFloat(df.format(ResultsCollection.getHeartRateAverage(getApplicationContext())));
         heartRateDifference = Float.parseFloat(df.format(ResultsCollection.getHeartRateDifference(getApplicationContext())));
+        heartRateList = ResultsCollection.getHeartRateList();
+        float heartRateMax = Collections.max(heartRateList, null);
         TextView tvHeartRateResult = findViewById(R.id.txtHrateResult);
         TextView tvHeartRateDifference = findViewById(R.id.txtHrateDifference);
         tvHeartRateResult.setText(String.valueOf(heartRateAverage));
@@ -361,52 +344,153 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
             tvHeartRateDifference.setText("(" + heartRateDifference + ")");
             tvHeartRateDifference.setTextColor(Color.GRAY);
         }
+        // Collect blood pressure elements for graph
+        ArrayList<Entry> heartRateValues = new ArrayList<>();
+        List<Float> heartRateCollection = new ArrayList<>();
+        for(float hrate : heartRateList){
+            heartRateCollection.add(hrate);
+        }
+        for(int i=0;i<heartRateCollection.size();i++) {
+            heartRateValues.add(new Entry(i, heartRateCollection.get(i)));
+        }
 
-        // DOESN'T WORK
-        //collectITEMSFROMTABLE();
+        /** ------------!!!!!!!!!!!!!!!!!!!!!!----------------- */
+        /** ------------- GRAPH PART - START ------------------ */
 
-        LineDataSet bmiLds;
-        if(bmiLineChart.getData() != null && bmiLineChart.getData().getDataSetCount() > 0){
-            bmiLds = (LineDataSet) bmiLineChart.getData().getDataSetByIndex(0);
-            bmiLds.setValues(bmiValues);
-            bmiLds.notifyDataSetChanged();
-            bmiLineChart.getData().notifyDataChanged();
-            bmiLineChart.notifyDataSetChanged();
+        resultsLineChart = (LineChart)findViewById(R.id.lineChart);
+        rgOption = ResultsGraphOptions.getResultsGraphOption(getApplicationContext());
+
+        // NEW - from Examples
+        resultsLineChart.setBackgroundColor(Color.WHITE);
+        resultsLineChart.getDescription().setEnabled(false);
+        resultsLineChart.setTouchEnabled(true); //May need to switch to false
+        resultsLineChart.setDrawGridBackground(false);
+        resultsLineChart.setDragEnabled(true);
+        resultsLineChart.setScaleEnabled(true);
+        resultsLineChart.setPinchZoom(true);
+        XAxis xAxis;
+        {
+            xAxis = resultsLineChart.getXAxis();
+            xAxis.enableGridDashedLine(10f,10f,0f);
+        }
+        YAxis yAxis;
+        {
+            yAxis = resultsLineChart.getAxisLeft();
+            resultsLineChart.getAxisRight().setEnabled(false);
+            yAxis.enableGridDashedLine(10f,10f,0f);
+            switch(rgOption){
+                case 0:     yAxis.setAxisMaximum(bmiMax + 20);
+                            break;
+                case 1:     yAxis.setAxisMaximum(pintMax + 10);
+                            break;
+                case 2:     yAxis.setAxisMaximum(weightLbsMax + 100);
+                            break;
+                case 3:     yAxis.setAxisMaximum(weightKgMax + 50);
+                            break;
+                case 4:     yAxis.setAxisMaximum(tempCelsMax + 20);
+                            break;
+                case 5:     yAxis.setAxisMaximum(tempFahrMax + 100);
+                            break;
+                case 6:     yAxis.setAxisMaximum(systolicMax + 100);
+                            break;
+                case 7:     yAxis.setAxisMaximum(diastolicMax + 50);
+                            break;
+                case 8:     yAxis.setAxisMaximum(heartRateMax + 100);
+                            break;
+                default:    yAxis.setAxisMaximum(bmiMax + 20);
+                            break;
+            }
+            yAxis.setAxisMinimum(0);
+        }
+
+        LineDataSet resultsLds;
+        if(resultsLineChart.getData() != null && resultsLineChart.getData().getDataSetCount() > 0){
+            resultsLds = (LineDataSet) resultsLineChart.getData().getDataSetByIndex(0);
+            //bmiLds.setValues(bmiValues);
+            switch(rgOption){
+                case 0:     resultsLds.setValues(bmiValues);
+                            break;
+                case 1:     resultsLds.setValues(pintValues);
+                            break;
+                case 2:     resultsLds.setValues(weightLbsValues);
+                            break;
+                case 3:     resultsLds.setValues(weightKgValues);
+                            break;
+                case 4:     resultsLds.setValues(tempCelsValues);
+                            break;
+                case 5:     resultsLds.setValues(tempFahrValues);
+                            break;
+                case 6:     resultsLds.setValues(systolicValues);
+                            break;
+                case 7:     resultsLds.setValues(diastolicValues);
+                            break;
+                case 8:     resultsLds.setValues(heartRateValues);
+                            break;
+                default:    resultsLds.setValues(bmiValues);
+                            break;
+            }
+            resultsLds.notifyDataSetChanged();
+            resultsLineChart.getData().notifyDataChanged();
+            resultsLineChart.notifyDataSetChanged();
         }
         else{
-            bmiLds = new LineDataSet(bmiValues, "BMI");
-            bmiLds.setDrawIcons(false);
-            bmiLds.enableDashedLine(10f,0f,0f); //spaceLength is 0 so lines are not dashed
-            bmiLds.setColor(Color.BLACK);
-            bmiLds.setCircleColor(Color.BLACK);
-            bmiLds.setLineWidth(1f);
-            bmiLds.setCircleRadius(2.5f);
-            bmiLds.setDrawCircleHole(false);
-            bmiLds.setFormLineWidth(1f);
-            bmiLds.setFormLineDashEffect(new DashPathEffect(new float[]{10f,5f},0f));
-            bmiLds.setFormSize(15f);
-            bmiLds.setValueTextSize(9f);
-            bmiLds.enableDashedHighlightLine(10f,0f,0f);
-            bmiLds.setDrawFilled(true);
-            bmiLds.setFillFormatter(new IFillFormatter() {
+            ArrayList<Entry> valuesList;
+            //String[] graphOptions = getResources().getStringArray(R.array.graph_options_array);
+            switch(rgOption) {
+                case 0:     valuesList = bmiValues;
+                            break;
+                case 1:     valuesList = pintValues;
+                            break;
+                case 2:     valuesList = weightLbsValues;
+                            break;
+                case 3:     valuesList = weightKgValues;
+                            break;
+                case 4:     valuesList = tempCelsValues;
+                            break;
+                case 5:     valuesList = tempFahrValues;
+                            break;
+                case 6:     valuesList = systolicValues;
+                            break;
+                case 7:     valuesList = diastolicValues;
+                            break;
+                case 8:     valuesList = heartRateValues;
+                            break;
+                default:    valuesList = bmiValues;
+                            break;
+            }
+            resultsLds = new LineDataSet(valuesList, graphOptions[rgOption]);
+            resultsLds.setDrawIcons(false);
+            resultsLds.enableDashedLine(10f,0f,0f); //spaceLength is 0 so lines are not dashed
+            resultsLds.setColor(Color.BLACK);
+            resultsLds.setCircleColor(Color.BLACK);
+            resultsLds.setLineWidth(1f);
+            resultsLds.setCircleRadius(2.5f);
+            resultsLds.setDrawCircleHole(false);
+            resultsLds.setFormLineWidth(1f);
+            resultsLds.setFormLineDashEffect(new DashPathEffect(new float[]{10f,5f},0f));
+            resultsLds.setFormSize(15f);
+            resultsLds.setValueTextSize(9f);
+            resultsLds.enableDashedHighlightLine(10f,0f,0f);
+            resultsLds.setDrawFilled(true);
+            resultsLds.setFillFormatter(new IFillFormatter() {
                 @Override
                 public float getFillLinePosition(ILineDataSet dataSet, LineDataProvider dataProvider) {
-                    return bmiLineChart.getAxisLeft().getAxisMinimum();
+                    return resultsLineChart.getAxisLeft().getAxisMinimum();
                 }
             });
             if(Utils.getSDKInt() >= 18){
                 Drawable drawable = ContextCompat.getDrawable(this, R.drawable.fade_orange);
-                bmiLds.setFillDrawable(drawable);
+                resultsLds.setFillDrawable(drawable);
             } else {
-                bmiLds.setFillColor(Color.BLACK);
+                resultsLds.setFillColor(Color.BLACK);
             }
-            ArrayList<ILineDataSet> bmiDatasets = new ArrayList<>();
-            bmiDatasets.add(bmiLds);
-            LineData bmiData = new LineData(bmiDatasets);
-            bmiLineChart.setData(bmiData);
+            ArrayList<ILineDataSet> resultsDataSets = new ArrayList<>();
+            resultsDataSets.add(resultsLds);
+            LineData resultsData = new LineData(resultsDataSets);
+            resultsLineChart.setData(resultsData);
         }
-        bmiLineChart.animateX(1500);
-        Legend legend = bmiLineChart.getLegend();
+        resultsLineChart.animateX(1500);
+        Legend legend = resultsLineChart.getLegend();
         legend.setForm(Legend.LegendForm.LINE);
 
         /*
@@ -444,7 +528,7 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
         lineDataSet2.setColor(Color.RED);
         lineDataSets.add(lineDataSet1);
         lineDataSets.add(lineDataSet2);
-        bmiLineChart.setData(new LineData(lineDataSets));
+        resultsLineChart.setData(new LineData(lineDataSets));
         */
         /** ------------!!!!!!!!!!!!!!!!!!!!!!----------------- */
         /** ------------- GRAPH PART - END ------------------ */
@@ -499,252 +583,6 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
         iShare.putExtra(Intent.EXTRA_TEXT, shareSub);
         startActivity(Intent.createChooser(iShare, "Share your health results via"));
     }
-
-    /** !!!!!!!!!!!!!!!! AZURE CHUNK -- START !!!!!!!!!!!!!!!!!!!!!!!!! */
-    private void refreshItemsFromTable() {
-
-        // Get the items that weren't marked as completed and add them in the
-        // adapter
-
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>(){
-            @Override
-            protected Void doInBackground(Void... params) {
-
-                try {
-                    final List<ActivityTable> results = refreshItemsFromMobileServiceTable();
-
-                    //Offline Sync
-                    //final List<ActivityTable> results = refreshItemsFromMobileServiceTableSyncTable();
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            //mAdapter.clear();
-
-                            /*for (ActivityTable item : results) {
-                                mAdapter.add(item);
-                            }*/
-                        }
-                    });
-                } catch (final Exception e){
-                    createAndShowDialogFromTask(e, "Error");
-                }
-
-                return null;
-            }
-        };
-
-        runAsyncTask(task);
-    }
-    private List<ActivityTable> refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException, MobileServiceException {
-        //return mActivityTable.where().field("deleted").eq(val(false)).orderBy("createdAt", QueryOrder.Descending).execute().get();
-        return mActivityTable.orderBy("createdAt", QueryOrder.Descending).execute().get();
-    }
-
-    // NEW LISTS
-    private List<ActivityTable> getBmiFromMobileService() throws ExecutionException, InterruptedException{
-        return mActivityTable.where().field("bmi").gt(0).select("bmi").orderBy("createdAt", QueryOrder.Ascending).execute().get();
-    }
-    private List<ActivityTable> getPainIntensityFromMobileService() throws ExecutionException, InterruptedException{
-        return mActivityTable.select("pain_intensity").execute().get();
-    }
-    private List<ActivityTable> getHeartRatesFromMobileService() throws ExecutionException, InterruptedException{
-        return mActivityTable.where().field("heart_rate").gt(0).select("heart_rate").execute().get();
-    }
-
-    // DOESN'T WORK
-    /*private void collectITEMSFROMTABLE() {
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-                    final List<ActivityTable> bmiResults = getBmiFromMobileService();
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            BMI_COLLECTION.clear();
-
-                            for (ActivityTable result : bmiResults) {
-                                BMI_COLLECTION.add(result);
-                            }
-                        }
-                    });
-                } catch (final Exception e){
-                    createAndShowDialog(e, "Error");
-                }
-
-                return null;
-            }
-        };
-
-        runAsyncTask(task);
-    }*/
-
-    //Offline Sync
-    /**
-     * Refresh the list with the items in the Mobile Service Sync Table
-     */
-    /*private List<ActivityTable> refreshItemsFromMobileServiceTableSyncTable() throws ExecutionException, InterruptedException {
-        //sync the data
-        sync().get();
-        //Query query = QueryOperations.field("complete").
-        //        eq(val(false));
-        Query query = QueryOperations.field("deleted").eq(val(false)).orderBy("createdAt",QueryOrder.Descending);
-        return mActivityTable.read(query).get();
-    }*/
-
-    private AsyncTask<Void, Void, Void> initLocalStore() throws MobileServiceLocalStoreException, ExecutionException, InterruptedException {
-
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-
-                    MobileServiceSyncContext syncContext = mClient.getSyncContext();
-
-                    if (syncContext.isInitialized())
-                        return null;
-
-                    SQLiteLocalStore localStore = new SQLiteLocalStore(mClient.getContext(), "OfflineStore", null, 1);
-
-                    Map<String, ColumnDataType> tableDefinition = new HashMap<String, ColumnDataType>();
-                    tableDefinition.put("id", ColumnDataType.String);
-                    tableDefinition.put("deleted", ColumnDataType.Boolean);
-                    tableDefinition.put("activity_title", ColumnDataType.String);
-                    tableDefinition.put("pain_intensity", ColumnDataType.Real);
-                    tableDefinition.put("bodytemperature_celsius", ColumnDataType.Real);
-                    tableDefinition.put("bodytemperature_fahrenheit", ColumnDataType.Real);
-                    tableDefinition.put("activity_description", ColumnDataType.String);
-                    tableDefinition.put("activity_location", ColumnDataType.String);
-                    tableDefinition.put("weight_lbs", ColumnDataType.Real);
-                    tableDefinition.put("weight_kg", ColumnDataType.Real);
-                    tableDefinition.put("medication_brand", ColumnDataType.String);
-                    tableDefinition.put("medication_dosage", ColumnDataType.String);
-                    tableDefinition.put("systolic", ColumnDataType.Real);
-                    tableDefinition.put("diastolic", ColumnDataType.Real);
-                    tableDefinition.put("heart_rate", ColumnDataType.Real);
-                    tableDefinition.put("bmi", ColumnDataType.Real);
-
-                    localStore.defineTable("ActivityTable", tableDefinition);
-
-                    SimpleSyncHandler handler = new SimpleSyncHandler();
-
-                    syncContext.initialize(localStore, handler).get();
-
-                } catch (final Exception e) {
-                    createAndShowDialogFromTask(e, "Error");
-                }
-
-                return null;
-            }
-        };
-
-        return runAsyncTask(task);
-    }
-
-    //Offline Sync
-    /**
-     * Sync the current context and the Mobile Service Sync Table
-     * @return
-     */
-    /*private AsyncTask<Void, Void, Void> sync() {
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>(){
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-                    MobileServiceSyncContext syncContext = mClient.getSyncContext();
-                    syncContext.push().get();
-                    mActivityTable.pull(null).get();
-                } catch (final Exception e) {
-                    //createAndShowDialogFromTask(e, "Error"); //Hide error when running offline
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        };
-        return runAsyncTask(task);
-    }*/
-
-    private void createAndShowDialogFromTask(final Exception exception, String title) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                createAndShowDialog(exception, "Error");
-            }
-        });
-    }
-
-    private void createAndShowDialog(Exception exception, String title) {
-        Throwable ex = exception;
-        if(exception.getCause() != null){
-            ex = exception.getCause();
-        }
-        createAndShowDialog(ex.getMessage(), title);
-    }
-
-    private void createAndShowDialog(final String message, final String title) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setMessage(message);
-        builder.setTitle(title);
-        builder.create().show();
-    }
-
-    private AsyncTask<Void, Void, Void> runAsyncTask(AsyncTask<Void, Void, Void> task) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            return task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        } else {
-            return task.execute();
-        }
-    }
-
-    public void refreshList(View view) {
-        refreshItemsFromTable();
-    }
-
-    private class ProgressFilter implements ServiceFilter {
-
-        @Override
-        public ListenableFuture<ServiceFilterResponse> handleRequest(ServiceFilterRequest request, NextServiceFilterCallback nextServiceFilterCallback) {
-
-            final SettableFuture<ServiceFilterResponse> resultFuture = SettableFuture.create();
-
-
-            runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (mProgressBar != null) mProgressBar.setVisibility(ProgressBar.VISIBLE);
-                }
-            });
-
-            ListenableFuture<ServiceFilterResponse> future = nextServiceFilterCallback.onNext(request);
-
-            Futures.addCallback(future, new FutureCallback<ServiceFilterResponse>() {
-                @Override
-                public void onFailure(Throwable e) {
-                    resultFuture.setException(e);
-                }
-
-                @Override
-                public void onSuccess(ServiceFilterResponse response) {
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            if (mProgressBar != null) mProgressBar.setVisibility(ProgressBar.GONE);
-                        }
-                    });
-
-                    resultFuture.set(response);
-                }
-            });
-
-            return resultFuture;
-        }
-    }
-    /** !!!!!!!!!!!!!!!!!!!!!!! AZURE CHUNK -- END !!!!!!!!!!!!!!!!!!!!!! */
 
     @Override
     public void onBackPressed() {
@@ -813,4 +651,40 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
         return true;
     }
 
+    public void switchGraph(View view) {
+        final int graphOptionIndex = ResultsGraphOptions.getResultsGraphOption(getApplicationContext());
+        //final String[] graphOptions = getResources().getStringArray(R.array.graph_options_array);
+
+        AlertDialog.Builder graphDialog = new AlertDialog.Builder(this);
+        graphDialog.setTitle("Choose your options:");
+        graphDialog.setSingleChoiceItems(R.array.graph_options_array, graphOptionIndex, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        graphDialog.setPositiveButton("Apply", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                int selectedPosition = ((AlertDialog)dialog).getListView().getCheckedItemPosition();
+                if(selectedPosition != graphOptionIndex) {
+                    String msg = "Graph will show " + graphOptions[selectedPosition] + " results";
+                    ResultsGraphOptions.setResultsGraphOption(getApplicationContext(), selectedPosition);
+                    Intent iResults = new Intent(ResultsActivity.this, ResultsActivity.class);
+                    startActivity(iResults);
+                    Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    String msg = "No changes have been applied";
+                    Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        graphDialog.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        graphDialog.show();
+    }
 }

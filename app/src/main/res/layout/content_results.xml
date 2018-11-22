@@ -14,21 +14,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"></com.github.mikephil.charting.charts.LineChart>
 
-    <Button
-        android:id="@+id/btnShare"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="44dp"
-        android:onClick="shareClick"
-        android:text="Share your results"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <RelativeLayout
         android:id="@+id/resultsLayout"
         android:layout_width="381dp"
@@ -270,5 +255,30 @@
 
 
     </RelativeLayout>
+
+    <Button
+        android:id="@+id/btnSwitchGraph"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="44dp"
+        android:text="Switch Graph"
+        android:onClick="switchGraph"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/resultsLayout" />
+
+    <Button
+        android:id="@+id/btnShare"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="44dp"
+        android:onClick="shareClick"
+        android:text="Share your results"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/resultsLayout" />
 
 </android.support.constraint.ConstraintLayout>
