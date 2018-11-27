@@ -79,17 +79,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:onClick="runLogin"
                 android:text="@string/action_sign_in"
                 android:textStyle="bold" />
 
         </LinearLayout>
     </ScrollView>
 
-    <TextView
+    <Button
+        android:id="@+id/btnRegister"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_marginTop="50dp"
+        android:onClick="goToRegister"
+        android:text="Register"
+        android:textSize="12sp" />
+
+    <Button
+        android:id="@+id/btnForgotPassword"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:text="Forgot Password?"
+        android:textSize="12dp" />
+
+    <!--TextView
         android:id="@+id/txtForgot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
         android:text="Forgot Password?"
-        android:textAlignment="center" />
+        android:textAlignment="center" /-->
 </LinearLayout>
