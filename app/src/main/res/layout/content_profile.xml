@@ -211,6 +211,7 @@
             android:ems="10"
             android:inputType="date"
             android:textSize="14sp"
+            android:hint="yyyy-mm-dd"
             android:layout_below="@+id/txtSq3Answer"
             android:layout_alignEnd="@+id/txtSq3Answer" />
 
@@ -231,7 +232,7 @@
             android:layout_alignStart="@+id/txtBirthdate"
             android:layout_below="@+id/txtBirthdate"
             android:ems="10"
-            android:inputType="number"
+            android:inputType="numberDecimal"
              />
 
         <Spinner
@@ -293,7 +294,7 @@
             android:layout_alignStart="@+id/txtFeet"
             android:layout_below="@+id/txtFeet"
             android:ems="10"
-            android:inputType="number"
+            android:inputType="numberDecimal"
             android:textSize="12sp" />
 
         <Button

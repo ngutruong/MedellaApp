@@ -2,7 +2,9 @@ package com.medella.android.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -10,6 +12,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,12 +21,32 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.medella.android.R;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.regex.Pattern;
 
-public class ProfileActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class ProfileActivity extends AppCompatActivity {
+
+    private EditText nameInput, emailInput, passwordInput, confirmPassword, securityAnswer1,
+    securityAnswer2, securityAnswer3, birthdateInput, heightInput, feetInput, inchesInput;
+    private Spinner heightSpin, spSecurityQuestion1, spSecurityQuestion2, spSecurityQuestion3;
+    private TextView feetLabel, inchesLabel;
+
+    private boolean isHeightChecked;
+    
+    private Connection con;
+    private RegisterTask mRegisterTask = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,22 +55,30 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
 
+        nameInput = findViewById(R.id.txtNameEdit);
+        emailInput = findViewById(R.id.txtEmailEdit);
+        passwordInput = findViewById(R.id.txtCreatePassword);
+        confirmPassword = findViewById(R.id.txtConfirmEdit);
+        spSecurityQuestion1 = findViewById(R.id.sq1Spinner);
+        spSecurityQuestion2 = findViewById(R.id.sq2Spinner);
+        spSecurityQuestion3 = findViewById(R.id.sq3Spinner);
+        securityAnswer1 = findViewById(R.id.txtSq1Answer);
+        securityAnswer2 = findViewById(R.id.txtSq2Answer);
+        securityAnswer3 = findViewById(R.id.txtSq3Answer);
+        birthdateInput = findViewById(R.id.txtBirthdate);
+        heightInput = findViewById(R.id.txtHeight);
+        feetInput = findViewById(R.id.txtFeet);
+        inchesInput = findViewById(R.id.txtInches);
+        heightSpin = findViewById(R.id.heightSpinner);
+        feetLabel = findViewById(R.id.feetText);
+        inchesLabel = findViewById(R.id.inchesText);
         CheckBox feetAndInches = findViewById(R.id.chkFeetInches);
-        final EditText editHeight = findViewById(R.id.txtHeight);
-        final Spinner spinHeight = findViewById(R.id.heightSpinner);
-        final EditText editFeet = findViewById(R.id.txtFeet);
-        final EditText editInches = findViewById(R.id.txtInches);
-        final TextView feetLabel = findViewById(R.id.feetText);
-        final TextView inchesLabel = findViewById(R.id.inchesText);
 
-        editFeet.setVisibility(View.GONE);
-        editInches.setVisibility(View.GONE);
+        isHeightChecked = false;
+
+        feetInput.setVisibility(View.GONE);
+        inchesInput.setVisibility(View.GONE);
         feetLabel.setVisibility(View.GONE);
         inchesLabel.setVisibility(View.GONE);
 
@@ -55,35 +86,37 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if(isChecked){
-                    editHeight.setVisibility(View.GONE);
-                    spinHeight.setVisibility(View.GONE);
+                    heightInput.setVisibility(View.GONE);
+                    heightSpin.setVisibility(View.GONE);
 
-                    editFeet.setVisibility(View.VISIBLE);
-                    editInches.setVisibility(View.VISIBLE);
+                    feetInput.setVisibility(View.VISIBLE);
+                    inchesInput.setVisibility(View.VISIBLE);
                     feetLabel.setVisibility(View.VISIBLE);
                     inchesLabel.setVisibility(View.VISIBLE);
 
-                    editHeight.setText("");
+                    heightInput.setText("");
+
+                    isHeightChecked = true;
                 }
                 else{
-                    editHeight.setVisibility(View.VISIBLE);
-                    spinHeight.setVisibility(View.VISIBLE);
+                    heightInput.setVisibility(View.VISIBLE);
+                    heightSpin.setVisibility(View.VISIBLE);
 
-                    editFeet.setVisibility(View.GONE);
-                    editInches.setVisibility(View.GONE);
+                    feetInput.setVisibility(View.GONE);
+                    inchesInput.setVisibility(View.GONE);
                     feetLabel.setVisibility(View.GONE);
                     inchesLabel.setVisibility(View.GONE);
 
-                    editFeet.setText("");
-                    editInches.setText("");
+                    feetInput.setText("");
+                    inchesInput.setText("");
+
+                    isHeightChecked = false;
                 }
             }
         });
-
-        NavigationView navigationView = findViewById(R.id.nav_view_profile);
-        navigationView.setNavigationItemSelectedListener(this);
     }
 
+    //This is a regular expression to validate user's e-mail address
     public static final Pattern EMAIL_PATTERN = Pattern.compile(
             "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
                     "\\@" +
@@ -92,24 +125,14 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                     "\\." +
                     "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
                     ")+"
-    ); //This is a regular expression to validate user's e-mail address
+    );
+
+    //This is a regular expression to validate birth date format
+    public static final Pattern BIRTHDATE_PATTERN = Pattern.compile("^\\d{4}-\\d{2}-\\d{2}$");
 
     private static String collectErrors = "";
 
     public void nextClick(View view) {
-        EditText nameInput = findViewById(R.id.txtNameEdit);
-        EditText emailInput = findViewById(R.id.txtEmailEdit);
-        EditText passwordInput = findViewById(R.id.txtCreatePassword);
-        EditText confirmPassword = findViewById(R.id.txtConfirmEdit);
-        EditText securityAnswer1 = findViewById(R.id.txtSq1Answer);
-        EditText securityAnswer2 = findViewById(R.id.txtSq2Answer);
-        EditText securityAnswer3 = findViewById(R.id.txtSq3Answer);
-        EditText birthdateInput = findViewById(R.id.txtBirthdate);
-        EditText heightInput = findViewById(R.id.txtHeight);
-        EditText feetInput = findViewById(R.id.txtFeet);
-        EditText inchesInput = findViewById(R.id.txtInches);
-        Spinner heightSpin = findViewById(R.id.heightSpinner);
-
         String checkNameInput = nameInput.getText().toString();
         String checkEmailInput = emailInput.getText().toString();
         String checkPasswordInput = passwordInput.getText().toString();
@@ -117,7 +140,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         String checkAnswer1Input = securityAnswer1.getText().toString();
         String checkAnswer2Input = securityAnswer2.getText().toString();
         String checkAnswer3Input = securityAnswer3.getText().toString();
-        String checkBirthdateInput; //MUST FIND BIRTHDATE VALIDATION
+        String checkBirthdateInput = birthdateInput.getText().toString();
         String checkHeightInput = heightInput.getText().toString();
         String checkFeetInput = feetInput.getText().toString();
         String checkInchesInput = inchesInput.getText().toString();
@@ -183,18 +206,55 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 collectErrors+="- Answer for Security Question 3 is less than 5 characters.\n";
             }
 
+            /** BIRTH DATE VALIDATION IN PROFILE PAGE */
+            if(!BIRTHDATE_PATTERN.matcher(checkBirthdateInput).matches()){
+                collectErrors+="- Birth date format does not match.\n";
+            }
+            else {
+                String[] birthDateArray = checkBirthdateInput.split("-");
+                int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+                int birthYear = Integer.parseInt(birthDateArray[0]);
+                if(currentYear - birthYear < 13) {
+                    collectErrors+="- You must be 13 years of age or older to register.";
+                }
+                else if(currentYear - birthYear > 111){
+                    collectErrors+="- Birth date is invalid.";
+                }
+                else{
+                    if(!isDateValid(checkBirthdateInput)){
+                        collectErrors+="- Birth date is invalid.";
+                    }
+                }
+            }
+
             /** HEIGHT VALIDATION IN PROFILE PAGE */
-            if(heightSpin.getSelectedItem().toString().equals("cm.") && Double.parseDouble(checkHeightInput) < 50){
-                collectErrors+="- Height cannot be less than 50 cm.";
+            if(!isHeightChecked) {
+                if(checkHeightInput.isEmpty()){
+                    collectErrors += "- Height cannot be empty.";
+                }
+                else {
+                    if (heightSpin.getSelectedItem().toString().equals("cm.") && Double.parseDouble(checkHeightInput) < 50) {
+                        collectErrors += "- " + checkHeightInput + " cm. is not a valid height.";
+                    } else if (heightSpin.getSelectedItem().toString().equals("m.") && Double.parseDouble(checkHeightInput) < 0.5) {
+                        collectErrors += "- " + checkHeightInput + " m. is not a valid height.";
+                    } else if (heightSpin.getSelectedItem().toString().equals("in.") && Double.parseDouble(checkHeightInput) < 19.685) {
+                        collectErrors += "- " + checkHeightInput + " in. is not a valid height.";
+                    }
+                }
             }
-            else if(heightSpin.getSelectedItem().toString().equals("m.") && Double.parseDouble(checkHeightInput) < 0.5){
-                collectErrors+="- Height cannot be less than 0.5 m.";
-            }
-            else if(heightSpin.getSelectedItem().toString().equals("in.") && Double.parseDouble(checkHeightInput) < 19.685){
-                collectErrors+="- Height cannot be less than 20 in.";
-            }
-            else if(Double.parseDouble(checkInchesInput) > 12){ //HAVING ERRORS
-                collectErrors+="- Inches are not valid.";
+            else {
+                if(checkFeetInput.isEmpty()){
+                    collectErrors += "- Feet cannot be empty.\n";
+                }
+                else if(Double.parseDouble(checkFeetInput) < 2){
+                    collectErrors += "- Feet is invalid.\n";
+                }
+                if(checkInchesInput.isEmpty()){
+                    collectErrors += "- Inches cannot be empty. If inches are 0, please enter 0.";
+                }
+                else if(Double.parseDouble(checkInchesInput) >= 12){
+                    collectErrors += "- Inches cannot be 12 or higher.";
+                }
             }
         }
         catch (Exception ex){
@@ -202,32 +262,149 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         }
 
         if(collectErrors.trim().length() > 0) {
+            //isSuccess = false;
+
             errorDialog.setTitle("Error")
                     .setMessage("Registration is not complete due to the following errors:\n\n" + collectErrors)
                     .show();
             collectErrors = ""; //Reset errors
         }
         else{
-            errorDialog.setTitle("Registration Success")
-                    .setMessage("Thank you.")
-                    .show();
+            Double getHeightCm = 0.0;
+            Double getHeightM = 0.0;
+            Double getHeightIn = 0.0;
+            Double ftinFeet = 0.0;
+            Double ftinInches = 0.0;
+
+            if(!isHeightChecked){
+                Double heightFromInput = Double.parseDouble(heightInput.getText().toString());
+                if(heightSpin.getSelectedItemId() == 0){
+                    getHeightCm = heightFromInput;
+                    getHeightM = new ConvertCentimeters().convertCmToM(heightFromInput);
+                    getHeightIn = new ConvertCentimeters().convertCmToIn(heightFromInput);
+                    ftinFeet = new ConvertFeetAndInches().ftinCentimeters_ft(heightFromInput);
+                    ftinInches = new ConvertFeetAndInches().ftinCentimeters_in(heightFromInput);
+                }
+                else if(heightSpin.getSelectedItemId() == 1){
+                    getHeightM = heightFromInput;
+                    getHeightCm = new ConvertMeters().convertMToCm(heightFromInput);
+                    getHeightIn = new ConvertMeters().convertMToIn(heightFromInput);
+                    ftinFeet = new ConvertFeetAndInches().ftinMeters_ft(heightFromInput);
+                    ftinInches = new ConvertFeetAndInches().ftinMeters_in(heightFromInput);
+                }
+                else if(heightSpin.getSelectedItemId() == 2){
+                    getHeightIn = heightFromInput;
+                    getHeightCm = new ConvertInches().convertInToCm(heightFromInput);
+                    getHeightM = new ConvertInches().convertInToM(heightFromInput);
+                    ftinFeet = new ConvertFeetAndInches().ftinInches_ft(heightFromInput);
+                    ftinInches = new ConvertFeetAndInches().ftinInches_in(heightFromInput);
+                }
+            }
+            else{
+                Double feetFromInput = Double.parseDouble(feetInput.getText().toString());
+                Double inchesFromInput = Double.parseDouble(inchesInput.getText().toString());
+                ftinFeet = feetFromInput;
+                ftinInches = inchesFromInput;
+                getHeightCm = new ConvertFeetAndInches().convertFtInToCm(feetFromInput, inchesFromInput);
+                getHeightM = new ConvertFeetAndInches().convertFtInToM(feetFromInput, inchesFromInput);
+                getHeightIn = new ConvertFeetAndInches().convertFtInToIn(feetFromInput, inchesFromInput);
+            }
+
+            String getSecurityQuestion1 = spSecurityQuestion1.getSelectedItem().toString();
+            String getSecurityQuestion2 = spSecurityQuestion2.getSelectedItem().toString();
+            String getSecurityQuestion3 = spSecurityQuestion3.getSelectedItem().toString();
+            RegisterTask registerTask = new RegisterTask(checkNameInput, checkEmailInput, checkPasswordInput,
+                    getSecurityQuestion1, getSecurityQuestion2, getSecurityQuestion3, checkAnswer1Input,
+                    checkAnswer2Input, checkAnswer3Input, getHeightCm, getHeightM, getHeightIn, ftinFeet,
+                    ftinInches, checkBirthdateInput);
+            registerTask.execute("");
+        }
+    }
+
+    private class ConvertCentimeters {
+        Double convertCmToM(Double cm){
+            return cm / 100;
+        }
+        Double convertCmToIn(Double cm){
+            return cm * 0.3937;
+        }
+    }
+    private class ConvertInches {
+        Double convertInToM(Double in){
+            return (in/0.3937)/100;
+        }
+        Double convertInToCm(Double in){
+            return in / 0.3937;
+        }
+    }
+    private class ConvertMeters {
+        Double convertMToCm(Double m){
+            return m * 100;
+        }
+        Double convertMToIn(Double m) {
+            return (m*100)*0.3937;
+        }
+    }
+    private class ConvertFeetAndInches {
+        Double convertFtInToCm(Double ft, Double in){
+            Double ftCm = ft * 30.48;
+            Double inCm = new ConvertInches().convertInToCm(in);
+            return ftCm + inCm;
+        }
+        Double convertFtInToM(Double ft, Double in){
+            Double ftM = ft * 0.3048;
+            Double inM = new ConvertInches().convertInToM(in);
+            return ftM + inM;
+        }
+        Double convertFtInToIn(Double ft, Double in){
+            Double ftIn = ft * 12;
+            return ftIn + in;
+        }
+        // Reverse
+        Double ftinCentimeters_ft(Double cm){
+            String feetDecimal = String.valueOf(cm/30.48);
+            return Double.valueOf(feetDecimal.substring(0, feetDecimal.indexOf(".")));
+        }
+        Double ftinCentimeters_in(Double cm){
+            String feetDecimal = String.valueOf(cm/30.48);
+            Double feetAfterDecimalPoint = Double.valueOf(feetDecimal.substring(feetDecimal.indexOf(".")));
+            return feetAfterDecimalPoint * 12;
+        }
+        Double ftinMeters_ft(Double m){
+            String feetDecimal = String.valueOf(m/0.3048);
+            return Double.valueOf(feetDecimal.substring(0, feetDecimal.indexOf(".")));
+        }
+        Double ftinMeters_in(Double m){
+            String feetDecimal = String.valueOf(m/0.3048);
+            Double feetAfterDecimalPoint = Double.valueOf(feetDecimal.substring(feetDecimal.indexOf(".")));
+            return feetAfterDecimalPoint * 12;
+        }
+        Double ftinInches_ft(Double in){
+            String feetDecimal = String.valueOf(in/12);
+            return Double.valueOf(feetDecimal.substring(0, feetDecimal.indexOf(".")));
+        }
+        Double ftinInches_in(Double in){
+            //String feetDecimal = String.valueOf(in/12);
+            //Double wholeInches =  12.00 * Double.valueOf(feetDecimal.substring(0, feetDecimal.indexOf(".")));
+            Double wholeInches = ftinInches_ft(in) * 12;
+            return in - wholeInches;
+        }
+    }
+
+    private static boolean isDateValid(String date)
+    {
+        try {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            df.setLenient(false);
+            df.parse(date);
+            return true;
+        } catch (ParseException e) {
+            return false;
         }
     }
 
     @Override
     public void onBackPressed() {
-        EditText nameInput = findViewById(R.id.txtNameEdit);
-        EditText emailInput = findViewById(R.id.txtEmailEdit);
-        EditText passwordInput = findViewById(R.id.txtCreatePassword);
-        EditText confirmPassword = findViewById(R.id.txtConfirmEdit);
-        EditText securityAnswer1 = findViewById(R.id.txtSq1Answer);
-        EditText securityAnswer2 = findViewById(R.id.txtSq2Answer);
-        EditText securityAnswer3 = findViewById(R.id.txtSq3Answer);
-        EditText birthdateInput = findViewById(R.id.txtBirthdate);
-        EditText heightInput = findViewById(R.id.txtHeight);
-        EditText feetInput = findViewById(R.id.txtFeet);
-        EditText inchesInput = findViewById(R.id.txtInches);
-
         boolean emptyName = nameInput.getText().toString().trim().isEmpty();
         boolean emptyEmail = emailInput.getText().toString().trim().isEmpty();
         boolean emptyPassword = passwordInput.getText().toString().trim().isEmpty();
@@ -236,7 +413,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         boolean emptySecondAnswer = securityAnswer2.getText().toString().trim().isEmpty();
         boolean emptyThirdAnswer = securityAnswer3.getText().toString().trim().isEmpty();
         boolean emptyBirthdate; //MUST FIND BIRTHDATE VALIDATION--need to be boolean
-        boolean emptyHeight = heightInput.getText().toString().trim().isEmpty();
+        boolean emptyHeight = heightInput.getText().toString().trim().isEmpty(); //CONFIGURE HEIGHT
         boolean emptyFeet = feetInput.getText().toString().trim().isEmpty();
         boolean emptyInches = inchesInput.getText().toString().trim().isEmpty();
 
@@ -276,186 +453,190 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.menu_profile, menu); //Cancel out 3-dot menu in Health Activity page
-        return true;
-    }
+    public class RegisterTask extends AsyncTask<String, String, String> {
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        private final String mName, mEmail, mPassword, mSecQues1, mSecQues2, mSecQues3, mSecAns1,
+                mSecAns2, mSecAns3, mBirthdate;
+        private Double mHeightCm, mHeightM, mHeightIn, mHeight2Feet, mHeight2Inches;
+        String registerMsg = "";
+        Boolean isSuccess = false;
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        RegisterTask(String name, String email, String password, String sq1, String sq2, String sq3,
+                     String sa1, String sa2, String sa3, Double cm, Double m, Double in, Double ftin_ft,
+                     Double ftin_in, String birthdate){
+            mName = name;
+            mEmail = email;
+            mPassword = password;
+            mSecQues1 = sq1;
+            mSecQues2 = sq2;
+            mSecQues3 = sq3;
+            mSecAns1 = sa1;
+            mSecAns2 = sa2;
+            mSecAns3 = sa3;
+            mHeightCm = cm;
+            mHeightM = m;
+            mHeightIn = in;
+            mHeight2Feet = ftin_ft;
+            mHeight2Inches = ftin_in;
+            mBirthdate = birthdate;
+        }
+
+        /*@Override
+        protected void onPostExecute(final Boolean success) {
+            mAuthTask = null;
+            showProgress(false);
+
+            if (success) {
+                finish();
+            } else {
+                mPasswordView.setError(getString(R.string.error_incorrect_password));
+                mPasswordView.requestFocus();
+            }
+        }*/
+
+        protected void onPreExecute(){
+            //mProgressView.setVisibility(View.VISIBLE);
+        }
+        @Override
+        protected void onPostExecute(String r){
+            if(isSuccess){
+                AlertDialog.Builder successDialog = new AlertDialog.Builder(ProfileActivity.this);
+                successDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent iLogin = new Intent(ProfileActivity.this, LoginActivity.class);
+                        startActivity(iLogin);
+                    }
+                });
+                successDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        Intent iLogin = new Intent(ProfileActivity.this, LoginActivity.class);
+                        startActivity(iLogin);
+                    }
+                });
+                successDialog.setTitle("Registration Successful").setMessage(registerMsg);
+                successDialog.show();
+            }
+            else{
+                AlertDialog.Builder errorDialog = new AlertDialog.Builder(ProfileActivity.this);
+                errorDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                errorDialog.setTitle("Registration Error")
+                        .setMessage(registerMsg)
+                        .show();
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... params){
+            try{
+                con = connectionClass();
+                if(con==null){
+                    registerMsg = "Please check your internet connection";
+                    isSuccess = false;
+                }
+                else{
+                    String queryInsertProfile = "insert into profiletable(profile_name, email, profile_pw, security_question1, security_question2, security_question3, security_answer1, security_answer2, security_answer3, height_cm, height_m, height_in, height2_ft, height2_in, birthdate) values";
+
+                    String querySelectProfile = "select * from profiletable where ";
+                    String queryWhereEmail = "email = \'" + mEmail + "\'";
+                    String checkEmailQuery = querySelectProfile + queryWhereEmail;
+                    Statement checkEmailStatement = con.createStatement();
+                    ResultSet rsCheckEmail = checkEmailStatement.executeQuery(checkEmailQuery);
+                    if(rsCheckEmail.next()){
+                        registerMsg = "E-mail address already exists. Please login with the existing e-mail address, or register with a different address.";
+                        isSuccess = false;
+                        con.close();
+                    }
+                    else {
+                        String queryInsertName = "\'"+mName+"\',";
+                        String queryInsertEmail = "\'"+mEmail+"\',";
+                        byte[] encodedString = Base64.encode(mPassword.getBytes(), Base64.NO_WRAP);
+                        String queryInsertPassword = "\'" + new String(encodedString) + "\',";
+                        String querySecQues1 = "\'"+mSecQues1+"\',";
+                        String querySecQues2 = "\'"+mSecQues2+"\',";
+                        String querySecQues3 = "\'"+mSecQues3+"\',";
+                        String querySecAns1 = "\'"+mSecAns1+"\',";
+                        String querySecAns2 = "\'"+mSecAns2+"\',";
+                        String querySecAns3 = "\'"+mSecAns3+"\',";
+                        String queryCm = "\'"+mHeightCm+"\',";
+                        String queryM = "\'"+mHeightM+"\',";
+                        String queryIn = "\'"+mHeightIn+"\',";
+                        String queryFtin_ft = "\'"+mHeight2Feet+"\',";
+                        String queryFtin_in = "\'"+mHeight2Inches+"\',";
+                        String queryBirthdate = "\'"+mBirthdate+"\'"; // Last value for INSERT statement
+
+                        String queryInsertValues = "(" + queryInsertName + queryInsertEmail +
+                                queryInsertPassword + querySecQues1 + querySecQues2 + querySecQues3 +
+                                querySecAns1 + querySecAns2 + querySecAns3 + queryCm + queryM + queryIn + queryFtin_ft + queryFtin_in + queryBirthdate + ")";
+
+                        Statement insertAccount = con.createStatement();
+                        insertAccount.executeUpdate(queryInsertProfile + queryInsertValues);
+                        registerMsg = "You have successfully registered your account, " + mName + ". Please login.";
+                        isSuccess = true;
+                        con.close();
+                    }
+                }
+            } catch (SQLException e) {
+                registerMsg = "We hit a snag. Please check back later.";
+                isSuccess = false;
+                e.printStackTrace();
+            }
+            return registerMsg;
+        }
+
+        /*@Override
+        protected Boolean doInBackground(Void... params) {
+            // TODO: attempt authentication against a network service.
+
+            try {
+                // Simulate network access.
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                return false;
+            }
+
+            for (String credential : DUMMY_CREDENTIALS) {
+                String[] pieces = credential.split(":");
+                if (pieces[0].equals(mEmail)) {
+                    // Account exists, return true if the password matches.
+                    return pieces[1].equals(mPassword);
+                }
+            }
+
+            // TODO: register the new account here.
             return true;
-        }
+        }*/
 
-        return super.onOptionsItemSelected(item);
+        /*@Override
+        protected void onCancelled() {
+            mAuthTask = null;
+            showProgress(false);
+        }*/
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        EditText nameInput = findViewById(R.id.txtNameEdit);
-        EditText emailInput = findViewById(R.id.txtEmailEdit);
-        EditText passwordInput = findViewById(R.id.txtCreatePassword);
-        EditText confirmPassword = findViewById(R.id.txtConfirmEdit);
-        EditText securityAnswer1 = findViewById(R.id.txtSq1Answer);
-        EditText securityAnswer2 = findViewById(R.id.txtSq2Answer);
-        EditText securityAnswer3 = findViewById(R.id.txtSq3Answer);
-        EditText birthdateInput = findViewById(R.id.txtBirthdate);
-        EditText heightInput = findViewById(R.id.txtHeight);
-        EditText feetInput = findViewById(R.id.txtFeet);
-        EditText inchesInput = findViewById(R.id.txtInches);
-
-        boolean emptyName = nameInput.getText().toString().trim().isEmpty();
-        boolean emptyEmail = emailInput.getText().toString().trim().isEmpty();
-        boolean emptyPassword = passwordInput.getText().toString().trim().isEmpty();
-        boolean emptyConfirm = confirmPassword.getText().toString().trim().isEmpty();
-        boolean emptyFirstAnswer = securityAnswer1.getText().toString().trim().isEmpty();
-        boolean emptySecondAnswer = securityAnswer2.getText().toString().trim().isEmpty();
-        boolean emptyThirdAnswer = securityAnswer3.getText().toString().trim().isEmpty();
-        boolean emptyBirthdate; //MUST FIND BIRTHDATE VALIDATION--need to be boolean
-        boolean emptyHeight = heightInput.getText().toString().trim().isEmpty();
-        boolean emptyFeet = feetInput.getText().toString().trim().isEmpty();
-        boolean emptyInches = inchesInput.getText().toString().trim().isEmpty();
-
-        final Intent iHome = new Intent(ProfileActivity.this, HomeActivity.class);
-        final Intent iHealth = new Intent(ProfileActivity.this, HealthActivity.class);
-        final Intent iResults = new Intent(ProfileActivity.this, ResultsActivity.class);
-        final Intent iList = new Intent(ProfileActivity.this, ListActivity.class);
-        final Intent iSettings = new Intent(ProfileActivity.this, SettingsActivity.class);
-
-        //Warning message when user selects an option from navigation drawer
-        AlertDialog.Builder warningDialog = new AlertDialog.Builder(this);
-        //Registration page will stay when user clicks No
-        warningDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        });
-        warningDialog.setTitle("Registration Incomplete")
-                .setMessage("Are you sure you want to exit?");
-
-        //DRAWER NAVIGATION IN HOME PAGE
-        if (id == R.id.nav_amHome) {
-            //Will redirect to Home page when user selects Yes
-            warningDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    startActivity(iHome);
-                }
-            });
-
-            /**
-             * Warning message must show when one or more fields are not empty
-             * Validations for birth date, feet and inches are not available yet
-             */
-            if(!emptyName || !emptyEmail || !emptyPassword || !emptyConfirm || !emptyFirstAnswer || !emptySecondAnswer || !emptyThirdAnswer || !emptyHeight) {
-                warningDialog.show(); //Warning message will show when user selects the Home option
-            }
-            else{
-                startActivity(iHome);  //Will redirect to Home page when all fields are empty
-            }
-        } else if (id == R.id.nav_amActivity) {
-            // MAY NOT SHOW HEALTH ACTIVITY OPTION DUE TO NOT BEING LOGIN
-
-            //Will redirect to Activity page when user clicks Yes
-            warningDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    startActivity(iHealth);
-                }
-            });
-
-            /**
-             * Warning message must show when one or more fields are not empty
-             * Validations for birth date, feet and inches are not available yet
-             */
-            if(!emptyName || !emptyEmail || !emptyPassword || !emptyConfirm || !emptyFirstAnswer || !emptySecondAnswer || !emptyThirdAnswer || !emptyHeight) {
-                warningDialog.show(); //Warning message will show when user selects the Activity option
-            }
-            else{
-                startActivity(iHealth);  //Will redirect to Activity page when all fields are empty
-            }
-        } else if (id == R.id.nav_amList) {
-            // MAY NOT SHOW LIST OPTION DUE TO NOT BEING LOGIN
-
-            //Will redirect to Results page when user clicks Yes
-            warningDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    startActivity(iList);
-                }
-            });
-
-            /**
-             * Warning message must show when one or more fields are not empty
-             * Validations for birth date, feet and inches are not available yet
-             */
-            if(!emptyName || !emptyEmail || !emptyPassword || !emptyConfirm || !emptyFirstAnswer || !emptySecondAnswer || !emptyThirdAnswer || !emptyHeight) {
-                warningDialog.show(); //Warning message will show when user selects the Results option
-            }
-            else{
-                startActivity(iResults);  //Will redirect to Results page when all fields are empty
-            }
-        } else if (id == R.id.nav_amResults) {
-            // MAY NOT SHOW RESULTS OPTION DUE TO NOT BEING LOGIN
-
-            //Will redirect to Results page when user clicks Yes
-            warningDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    startActivity(iResults);
-                }
-            });
-
-            /**
-             * Warning message must show when one or more fields are not empty
-             * Validations for birth date, feet and inches are not available yet
-             */
-            if(!emptyName || !emptyEmail || !emptyPassword || !emptyConfirm || !emptyFirstAnswer || !emptySecondAnswer || !emptyThirdAnswer || !emptyHeight) {
-                warningDialog.show(); //Warning message will show when user selects the Results option
-            }
-            else{
-                startActivity(iResults);  //Will redirect to Results page when all fields are empty
-            }
+    public Connection connectionClass(){
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        Connection connection = null;
+        String connectionURL = null;
+        try{
+            Class.forName("net.sourceforge.jtds.jdbc.Driver");
+            //connectionURL = "jdbc:jtds:sqlserver://medellapp.database.windows.net:1433;database=MedellaData;user=MedellaAdmin@medellapp;password=C0ntrolHe@lth;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+            connectionURL = "jdbc:jtds:sqlserver://medellapp.database.windows.net:1433;DatabaseName=MedellaData;user=MedellaAdmin@medellapp;password=C0ntrolHe@lth;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+            connection = DriverManager.getConnection(connectionURL);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        else if (id == R.id.nav_amSettings){
-            warningDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    startActivity(iSettings);
-                }
-            });
-
-            /**
-             * Warning message must show when one or more fields are not empty
-             * Validations for birth date, feet and inches are not available yet
-             */
-            if(!emptyName || !emptyEmail || !emptyPassword || !emptyConfirm || !emptyFirstAnswer || !emptySecondAnswer || !emptyThirdAnswer || !emptyHeight) {
-                warningDialog.show(); //Warning message will show when user selects the Results option
-            }
-            else{
-                startActivity(iSettings);  //Will redirect to Settings page when all fields are empty
-            }
-        }
-        else if (id == R.id.nav_amLogout) {
-            //Logout is not available at this moment
-            //Logout must not appear while registering account
-        }
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+        return connection;
     }
 }

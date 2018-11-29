@@ -1,53 +1,28 @@
 package com.medella.android.activities;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.StrictMode;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
 
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.text.TextUtils;
 import android.util.Base64;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.medella.android.R;
 
-import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A login screen that offers login via email/password.
@@ -333,7 +308,7 @@ public class LoginActivity extends AppCompatActivity {
         private final String mEmail;
         private final String mPassword;
         String loginMsg = "";
-        String stringTest = "";
+        String profileName = "";
         Boolean isSuccess = false;
 
         UserLoginTask(String email, String password) {
@@ -395,8 +370,8 @@ public class LoginActivity extends AppCompatActivity {
                     Statement stmt = con.createStatement();
                     ResultSet rs = stmt.executeQuery(query);
                     if(rs.next()){
-                        stringTest = rs.getString("profile_name");
-                        loginMsg = "Welcome to Medella, " + stringTest + "!";
+                        profileName = rs.getString("profile_name");
+                        loginMsg = "Welcome to Medella, " + profileName + "!";
                         isSuccess = true;
                         con.close();
                     }
@@ -454,7 +429,6 @@ public class LoginActivity extends AppCompatActivity {
         String connectionURL = null;
         try{
             Class.forName("net.sourceforge.jtds.jdbc.Driver");
-            //connectionURL = "jdbc:jtds:sqlserver://medellapp.database.windows.net:1433;database=MedellaData;user=MedellaAdmin@medellapp;password=C0ntrolHe@lth;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
             connectionURL = "jdbc:jtds:sqlserver://medellapp.database.windows.net:1433;DatabaseName=MedellaData;user=MedellaAdmin@medellapp;password=C0ntrolHe@lth;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
             connection = DriverManager.getConnection(connectionURL);
         } catch (ClassNotFoundException e) {
