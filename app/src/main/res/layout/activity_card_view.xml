@@ -79,6 +79,14 @@
                     android:textSize="12sp" />
 
                 <TextView
+                    android:id="@+id/activity_date_updated_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-condensed"
+                    android:text="Updated: mmm dd yyyy - hh:mm a"
+                    android:textSize="12sp" />
+
+                <TextView
                     android:id="@+id/activity_date_added_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

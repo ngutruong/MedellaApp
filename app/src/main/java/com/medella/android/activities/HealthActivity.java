@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -19,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -30,7 +32,9 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
-import com.medella.android.MedellaOptions;
+import com.medella.android.SaveHealthActivity;
+import com.medella.android.UpdateHealthActivity;
+import com.medella.android.options.MedellaOptions;
 import com.medella.android.R;
 import com.medella.android.list.ActivityTable;
 import com.medella.android.list.ListActivityAdapter;
@@ -44,13 +48,16 @@ import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
 import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncContext;
 import com.microsoft.windowsazure.mobileservices.table.sync.localstore.ColumnDataType;
-import com.microsoft.windowsazure.mobileservices.table.sync.localstore.MobileServiceLocalStoreException;
 import com.microsoft.windowsazure.mobileservices.table.sync.localstore.SQLiteLocalStore;
 import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.SimpleSyncHandler;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.math.RoundingMode;
 import java.net.MalformedURLException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -73,35 +80,17 @@ public class HealthActivity extends AppCompatActivity
     private ListView listViewToDo;
     public boolean areAllInputsValid = false;
     
-    public boolean bodyTemperatureError = true;
-    public boolean systolicError = true;
-    public boolean diastolicError = true;
-    public boolean heartRateError = true;
+    public boolean bodyTemperatureError, systolicError, diastolicError, heartRateError = true;
 
     private MobileServiceClient mClient;
     private MobileServiceTable<ActivityTable> mActivityTable;
 
     private ListActivityAdapter mListActivityAdapter;
-    
-    private EditText etTitle;
-    private EditText etWeight;
+
     @Nullable
-    private EditText etMedicationBrand;
-    @Nullable
-    private EditText etMedicationDosage;
-    @Nullable
-    private EditText etBodyTemperature;
-    private EditText etSystolic;
-    private EditText etDiastolic;
-    @Nullable
-    private EditText etHeartRate;
-    @Nullable
-    private EditText etLocation;
-    private EditText etDescription;
-    private Spinner spWeight;
-    private Spinner spBodyTemperature;
-    private Spinner spMedicationDosage;
-    private Spinner spPainIntensity;
+    private EditText etMedicationBrand, etMedicationDosage, etBodyTemperature, etHeartRate, etLocation;
+    private EditText etTitle, etWeight, etSystolic, etDiastolic, etDescription;
+    private Spinner spWeight, spBodyTemperature, spMedicationDosage, spPainIntensity;
     private ProgressBar mProgressBar;
     private ImageButton ibPickLocation;
     private ImageView imageCameraView;
@@ -109,8 +98,19 @@ public class HealthActivity extends AppCompatActivity
     private GoogleApiClient mGoogleApiClient;
     private int PLACE_PICKER_REQUEST = 1;
 
-    private boolean useLbsUnit;
-    private boolean useCelsiusUnit;
+    private boolean useLbsUnit, useCelsiusUnit;
+    private float useDefaultWeight;
+
+    private String saveTitle, saveMedName, saveLocation, saveDescription;
+    private float saveWeight;
+    private int saveWeightSpin, savePintSpin, saveDoseSpin, saveTempSpin;
+    private float saveDosage, saveTemp, saveSystolic, saveDiastolic, saveHrate;
+    private boolean weightUnitChanged, tempUnitChanged;
+
+    private Button addButton, updateButton;
+
+    private Connection con;
+    private UpdateActivityTask mUpdateTask = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,6 +139,8 @@ public class HealthActivity extends AppCompatActivity
 
         useLbsUnit = MedellaOptions.getPreferredWeightUnit(getApplicationContext());
         useCelsiusUnit = MedellaOptions.getPreferredBodyTemperatureUnit(getApplicationContext());
+
+        useDefaultWeight = MedellaOptions.getDefaultWeight(getApplicationContext());
 
         try {
             // Create the Mobile Service Client instance, using the provided
@@ -181,6 +183,64 @@ public class HealthActivity extends AppCompatActivity
             spPainIntensity = findViewById(R.id.pintSpinner);
             ibPickLocation = findViewById(R.id.btnLocation);
 
+            addButton = findViewById(R.id.btnHfinish);
+            updateButton = findViewById(R.id.btnHupdate);
+
+            if(!UpdateHealthActivity.isUpdate(getApplicationContext())){
+                addButton.setVisibility(View.VISIBLE);
+                updateButton.setVisibility(View.GONE);
+            }
+            else{
+                addButton.setVisibility(View.GONE);
+                updateButton.setVisibility(View.VISIBLE);
+
+                etTitle.setText(UpdateHealthActivity.getTitle(getApplicationContext()));
+                if(useLbsUnit)
+                    etWeight.setText(String.valueOf(UpdateHealthActivity.getWeightLbs(getApplicationContext())));
+                else
+                    etWeight.setText(String.valueOf(UpdateHealthActivity.getWeightKg(getApplicationContext())));
+                spPainIntensity.setSelection((int)(UpdateHealthActivity.getPainIntensity(getApplicationContext()) - 1));
+                etMedicationBrand.setText(UpdateHealthActivity.getMedName(getApplicationContext()));
+                // Medication dose amount and unit
+                if(useCelsiusUnit)
+                    if(UpdateHealthActivity.getTemperatureCels(getApplicationContext()) > 0)
+                        etBodyTemperature.setText(String.valueOf(UpdateHealthActivity.getTemperatureCels(getApplicationContext())));
+                else
+                    if(UpdateHealthActivity.getTemperatureFahr(getApplicationContext()) > 0)
+                        etBodyTemperature.setText(String.valueOf(UpdateHealthActivity.getTemperatureFahr(getApplicationContext())));
+                if(UpdateHealthActivity.getSystolic(getApplicationContext()) > 0)
+                    etSystolic.setText(String.valueOf(UpdateHealthActivity.getSystolic(getApplicationContext())));
+                if(UpdateHealthActivity.getDiastolic(getApplicationContext()) > 0)
+                    etDiastolic.setText(String.valueOf(UpdateHealthActivity.getDiastolic(getApplicationContext())));
+                if(UpdateHealthActivity.getHeartRate(getApplicationContext()) > 0)
+                    etHeartRate.setText(String.valueOf(UpdateHealthActivity.getHeartRate(getApplicationContext())));
+                etLocation.setText(UpdateHealthActivity.getLocation(getApplicationContext()));
+                etDescription.setText(UpdateHealthActivity.getDescription(getApplicationContext()));
+            }
+
+            /**
+             * SAVEHEALTHACTIVITY
+             */
+            // MAY NEED TO REMOVE THIS -- GONNA MOVE IT
+            /*saveTitle = SaveHealthActivity.getSavedTitle(getApplicationContext());
+            saveWeight = SaveHealthActivity.getSavedWeight(getApplicationContext());
+            saveWeightSpin = SaveHealthActivity.getSavedWeightUnit(getApplicationContext());
+            savePintSpin = SaveHealthActivity.getSavedPainIntensity(getApplicationContext());
+            saveMedName = SaveHealthActivity.getSavedMedName(getApplicationContext());
+            saveDosage = SaveHealthActivity.getSavedMedDosage(getApplicationContext());
+            saveDoseSpin = SaveHealthActivity.getSavedMedUnit(getApplicationContext());
+            saveTemp = SaveHealthActivity.getSavedTemperature(getApplicationContext());
+            saveTempSpin = SaveHealthActivity.getSavedTempUnit(getApplicationContext());
+            saveSystolic = SaveHealthActivity.getSavedSystolic(getApplicationContext());
+            saveDiastolic = SaveHealthActivity.getSavedDiastolic(getApplicationContext());
+            saveHrate = SaveHealthActivity.getSavedHeartRate(getApplicationContext());
+            saveLocation = SaveHealthActivity.getSavedLocation(getApplicationContext());
+            saveDescription = SaveHealthActivity.getSavedDescription(getApplicationContext());
+            weightUnitChanged = false;
+            tempUnitChanged = false;
+
+            spMedicationDosage.setSelection(15);*/
+
             // Set selections for Weight and Temperature spinners based on user's preferences from Settings
             if(useLbsUnit)
                 spWeight.setSelection(0);
@@ -190,6 +250,14 @@ public class HealthActivity extends AppCompatActivity
                 spBodyTemperature.setSelection(0);
             else
                 spBodyTemperature.setSelection(1);
+
+            if(useDefaultWeight > 0)
+                etWeight.setText(String.valueOf(useDefaultWeight));
+
+            /**
+             * SAVEHEALTHACTIVITY
+             */
+            //getSavedDetailsAfterIntent();
 
             // Create an adapter to bind the items with the view
             mListActivityAdapter = new ListActivityAdapter(this, R.layout.activity_card_view);
@@ -264,37 +332,15 @@ public class HealthActivity extends AppCompatActivity
     private static String collectErrors = "";
 
     public void cameraClick(View view) {
+        /**
+         * SAVEHEALTHACTIVITY
+         */
+        //saveDetailsBeforeIntent();
         Intent iCamera = new Intent(this, CameraActivity.class);
         startActivityForResult(iCamera,0);
     }
 
-    public void finishClick(View view) {
-
-        // Error dialog when user enters invalid input
-        AlertDialog.Builder errorDialog = new AlertDialog.Builder(this);
-        errorDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        });
-        // Success dialog when user enters valid input
-        AlertDialog.Builder successDialog = new AlertDialog.Builder(this);
-        successDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Intent iList = new Intent(HealthActivity.this, ListActivity.class);
-                startActivity(iList);
-            }
-        });
-        successDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                Intent iList = new Intent(HealthActivity.this, ListActivity.class);
-                startActivity(iList);
-            }
-        });
-
+    private void validateInput(){
         try {
             //TITLE VALIDATION IN HEALTH ACTIVITY PAGE
             if(etTitle.getText().toString().trim().isEmpty()){
@@ -385,8 +431,38 @@ public class HealthActivity extends AppCompatActivity
         }
         catch (Exception ex){
             areAllInputsValid = false;
-            errorDialog.setMessage("Please enter a valid input.");
+            //errorDialog.setMessage("Please enter a valid input.");
         }
+    }
+
+    public void finishClick(View view) {
+
+        // Error dialog when user enters invalid input
+        AlertDialog.Builder errorDialog = new AlertDialog.Builder(this);
+        errorDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        // Success dialog when user enters valid input
+        AlertDialog.Builder successDialog = new AlertDialog.Builder(this);
+        successDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent iList = new Intent(HealthActivity.this, ListActivity.class);
+                startActivity(iList);
+            }
+        });
+        successDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                Intent iList = new Intent(HealthActivity.this, ListActivity.class);
+                startActivity(iList);
+            }
+        });
+
+        validateInput();
 
         if(collectErrors.trim().length() > 0 && heartRateError==true && bodyTemperatureError==true && systolicError==true && diastolicError==true) {
             errorDialog.setTitle("Error")
@@ -439,7 +515,7 @@ public class HealthActivity extends AppCompatActivity
             else{
                 String dosageAmount = etMedicationDosage.getText().toString();
                 String dosageUnit = spMedicationDosage.getSelectedItem().toString();
-                item.setMedicationDosage(dosageAmount+dosageUnit);
+                item.setMedicationDosage(dosageAmount+" "+dosageUnit);
             }
             if(etBodyTemperature.getText().toString().isEmpty()) {
                 /*item.setBodyTemperatureCelsius(Float.parseFloat(null));
@@ -517,10 +593,95 @@ public class HealthActivity extends AppCompatActivity
                     .setMessage(etTitle.getText().toString() + " has been successfully added to List.")
                     .show();
 
-            // MAY BE BEST TO RESET SHARED PREFERENCES FOR HEALTH ACTIVITY HERE
+            //resetSavedInfoAfterAdd(); //Reset saved activity details after adding successfully
         }
     }
 
+    /*public void getSavedDetailsAfterIntent(String saveTitle, float saveWeight, int savePintSpin,
+                                                String saveMedName, float saveDosage, int saveDoseSpin,
+                                                float saveTemp, float saveSystolic, float saveDiastolic,
+                                                float saveHrate, String saveLocation, String saveDescription)*/
+    public void getSavedDetailsAfterIntent()
+    {
+        if(saveTitle != null)
+            etTitle.setText(saveTitle);
+        if(saveWeight > 0 || saveWeight != useDefaultWeight)
+            etWeight.setText(String.valueOf(saveWeight));
+        if(weightUnitChanged)
+            spWeight.setSelection(saveWeightSpin);
+        spPainIntensity.setSelection(savePintSpin);
+        if(saveMedName != null)
+            etMedicationBrand.setText(saveMedName);
+        if(saveDosage > 0)
+            etMedicationDosage.setText(String.valueOf(saveDosage));
+        //if(saveDoseSpin != 15)
+        spMedicationDosage.setSelection(saveDoseSpin);
+        if(saveTemp > 0)
+            etBodyTemperature.setText(String.valueOf(saveTemp));
+        if(tempUnitChanged)
+            spBodyTemperature.setSelection(saveTempSpin);
+        if(saveSystolic > 0)
+            etSystolic.setText(String.valueOf(saveSystolic));
+        if(saveDiastolic > 0)
+            etDiastolic.setText(String.valueOf(saveDiastolic));
+        if(saveHrate > 0)
+            etHeartRate.setText(String.valueOf(saveHrate));
+        if(saveLocation != null)
+            etLocation.setText(saveLocation);
+        if(saveDescription != null)
+            etDescription.setText(saveDescription);
+    }
+
+    public void saveDetailsBeforeIntent()
+    {
+        if(!etTitle.getText().toString().trim().isEmpty())
+            SaveHealthActivity.saveTitle(getApplicationContext(), etTitle.getText().toString());
+        if(!etWeight.getText().toString().trim().isEmpty())
+            SaveHealthActivity.saveWeight(getApplicationContext(), Float.parseFloat(etWeight.getText().toString()));
+        if((useLbsUnit && spWeight.getSelectedItemId() != 0) || (!useLbsUnit && spWeight.getSelectedItemId() != 1)) {
+            SaveHealthActivity.saveWeightUnit(getApplicationContext(), (int)spWeight.getSelectedItemId());
+            weightUnitChanged = true;
+        }
+        SaveHealthActivity.savePainIntensity(getApplicationContext(),(int)spPainIntensity.getSelectedItemId());
+        if(!etMedicationBrand.getText().toString().trim().isEmpty())
+            SaveHealthActivity.saveMedName(getApplicationContext(),etMedicationBrand.getText().toString());
+        if(!etMedicationDosage.getText().toString().trim().isEmpty())
+            SaveHealthActivity.saveMedDosage(getApplicationContext(),Float.parseFloat(etMedicationDosage.getText().toString()));
+        SaveHealthActivity.saveMedUnit(getApplicationContext(),(int)spMedicationDosage.getSelectedItemId());
+        if(!etBodyTemperature.getText().toString().trim().isEmpty())
+            SaveHealthActivity.saveTemperature(getApplicationContext(),Float.parseFloat(etBodyTemperature.getText().toString()));
+        if((useCelsiusUnit && spBodyTemperature.getSelectedItemId() != 0) || (!useCelsiusUnit && spBodyTemperature.getSelectedItemId() != 1)){
+            SaveHealthActivity.saveTempUnit(getApplicationContext(),(int)spBodyTemperature.getSelectedItemId());
+            tempUnitChanged = true;
+        }
+        if(!etSystolic.getText().toString().trim().isEmpty())
+            SaveHealthActivity.saveSystolic(getApplicationContext(),Float.parseFloat(etSystolic.getText().toString()));
+        if(!etDiastolic.getText().toString().trim().isEmpty())
+            SaveHealthActivity.saveDiastolic(getApplicationContext(),Float.parseFloat(etDiastolic.getText().toString()));
+        if(!etHeartRate.getText().toString().isEmpty())
+        SaveHealthActivity.saveHeartRate(getApplicationContext(),Float.parseFloat(etHeartRate.getText().toString()));
+        if(!etLocation.getText().toString().trim().isEmpty())
+            SaveHealthActivity.saveLocation(getApplicationContext(),etLocation.getText().toString());
+        if(!etDescription.getText().toString().trim().isEmpty())
+            SaveHealthActivity.saveDescription(getApplicationContext(),etDescription.getText().toString());
+    }
+
+    public void resetSavedInfoAfterAdd(){
+        SaveHealthActivity.saveTitle(getApplicationContext(), null);
+        SaveHealthActivity.saveWeight(getApplicationContext(), 0);
+        SaveHealthActivity.saveWeightUnit(getApplicationContext(), 0);
+        SaveHealthActivity.savePainIntensity(getApplicationContext(),0);
+        SaveHealthActivity.saveMedName(getApplicationContext(),null);
+        SaveHealthActivity.saveMedDosage(getApplicationContext(),0);
+        SaveHealthActivity.saveMedUnit(getApplicationContext(),15);
+        SaveHealthActivity.saveTemperature(getApplicationContext(),0);
+        SaveHealthActivity.saveTempUnit(getApplicationContext(),0);
+        SaveHealthActivity.saveSystolic(getApplicationContext(),0);
+        SaveHealthActivity.saveDiastolic(getApplicationContext(),0);
+        SaveHealthActivity.saveHeartRate(getApplicationContext(),0);
+        SaveHealthActivity.saveLocation(getApplicationContext(),null);
+        SaveHealthActivity.saveDescription(getApplicationContext(),null);
+    }
 
     public ActivityTable addItemInTable(ActivityTable item) throws ExecutionException, InterruptedException {
         ActivityTable entity = mActivityTable.insert(item).get();
@@ -727,6 +888,133 @@ public class HealthActivity extends AppCompatActivity
         }
     }
 
+    public void updateActivity(View view) {
+        // Error dialog when user enters invalid input
+        AlertDialog.Builder errorDialog = new AlertDialog.Builder(this);
+        errorDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        // Success dialog when user enters valid input
+        /*AlertDialog.Builder successDialog = new AlertDialog.Builder(this);
+        successDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent iList = new Intent(HealthActivity.this, ListActivity.class);
+                startActivity(iList);
+            }
+        });
+        successDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                Intent iList = new Intent(HealthActivity.this, ListActivity.class);
+                startActivity(iList);
+            }
+        });*/
+
+        validateInput();
+
+        if(collectErrors.trim().length() > 0 && heartRateError==true && bodyTemperatureError==true && systolicError==true && diastolicError==true) {
+            errorDialog.setTitle("Error")
+                    .setMessage("Health activity is not complete due to the following errors:\n\n" + collectErrors)
+                    .show();
+            collectErrors = ""; //Reset errors
+            areAllInputsValid = false; //All inputs will not be saved if one or more inputs are not valid
+        }
+        else{
+            areAllInputsValid = true; //All inputs can be saved if they are valid
+        }
+
+        if(areAllInputsValid){
+            String activityId = UpdateHealthActivity.getActivityId(getApplicationContext());
+            String activityTitle = etTitle.getText().toString();
+            int painIntensity = (int)(spPainIntensity.getSelectedItemId()+1);
+            float bTempCels, bTempFahr;
+            if(spBodyTemperature.getSelectedItemId() == 0){
+                if(etBodyTemperature.getText().toString().isEmpty()){
+                    bTempCels = -1;
+                    bTempFahr = -1;
+                }
+                else {
+                    bTempCels = Float.parseFloat(etBodyTemperature.getText().toString());
+                    bTempFahr = convertCelsiusToFahrenheit(Float.parseFloat(etBodyTemperature.getText().toString()));
+                }
+            }
+            else{
+                if(etBodyTemperature.getText().toString().isEmpty()){
+                    bTempFahr = -1;
+                    bTempCels = -1;
+                }
+                else {
+                    bTempFahr = Float.parseFloat(etBodyTemperature.getText().toString());
+                    bTempCels = convertFahrenheitToCelsius(Float.parseFloat(etBodyTemperature.getText().toString()));
+                }
+            }
+            String activityDesc = etDescription.getText().toString();
+            float weightLbs, weightKg;
+            if(spWeight.getSelectedItemId() == 0){
+                weightLbs = Float.parseFloat(etWeight.getText().toString());
+                weightKg = convertLbsToKg(Float.parseFloat(etWeight.getText().toString()));
+            }
+            else{
+                weightKg = Float.parseFloat(etWeight.getText().toString());
+                weightLbs = convertKgToLbs(Float.parseFloat(etWeight.getText().toString()));
+            }
+            String medBrand;
+            if(etMedicationBrand.getText().toString().isEmpty()){
+                medBrand = null;
+            }
+            else{
+                medBrand = etMedicationBrand.getText().toString();
+            }
+            // Will deal with MEDICATION DOSAGE later
+            float systolic, diastolic, heartRate;
+            if(etSystolic.getText().toString().isEmpty())
+                systolic = -1;
+            else
+                systolic = Float.parseFloat(etSystolic.getText().toString());
+            if(etDiastolic.getText().toString().isEmpty())
+                diastolic = -1;
+            else
+                diastolic = Float.parseFloat(etDiastolic.getText().toString());
+            if(etHeartRate.getText().toString().isEmpty())
+                heartRate = -1;
+            else
+                heartRate = Float.parseFloat(etHeartRate.getText().toString());
+            String location;
+            if(etLocation.getText().toString().isEmpty())
+                location = null;
+            else
+                location = etLocation.getText().toString();
+            UpdateActivityTask updateActivityTask = new UpdateActivityTask(activityId,activityTitle,
+                    painIntensity, bTempCels, bTempFahr, activityDesc, weightLbs, weightKg, medBrand,
+                    systolic, diastolic, heartRate, location);
+            updateActivityTask.execute("");
+
+            resetUpdateHealthActivity();
+        }
+    }
+
+    private void resetUpdateHealthActivity(){
+        UpdateHealthActivity.processUpdate(getApplicationContext(), false);
+
+        UpdateHealthActivity.setTitle(getApplicationContext(), null);
+        UpdateHealthActivity.setWeightLbs(getApplicationContext(), 0);
+        UpdateHealthActivity.setWeightKg(getApplicationContext(), 0);
+        UpdateHealthActivity.setPainIntensity(getApplicationContext(), 0);
+        UpdateHealthActivity.setMedName(getApplicationContext(), null);
+        // Medication dose amount and unit
+        UpdateHealthActivity.setTemperatureCels(getApplicationContext(), 0);
+        UpdateHealthActivity.setTemperatureFahr(getApplicationContext(), 0);
+        UpdateHealthActivity.setSystolic(getApplicationContext(), 0);
+        UpdateHealthActivity.setDiastolic(getApplicationContext(), 0);
+        UpdateHealthActivity.setHeartRate(getApplicationContext(), 0);
+        UpdateHealthActivity.setLocation(getApplicationContext(), null);
+        UpdateHealthActivity.setDescription(getApplicationContext(), null);
+    }
+
     private class ProgressFilter implements ServiceFilter {
 
         @Override
@@ -769,12 +1057,182 @@ public class HealthActivity extends AppCompatActivity
         }
     }
 
+    public class UpdateActivityTask extends AsyncTask<String, String, String> {
+
+        private final String mActivityId, mActivityTitle, mMedBrand, mLocation, mDescription;
+        private final int mPainIntensity;
+        private final float mTempCels, mTempFahr, mWeightLbs, mWeightKg, mSystolic, mDiastolic, mHeartRate;
+        // NEED TO DEAL WITH MEDICATION DOSAGE
+        String updateMsg = "";
+        Boolean isSuccess = false;
+
+        UpdateActivityTask(String activityId, String activityTitle, int painIntensity, float tempCels,
+                           float tempFahr, String desc, float weightLbs, float weightKg, String medBrand,
+                           float systolic, float diastolic, float heartRate, String location){
+            mActivityId = activityId;
+            mActivityTitle = activityTitle;
+            mPainIntensity = painIntensity;
+            mTempCels = tempCels;
+            mTempFahr = tempFahr;
+            mDescription = desc;
+            mWeightLbs = weightLbs;
+            mWeightKg = weightKg;
+            mMedBrand = medBrand;
+            // NEED TO DEAL WITH MEDICATION DOSAGE
+            mSystolic = systolic;
+            mDiastolic = diastolic;
+            mHeartRate = heartRate;
+            mLocation = location;
+        }
+
+        protected void onPreExecute(){
+        }
+        @Override
+        protected void onPostExecute(String r){
+            if(isSuccess) {
+                AlertDialog.Builder successDialog = new AlertDialog.Builder(HealthActivity.this);
+                successDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent iList = new Intent(HealthActivity.this, ListActivity.class);
+                        startActivity(iList);
+                    }
+                });
+                successDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        Intent iList = new Intent(HealthActivity.this, ListActivity.class);
+                        startActivity(iList);
+                    }
+                });
+                successDialog.setTitle("Update Successful").setMessage(updateMsg);
+                successDialog.show();
+            }
+            else{
+                AlertDialog.Builder errorDialog = new AlertDialog.Builder(HealthActivity.this);
+                errorDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                errorDialog.setTitle("Update Error")
+                        .setMessage(updateMsg)
+                        .show();
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... params){
+            try{
+                con = connectionClass();
+                if(con==null){
+                    updateMsg = "Please check your internet connection";
+                    isSuccess = false;
+                }
+                else{
+                    String queryUpdate = "update activitytable set ";
+
+                    String queryUpdateTitle = "activity_title=\'" + mActivityTitle + "\',";
+                    String queryUpdatePint = "pain_intensity=\'" + mPainIntensity + "\',";
+                    String queryUpdateTempCels = "bodytemperature_celsius=\'" + mTempCels + "\',";
+                    String queryUpdateTempFahr = "bodytemperature_fahrenheit=\'" + mTempCels + "\',";
+                    String queryUpdateDesc = "activity_description=\'" + mDescription + "\',";
+                    String queryUpdateWeightLbs = "weight_lbs=\'" + mWeightLbs + "\',";
+                    String queryUpdateWeightKg = "weight_kg=\'" + mWeightKg + "\',";
+                    String queryUpdateMedBrand;
+                    if(mMedBrand!=null)
+                        queryUpdateMedBrand = "medication_brand=\'" + mMedBrand + "\',";
+                    else
+                        queryUpdateMedBrand = "medication_brand=null,";
+                    // Will deal with MEDICATION DOSAGE later
+                    String queryUpdateSystolic = "systolic=\'" + mSystolic + "\',";
+                    String queryUpdateDiastolic = "diastolic=\'" + mDiastolic + "\',";
+                    String queryUpdateHeartRate = "heart_rate=\'" + mHeartRate + "\',";
+                    String queryUpdateLocation;
+                    if(mLocation!=null)
+                        queryUpdateLocation = "activity_location=\'" + mLocation + "\'"; // Last entry for UPDATE statement
+                    else
+                        queryUpdateLocation = "activity_location=null"; // Last entry for UPDATE statement
+
+                    String queryWhereId = " where id=\'" + mActivityId + "\'";
+
+                    String updateActivityQuery = queryUpdate + queryUpdateTitle + queryUpdatePint +
+                            queryUpdateTempCels + queryUpdateTempFahr + queryUpdateDesc + queryUpdateWeightLbs +
+                            queryUpdateWeightKg + queryUpdateMedBrand + queryUpdateSystolic + queryUpdateDiastolic +
+                            queryUpdateHeartRate + queryUpdateLocation + queryWhereId;
+
+                    Statement updateActivity = con.createStatement();
+                    updateActivity.executeUpdate(updateActivityQuery);
+                    updateMsg = mActivityTitle + " has been successfully updated.";
+                    isSuccess = true;
+                    con.close();
+                }
+            } catch (SQLException e) {
+                updateMsg = "We hit a snag. Please check back later.";
+                isSuccess = false;
+                e.printStackTrace();
+            }
+            return updateMsg;
+        }
+
+        /*@Override
+        protected Boolean doInBackground(Void... params) {
+            // TODO: attempt authentication against a network service.
+
+            try {
+                // Simulate network access.
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                return false;
+            }
+
+            for (String credential : DUMMY_CREDENTIALS) {
+                String[] pieces = credential.split(":");
+                if (pieces[0].equals(mEmail)) {
+                    // Account exists, return true if the password matches.
+                    return pieces[1].equals(mPassword);
+                }
+            }
+
+            // TODO: register the new account here.
+            return true;
+        }*/
+
+        /*@Override
+        protected void onCancelled() {
+            mAuthTask = null;
+            showProgress(false);
+        }*/
+    }
+
+    public Connection connectionClass(){
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        Connection connection = null;
+        String connectionURL = null;
+        try{
+            Class.forName("net.sourceforge.jtds.jdbc.Driver");
+            //connectionURL = "jdbc:jtds:sqlserver://medellapp.database.windows.net:1433;database=MedellaData;user=MedellaAdmin@medellapp;password=C0ntrolHe@lth;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+            connectionURL = "jdbc:jtds:sqlserver://medellapp.database.windows.net:1433;DatabaseName=MedellaData;user=MedellaAdmin@medellapp;password=C0ntrolHe@lth;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+            connection = DriverManager.getConnection(connectionURL);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return connection;
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            resetUpdateHealthActivity();
             super.onBackPressed();
         }
     }
@@ -809,18 +1267,22 @@ public class HealthActivity extends AppCompatActivity
 
         //DRAWER NAVIGATION IN HOME PAGE
         if (id == R.id.nav_amHome) {
+            resetUpdateHealthActivity();
             Intent iHome = new Intent(this, HomeActivity.class);
             startActivity(iHome);
         } else if (id == R.id.nav_amActivity) {
             //Intent is not needed as the Health Activity button leads to this page
         } else if (id == R.id.nav_amList) {
+            resetUpdateHealthActivity();
             Intent iList = new Intent(this, ListActivity.class);
             startActivity(iList);
         } else if (id == R.id.nav_amResults) {
+            resetUpdateHealthActivity();
             Intent iResults = new Intent(this, ResultsActivity.class);
             startActivity(iResults);
         }
         else if (id == R.id.nav_amSettings) {
+            resetUpdateHealthActivity();
             Intent iSettings = new Intent(this, SettingsActivity.class);
             startActivity(iSettings);
         }

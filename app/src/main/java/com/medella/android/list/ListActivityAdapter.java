@@ -21,7 +21,11 @@ import java.util.Collections;
 import java.util.List;
 
 import com.medella.android.R;
+import com.medella.android.UpdateHealthActivity;
+import com.medella.android.activities.HealthActivity;
 import com.medella.android.activities.ListActivity;
+
+import org.w3c.dom.Text;
 
 public class ListActivityAdapter extends ArrayAdapter<ActivityTable> {
 
@@ -41,6 +45,7 @@ public class ListActivityAdapter extends ArrayAdapter<ActivityTable> {
         protected TextView tvBmiStatus;
         protected TextView tvLocation;
         protected TextView tvDateAdded;
+        protected TextView tvDateUpdated;
         protected View cardView;
     }
 
@@ -72,6 +77,7 @@ public class ListActivityAdapter extends ArrayAdapter<ActivityTable> {
                 activityViewHolder.tvBmiStatus = row.findViewById(R.id.bmi_status_text);
                 activityViewHolder.tvLocation = row.findViewById(R.id.activity_location_text);
                 activityViewHolder.tvDateAdded = row.findViewById(R.id.activity_date_added_text);
+                activityViewHolder.tvDateUpdated = row.findViewById(R.id.activity_date_updated_text);
                 activityViewHolder.cardView = row.findViewById(R.id.activity_card_view);
 
                 row.setTag(activityViewHolder);
@@ -216,7 +222,11 @@ public class ListActivityAdapter extends ArrayAdapter<ActivityTable> {
             }
             String addedDate = currentItem.getCreatedAt().substring(0, 10) + " ";
             String addedTime = currentItem.getCreatedAt().substring(11, 19);
+            String updatedDate = currentItem.getUpdatedAt().substring(0, 10) + " ";
+            String updatedTime = currentItem.getUpdatedAt().substring(11, 19);
+
             activityViewHolder.tvDateAdded.setText("Created: " + addedDate + addedTime);
+            activityViewHolder.tvDateUpdated.setText("Updated: " + updatedDate + updatedTime);
 
             /** When the user taps and holds a card view on ListActivity*/
             activityViewHolder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -243,9 +253,33 @@ public class ListActivityAdapter extends ArrayAdapter<ActivityTable> {
                                 iShare.putExtra(Intent.EXTRA_TEXT, shareBody);
                                 mContext.startActivity(Intent.createChooser(iShare, "Share your health activity via"));
                             }
-                            if (item == 1) {
-                                Toast.makeText(mContext, "Edit/update not available", Toast.LENGTH_SHORT).show();
-                            } else if (item == 2) {
+                            else if (item == 1) {
+                                UpdateHealthActivity.setActivityId(mContext, currentItem.getId());
+                                UpdateHealthActivity.setTitle(mContext, currentTitle);
+                                UpdateHealthActivity.setWeightLbs(mContext, currentItem.getWeightLbs());
+                                UpdateHealthActivity.setWeightKg(mContext, currentItem.getWeightKg());
+                                UpdateHealthActivity.setPainIntensity(mContext, currentItem.getPainIntensity());
+                                UpdateHealthActivity.setMedName(mContext, currentItem.getMedicationBrand());
+                                UpdateHealthActivity.setMedDosage(mContext, currentItem.getMedicationDosage());
+                                if(currentItem.getBodyTemperatureCelsius() > 0)
+                                    UpdateHealthActivity.setTemperatureCels(mContext, currentItem.getBodyTemperatureCelsius());
+                                if(currentItem.getBodyTemperatureFahrenheit() > 0)
+                                    UpdateHealthActivity.setTemperatureFahr(mContext, currentItem.getBodyTemperatureFahrenheit());
+                                if(currentItem.getSystolic() > 0)
+                                    UpdateHealthActivity.setSystolic(mContext, currentItem.getSystolic());
+                                if(currentItem.getSystolic() > 0)
+                                    UpdateHealthActivity.setDiastolic(mContext, currentItem.getDiastolic());
+                                if(currentItem.getHeartRate() > 0)
+                                    UpdateHealthActivity.setHeartRate(mContext, currentItem.getHeartRate());
+                                UpdateHealthActivity.setLocation(mContext, currentItem.getLocation());
+                                UpdateHealthActivity.setDescription(mContext, currentItem.getDescription());
+
+                                UpdateHealthActivity.processUpdate(mContext, true);
+
+                                Intent iHealth = new Intent(mContext, HealthActivity.class);
+                                mContext.startActivity(iHealth);
+                            }
+                            else if (item == 2) {
                                 if(mContext instanceof ListActivity) {
                                     final ListActivity activity = (ListActivity) mContext;
                                     AlertDialog.Builder confirmDeleteDialog = new AlertDialog.Builder(mContext); //Create AlertDialog to confirm deletion

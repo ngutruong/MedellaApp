@@ -18,8 +18,10 @@
         android:id="@+id/listFrame"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="1600dp"
+        android:layout_height="3600dp"
         tools:context="com.medella.android.activities.ListActivity"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         tools:showIn="@layout/app_bar_list">
 
         <ProgressBar
@@ -45,7 +47,7 @@
         <ListView
             android:id="@+id/listViewToDo"
             android:layout_width="match_parent"
-            android:layout_height="1600dp"
+            android:layout_height="3600dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentBottom="true"
             android:layout_marginStart="0dp"

@@ -42,6 +42,7 @@ public class ProfileActivity extends AppCompatActivity {
     securityAnswer2, securityAnswer3, birthdateInput, heightInput, feetInput, inchesInput;
     private Spinner heightSpin, spSecurityQuestion1, spSecurityQuestion2, spSecurityQuestion3;
     private TextView feetLabel, inchesLabel;
+    private View registerProgress;
 
     private boolean isHeightChecked;
     
@@ -81,6 +82,8 @@ public class ProfileActivity extends AppCompatActivity {
         inchesInput.setVisibility(View.GONE);
         feetLabel.setVisibility(View.GONE);
         inchesLabel.setVisibility(View.GONE);
+
+        registerProgress = findViewById(R.id.registerProgressBar);
 
         feetAndInches.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -190,24 +193,27 @@ public class ProfileActivity extends AppCompatActivity {
             if(checkAnswer1Input.trim().isEmpty()){
                 collectErrors+="- Answer for Security Question 1 is empty.\n";
             }
-            else if (checkAnswer1Input.trim().length() < 5 && checkAnswer1Input.trim().length() > 0) {
-                collectErrors+="- Answer for Security Question 1 is less than 5 characters.\n";
+            else if (checkAnswer1Input.trim().length() < 4 && checkAnswer1Input.trim().length() > 0) {
+                collectErrors+="- Answer for Security Question 1 is less than 4 characters.\n";
             }
             if(checkAnswer2Input.trim().isEmpty()){
                 collectErrors+="- Answer for Security Question 2 is empty.\n";
             }
-            else if (checkAnswer2Input.trim().length() < 5 && checkAnswer2Input.trim().length() > 0) {
-                collectErrors+="- Answer for Security Question 2 is less than 5 characters.\n";
+            else if (checkAnswer2Input.trim().length() < 4 && checkAnswer2Input.trim().length() > 0) {
+                collectErrors+="- Answer for Security Question 2 is less than 4 characters.\n";
             }
             if(checkAnswer3Input.trim().isEmpty()){
                 collectErrors+="- Answer for Security Question 3 is empty.\n";
             }
-            else if (checkAnswer3Input.trim().length() < 5 && checkAnswer3Input.trim().length() > 0) {
-                collectErrors+="- Answer for Security Question 3 is less than 5 characters.\n";
+            else if (checkAnswer3Input.trim().length() < 4 && checkAnswer3Input.trim().length() > 0) {
+                collectErrors+="- Answer for Security Question 4 is less than 4 characters.\n";
             }
 
             /** BIRTH DATE VALIDATION IN PROFILE PAGE */
-            if(!BIRTHDATE_PATTERN.matcher(checkBirthdateInput).matches()){
+            if(checkBirthdateInput.isEmpty()){
+                collectErrors+="- Birth date is empty.\n";
+            }
+            else if(!BIRTHDATE_PATTERN.matcher(checkBirthdateInput).matches()){
                 collectErrors+="- Birth date format does not match.\n";
             }
             else {
@@ -215,14 +221,14 @@ public class ProfileActivity extends AppCompatActivity {
                 int currentYear = Calendar.getInstance().get(Calendar.YEAR);
                 int birthYear = Integer.parseInt(birthDateArray[0]);
                 if(currentYear - birthYear < 13) {
-                    collectErrors+="- You must be 13 years of age or older to register.";
+                    collectErrors+="- You must be 13 years of age or older to register.\n";
                 }
                 else if(currentYear - birthYear > 111){
-                    collectErrors+="- Birth date is invalid.";
+                    collectErrors+="- Birth date is invalid.\n";
                 }
                 else{
                     if(!isDateValid(checkBirthdateInput)){
-                        collectErrors+="- Birth date is invalid.";
+                        collectErrors+="- Birth date is invalid.\n";
                     }
                 }
             }
@@ -495,10 +501,11 @@ public class ProfileActivity extends AppCompatActivity {
         }*/
 
         protected void onPreExecute(){
-            //mProgressView.setVisibility(View.VISIBLE);
+            registerProgress.setVisibility(View.VISIBLE);
         }
         @Override
         protected void onPostExecute(String r){
+            registerProgress.setVisibility(View.GONE);
             if(isSuccess){
                 AlertDialog.Builder successDialog = new AlertDialog.Builder(ProfileActivity.this);
                 successDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -561,9 +568,9 @@ public class ProfileActivity extends AppCompatActivity {
                         String querySecQues1 = "\'"+mSecQues1+"\',";
                         String querySecQues2 = "\'"+mSecQues2+"\',";
                         String querySecQues3 = "\'"+mSecQues3+"\',";
-                        String querySecAns1 = "\'"+mSecAns1+"\',";
-                        String querySecAns2 = "\'"+mSecAns2+"\',";
-                        String querySecAns3 = "\'"+mSecAns3+"\',";
+                        String querySecAns1 = "\'"+mSecAns1.toLowerCase()+"\',";
+                        String querySecAns2 = "\'"+mSecAns2.toLowerCase()+"\',";
+                        String querySecAns3 = "\'"+mSecAns3.toLowerCase()+"\',";
                         String queryCm = "\'"+mHeightCm+"\',";
                         String queryM = "\'"+mHeightM+"\',";
                         String queryIn = "\'"+mHeightIn+"\',";

@@ -50,6 +50,9 @@ public class ActivityTable {
     @com.google.gson.annotations.SerializedName("createdAt")
     private String mCreatedAt;
 
+    @com.google.gson.annotations.SerializedName("updatedAt")
+    private String mUpdatedAt;
+
     @com.google.gson.annotations.SerializedName("deleted")
     private boolean mDeleted;
 
@@ -145,6 +148,7 @@ public class ActivityTable {
         mId = id;
     }
     public String getCreatedAt(){ return mCreatedAt; }
+    public String getUpdatedAt(){ return mUpdatedAt; }
     public boolean isDeleted(){ return mDeleted; }
     public final void setDelete(boolean deleted){ mDeleted = deleted; }
 

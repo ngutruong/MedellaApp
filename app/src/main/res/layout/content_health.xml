@@ -177,8 +177,8 @@
             android:layout_alignEnd="@+id/txtDosage"
             android:layout_below="@+id/doseSpinner"
             android:ems="10"
-            android:hint="Add temperature number here"
-            android:inputType="number"
+            android:hint="Add temperature here"
+            android:inputType="numberDecimal"
             android:textAlignment="center"
             android:textSize="12sp" />
 
@@ -263,7 +263,18 @@
             android:layout_alignEnd="@+id/bpmText"
             android:layout_below="@+id/txtDesc"
             android:onClick="finishClick"
-            android:text="Add Activity" />
+            android:text="Add Activity"
+            android:visibility="visible"/>
+
+        <Button
+            android:id="@+id/btnHupdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/bpmText"
+            android:layout_below="@+id/btnHfinish"
+            android:onClick="updateActivity"
+            android:text="Update Activity"
+            android:visibility="gone" />
 
         <EditText
             android:id="@+id/txtDesc"
@@ -306,12 +317,13 @@
 
         <EditText
             android:id="@+id/txtLocation"
-            android:layout_width="wrap_content"
+            android:layout_width="356dp"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/descText"
             android:layout_below="@+id/locationText"
-            android:layout_marginEnd="-120dp"
-            android:layout_toStartOf="@+id/btnHfinish"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="12dp"
             android:ems="10"
             android:hint="Tap the map pin below or enter location manually"
             android:inputType="textPersonName"
