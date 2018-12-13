@@ -135,4 +135,8 @@
         <item>Celsius (°C)</item>
         <item>Fahrenheit (°F)</item>
     </string-array>
+
+    <string name="title_activity_forgot_password_email">Forgot Password</string>
+    <string name="title_activity_forgot_password_security_question">Forgot Password</string>
+    <string name="title_activity_forgot_password_new_password">Forgot Password</string>
 </resources>

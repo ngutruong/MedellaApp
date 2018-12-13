@@ -101,6 +101,7 @@
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="35dp"
+        android:onClick="goToForgotPassword"
         android:text="Forgot Password?"
         android:textSize="12dp" />
 
