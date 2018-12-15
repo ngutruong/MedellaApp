@@ -102,6 +102,10 @@
             android:name=".forgotpassword.ForgotPasswordNewPassword"
             android:label="@string/title_activity_forgot_password_new_password"
             android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.AccountInfoActivity"
+            android:label="@string/title_activity_account_info"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

@@ -49,15 +49,69 @@ public class AccountStatus {
         return loginPref.getString("loginEmail", null);
     }
 
-    public static void setHeight(Context context, float m){
+    public static float getHeightM(Context context){
+        SharedPreferences loginPref = PreferenceManager.getDefaultSharedPreferences(context);
+        return loginPref.getFloat("profileHeightM", 0);
+    }
+    public static void setHeightM(Context context, float m){
         SharedPreferences loginPref = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = loginPref.edit();
-        editor.putFloat("profileHeight", m);
+        editor.putFloat("profileHeightM", m);
         editor.apply();
     }
-    public static float getHeight(Context context){
+
+    public static float getHeightCm(Context context){
         SharedPreferences loginPref = PreferenceManager.getDefaultSharedPreferences(context);
-        return loginPref.getFloat("profileHeight", 0);
+        return loginPref.getFloat("profileHeightCm", 0);
+    }
+    public static void setHeightCm(Context context, float cm){
+        SharedPreferences loginPref = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = loginPref.edit();
+        editor.putFloat("profileHeightCm", cm);
+        editor.apply();
     }
 
+    public static float getHeightIn(Context context){
+        SharedPreferences loginPref = PreferenceManager.getDefaultSharedPreferences(context);
+        return loginPref.getFloat("profileHeightIn", 0);
+    }
+    public static void setHeightIn(Context context, float in){
+        SharedPreferences loginPref = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = loginPref.edit();
+        editor.putFloat("profileHeightIn", in);
+        editor.apply();
+    }
+
+    public static float getHeight2Ft(Context context){
+        SharedPreferences loginPref = PreferenceManager.getDefaultSharedPreferences(context);
+        return loginPref.getFloat("profileHeight2Ft", 0);
+    }
+    public static void setHeight2Ft(Context context, float ft){
+        SharedPreferences loginPref = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = loginPref.edit();
+        editor.putFloat("profileHeight2Ft", ft);
+        editor.apply();
+    }
+
+    public static float getHeight2In(Context context){
+        SharedPreferences loginPref = PreferenceManager.getDefaultSharedPreferences(context);
+        return loginPref.getFloat("profileHeight2In", 0);
+    }
+    public static void setHeight2In(Context context, float in){
+        SharedPreferences loginPref = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = loginPref.edit();
+        editor.putFloat("profileHeight2In", in);
+        editor.apply();
+    }
+
+    public static void setProfileBirthdate(Context context, String birthdate){
+        SharedPreferences loginPref = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = loginPref.edit();
+        editor.putString("loginBirthdate", birthdate);
+        editor.apply();
+    }
+    public static String getProfileBirthdate(Context context){
+        SharedPreferences loginPref = PreferenceManager.getDefaultSharedPreferences(context);
+        return loginPref.getString("loginBirthdate", null);
+    }
 }

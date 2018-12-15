@@ -6,19 +6,13 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.medella.android.AccountStatus;
-import com.medella.android.ForgotPWAccount;
 import com.medella.android.R;
-import com.medella.android.activities.ListActivity;
 import com.medella.android.activities.LoginActivity;
 
 import java.sql.Connection;

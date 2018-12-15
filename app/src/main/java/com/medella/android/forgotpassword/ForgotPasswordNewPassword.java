@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
@@ -15,13 +13,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.medella.android.ForgotPWAccount;
 import com.medella.android.R;
 import com.medella.android.activities.LoginActivity;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -58,7 +54,7 @@ public class ForgotPasswordNewPassword extends AppCompatActivity {
         fpNewPw = tvNewPw.getText().toString();
         fpConfirmNewPw = tvConfirmNewPw.getText().toString();
 
-        if(fpNewPw.equals(fpConfirmNewPw)){
+        if(fpNewPw.equals(fpConfirmNewPw) && fpNewPw.trim().length() >= 8){
             Toast.makeText(getApplicationContext(), "Please wait...", Toast.LENGTH_SHORT).show();
             UpdatePasswordTask updatePasswordTask = new UpdatePasswordTask(fpNewPw);
             updatePasswordTask.execute("");
@@ -71,7 +67,7 @@ public class ForgotPasswordNewPassword extends AppCompatActivity {
 
                 }
             });
-            failDialog.setTitle("Error").setMessage("Passwords do not match.");
+            failDialog.setTitle("Error").setMessage("Passwords are invalid. They should be at least 8 characters long, and they should match.");
             failDialog.show();
         }
     }
