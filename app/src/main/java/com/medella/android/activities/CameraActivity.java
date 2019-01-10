@@ -99,11 +99,11 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
-        textureView = findViewById(R.id.textureView);
+        textureView = (TextureView)findViewById(R.id.textureView);
         //From Java 1.4 , you can use keyword 'assert' to check expression true or false
         assert textureView != null;
         textureView.setSurfaceTextureListener(textureListener);
-        btnCapture = findViewById(R.id.btnCapture);
+        btnCapture = (Button)findViewById(R.id.btnCapture);
         btnCapture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -112,13 +112,13 @@ public class CameraActivity extends AppCompatActivity {
         });
     }
 
-    /*@Override
+    @Override
     public void onBackPressed(){
         //super.onBackPressed();
         Intent iHealth = new Intent(this, HealthActivity.class);
         startActivity(iHealth);
-        super.onBackPressed();
-    }*/
+        //super.onBackPressed();
+    }
 
     private void takePicture() {
         if(cameraDevice == null)

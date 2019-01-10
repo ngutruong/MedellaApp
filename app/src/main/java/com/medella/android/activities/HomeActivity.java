@@ -11,16 +11,44 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.TextView;
 
+import com.medella.android.AccountStatus;
 import com.medella.android.R;
+import com.medella.android.options.MedellaOptions;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private Button btnLogin, btnCreateProfile, btnCreateActivity, btnList;
+    private TextView loginStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        btnLogin = findViewById(R.id.btnLogin);
+        btnCreateProfile = findViewById(R.id.btnCreateProfile);
+        btnCreateActivity = findViewById(R.id.btnCreateActivity);
+        btnList = findViewById(R.id.btnList);
+        loginStatus = findViewById(R.id.txtLoginStatus);
+
+        if(AccountStatus.isLoggedIn(getApplicationContext())){
+            btnLogin.setVisibility(View.INVISIBLE);
+            btnCreateProfile.setVisibility(View.INVISIBLE);
+            loginStatus.setText("Welcome, " + AccountStatus.getProfileName(getApplicationContext()) + "!");
+            btnCreateActivity.setVisibility(View.VISIBLE);
+            btnList.setVisibility(View.VISIBLE);
+        }
+        else{
+            loginStatus.setText("You are NOT logged in.");
+            btnLogin.setVisibility(View.VISIBLE);
+            btnCreateProfile.setVisibility(View.VISIBLE);
+            btnCreateActivity.setVisibility(View.INVISIBLE);
+            btnList.setVisibility(View.INVISIBLE);
+        }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -93,7 +121,17 @@ public class HomeActivity extends AppCompatActivity
             startActivity(iSettings);
         }
         else if (id == R.id.nav_amLogout) {
-            //Logout is not available at this moment
+            MedellaOptions.setDefaultWeight(getApplicationContext(), 0);
+            MedellaOptions.setPreferredWeightUnit(getApplicationContext(), true);
+            MedellaOptions.setPreferredBodyTemperatureUnit(getApplicationContext(), true);
+            MedellaOptions.setDefaultWeightEnabled(getApplicationContext(), false);
+            AccountStatus.setLogin(getApplicationContext(),false);
+            AccountStatus.setProfileName(getApplicationContext(),null);
+            AccountStatus.setProfileId(getApplicationContext(),null);
+            AccountStatus.setEmail(getApplicationContext(),null);
+            AccountStatus.setHeightM(getApplicationContext(),0);
+            Intent iLogin = new Intent(this, LoginActivity.class);
+            startActivity(iLogin);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

@@ -1,4 +1,4 @@
-package com.medella.android;
+package com.medella.android.options;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -25,5 +25,26 @@ public class MedellaOptions {
     public static boolean getPreferredBodyTemperatureUnit(Context context){
         SharedPreferences tempPref = PreferenceManager.getDefaultSharedPreferences(context);
         return tempPref.getBoolean("tempPref", true);
+    }
+
+    public static void setDefaultWeightEnabled(Context context, boolean isEnabled){
+        SharedPreferences dwPref = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = dwPref.edit();
+        editor.putBoolean("dwEnabled", isEnabled);
+        editor.apply();
+    }
+    public static boolean getDefaultWeightEnabled(Context context){
+        SharedPreferences dwPref = PreferenceManager.getDefaultSharedPreferences(context);
+        return dwPref.getBoolean("dwEnabled", false);
+    }
+    public static void setDefaultWeight(Context context, float dWeight){
+        SharedPreferences dwPref = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = dwPref.edit();
+        editor.putFloat("defaultWeight", dWeight);
+        editor.apply();
+    }
+    public static float getDefaultWeight(Context context){
+        SharedPreferences dwPref = PreferenceManager.getDefaultSharedPreferences(context);
+        return dwPref.getFloat("defaultWeight", 0);
     }
 }

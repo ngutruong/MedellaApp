@@ -17,6 +17,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +33,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
-import com.medella.android.SaveHealthActivity;
+import com.medella.android.AccountStatus;
 import com.medella.android.UpdateHealthActivity;
 import com.medella.android.options.MedellaOptions;
 import com.medella.android.R;
@@ -100,12 +101,6 @@ public class HealthActivity extends AppCompatActivity
 
     private boolean useLbsUnit, useCelsiusUnit;
     private float useDefaultWeight;
-
-    private String saveTitle, saveMedName, saveLocation, saveDescription;
-    private float saveWeight;
-    private int saveWeightSpin, savePintSpin, saveDoseSpin, saveTempSpin;
-    private float saveDosage, saveTemp, saveSystolic, saveDiastolic, saveHrate;
-    private boolean weightUnitChanged, tempUnitChanged;
 
     private Button addButton, updateButton;
 
@@ -218,29 +213,6 @@ public class HealthActivity extends AppCompatActivity
                 etDescription.setText(UpdateHealthActivity.getDescription(getApplicationContext()));
             }
 
-            /**
-             * SAVEHEALTHACTIVITY
-             */
-            // MAY NEED TO REMOVE THIS -- GONNA MOVE IT
-            /*saveTitle = SaveHealthActivity.getSavedTitle(getApplicationContext());
-            saveWeight = SaveHealthActivity.getSavedWeight(getApplicationContext());
-            saveWeightSpin = SaveHealthActivity.getSavedWeightUnit(getApplicationContext());
-            savePintSpin = SaveHealthActivity.getSavedPainIntensity(getApplicationContext());
-            saveMedName = SaveHealthActivity.getSavedMedName(getApplicationContext());
-            saveDosage = SaveHealthActivity.getSavedMedDosage(getApplicationContext());
-            saveDoseSpin = SaveHealthActivity.getSavedMedUnit(getApplicationContext());
-            saveTemp = SaveHealthActivity.getSavedTemperature(getApplicationContext());
-            saveTempSpin = SaveHealthActivity.getSavedTempUnit(getApplicationContext());
-            saveSystolic = SaveHealthActivity.getSavedSystolic(getApplicationContext());
-            saveDiastolic = SaveHealthActivity.getSavedDiastolic(getApplicationContext());
-            saveHrate = SaveHealthActivity.getSavedHeartRate(getApplicationContext());
-            saveLocation = SaveHealthActivity.getSavedLocation(getApplicationContext());
-            saveDescription = SaveHealthActivity.getSavedDescription(getApplicationContext());
-            weightUnitChanged = false;
-            tempUnitChanged = false;
-
-            spMedicationDosage.setSelection(15);*/
-
             // Set selections for Weight and Temperature spinners based on user's preferences from Settings
             if(useLbsUnit)
                 spWeight.setSelection(0);
@@ -253,11 +225,6 @@ public class HealthActivity extends AppCompatActivity
 
             if(useDefaultWeight > 0)
                 etWeight.setText(String.valueOf(useDefaultWeight));
-
-            /**
-             * SAVEHEALTHACTIVITY
-             */
-            //getSavedDetailsAfterIntent();
 
             // Create an adapter to bind the items with the view
             mListActivityAdapter = new ListActivityAdapter(this, R.layout.activity_card_view);
@@ -332,15 +299,37 @@ public class HealthActivity extends AppCompatActivity
     private static String collectErrors = "";
 
     public void cameraClick(View view) {
-        /**
-         * SAVEHEALTHACTIVITY
-         */
-        //saveDetailsBeforeIntent();
         Intent iCamera = new Intent(this, CameraActivity.class);
         startActivityForResult(iCamera,0);
     }
 
-    private void validateInput(){
+    public void finishClick(View view) {
+
+        // Error dialog when user enters invalid input
+        AlertDialog.Builder errorDialog = new AlertDialog.Builder(this);
+        errorDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        // Success dialog when user enters valid input
+        AlertDialog.Builder successDialog = new AlertDialog.Builder(this);
+        successDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent iList = new Intent(HealthActivity.this, ListActivity.class);
+                startActivity(iList);
+            }
+        });
+        successDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                Intent iList = new Intent(HealthActivity.this, ListActivity.class);
+                startActivity(iList);
+            }
+        });
+
         try {
             //TITLE VALIDATION IN HEALTH ACTIVITY PAGE
             if(etTitle.getText().toString().trim().isEmpty()){
@@ -376,10 +365,6 @@ public class HealthActivity extends AppCompatActivity
             } else {
                 bodyTemperatureError = false; // no error will trigger if body temperature input is empty or valid
             }
-
-            /*
-            VALIDATION IS ERRONEOUS--MESSAGES SHOULD SHOW
-             */
 
             //SYSTOLIC PRESSURE VALIDATION IN HEALTH ACTIVITY PAGE
             if(Float.valueOf(etSystolic.getText().toString()) < 90){
@@ -431,40 +416,10 @@ public class HealthActivity extends AppCompatActivity
         }
         catch (Exception ex){
             areAllInputsValid = false;
-            //errorDialog.setMessage("Please enter a valid input.");
+            errorDialog.setMessage("Please enter a valid input.");
         }
-    }
 
-    public void finishClick(View view) {
-
-        // Error dialog when user enters invalid input
-        AlertDialog.Builder errorDialog = new AlertDialog.Builder(this);
-        errorDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        });
-        // Success dialog when user enters valid input
-        AlertDialog.Builder successDialog = new AlertDialog.Builder(this);
-        successDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Intent iList = new Intent(HealthActivity.this, ListActivity.class);
-                startActivity(iList);
-            }
-        });
-        successDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                Intent iList = new Intent(HealthActivity.this, ListActivity.class);
-                startActivity(iList);
-            }
-        });
-
-        validateInput();
-
-        if(collectErrors.trim().length() > 0 && heartRateError==true && bodyTemperatureError==true && systolicError==true && diastolicError==true) {
+        if(collectErrors.trim().length() > 0) {
             errorDialog.setTitle("Error")
                     .setMessage("Health activity is not complete due to the following errors:\n\n" + collectErrors)
                     .show();
@@ -472,7 +427,7 @@ public class HealthActivity extends AppCompatActivity
             areAllInputsValid = false; //All inputs will not be saved if one or more inputs are not valid
         }
         else{
-            areAllInputsValid = true; //All inputs can be saved if they are valid
+            areAllInputsValid = true;
         }
 
         if(areAllInputsValid==true){
@@ -518,8 +473,6 @@ public class HealthActivity extends AppCompatActivity
                 item.setMedicationDosage(dosageAmount+" "+dosageUnit);
             }
             if(etBodyTemperature.getText().toString().isEmpty()) {
-                /*item.setBodyTemperatureCelsius(Float.parseFloat(null));
-                item.setBodyTemperatureFahrenheit(Float.parseFloat(null));*/
                 item.setBodyTemperatureCelsius(-1);
                 item.setBodyTemperatureFahrenheit(-1);
             }
@@ -554,8 +507,7 @@ public class HealthActivity extends AppCompatActivity
             }
 
             // Height must be gathered from user's data
-            // MUST GET FIXED
-            float heightInMeters = (float) 1.81;
+            float heightInMeters = AccountStatus.getHeightM(getApplicationContext());
             item.setBmi(calculateBmi(item.getWeightKg(), heightInMeters));
 
             item.setDescription(etDescription.getText().toString());
@@ -566,6 +518,7 @@ public class HealthActivity extends AppCompatActivity
                 item.setLocation(etLocation.getText().toString());
             }
 
+            item.setProfileId(AccountStatus.getProfileId(getApplicationContext()));
 
             // Insert the new item
             AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>(){
@@ -592,95 +545,7 @@ public class HealthActivity extends AppCompatActivity
             successDialog.setTitle("Health Activity Added")
                     .setMessage(etTitle.getText().toString() + " has been successfully added to List.")
                     .show();
-
-            //resetSavedInfoAfterAdd(); //Reset saved activity details after adding successfully
         }
-    }
-
-    /*public void getSavedDetailsAfterIntent(String saveTitle, float saveWeight, int savePintSpin,
-                                                String saveMedName, float saveDosage, int saveDoseSpin,
-                                                float saveTemp, float saveSystolic, float saveDiastolic,
-                                                float saveHrate, String saveLocation, String saveDescription)*/
-    public void getSavedDetailsAfterIntent()
-    {
-        if(saveTitle != null)
-            etTitle.setText(saveTitle);
-        if(saveWeight > 0 || saveWeight != useDefaultWeight)
-            etWeight.setText(String.valueOf(saveWeight));
-        if(weightUnitChanged)
-            spWeight.setSelection(saveWeightSpin);
-        spPainIntensity.setSelection(savePintSpin);
-        if(saveMedName != null)
-            etMedicationBrand.setText(saveMedName);
-        if(saveDosage > 0)
-            etMedicationDosage.setText(String.valueOf(saveDosage));
-        //if(saveDoseSpin != 15)
-        spMedicationDosage.setSelection(saveDoseSpin);
-        if(saveTemp > 0)
-            etBodyTemperature.setText(String.valueOf(saveTemp));
-        if(tempUnitChanged)
-            spBodyTemperature.setSelection(saveTempSpin);
-        if(saveSystolic > 0)
-            etSystolic.setText(String.valueOf(saveSystolic));
-        if(saveDiastolic > 0)
-            etDiastolic.setText(String.valueOf(saveDiastolic));
-        if(saveHrate > 0)
-            etHeartRate.setText(String.valueOf(saveHrate));
-        if(saveLocation != null)
-            etLocation.setText(saveLocation);
-        if(saveDescription != null)
-            etDescription.setText(saveDescription);
-    }
-
-    public void saveDetailsBeforeIntent()
-    {
-        if(!etTitle.getText().toString().trim().isEmpty())
-            SaveHealthActivity.saveTitle(getApplicationContext(), etTitle.getText().toString());
-        if(!etWeight.getText().toString().trim().isEmpty())
-            SaveHealthActivity.saveWeight(getApplicationContext(), Float.parseFloat(etWeight.getText().toString()));
-        if((useLbsUnit && spWeight.getSelectedItemId() != 0) || (!useLbsUnit && spWeight.getSelectedItemId() != 1)) {
-            SaveHealthActivity.saveWeightUnit(getApplicationContext(), (int)spWeight.getSelectedItemId());
-            weightUnitChanged = true;
-        }
-        SaveHealthActivity.savePainIntensity(getApplicationContext(),(int)spPainIntensity.getSelectedItemId());
-        if(!etMedicationBrand.getText().toString().trim().isEmpty())
-            SaveHealthActivity.saveMedName(getApplicationContext(),etMedicationBrand.getText().toString());
-        if(!etMedicationDosage.getText().toString().trim().isEmpty())
-            SaveHealthActivity.saveMedDosage(getApplicationContext(),Float.parseFloat(etMedicationDosage.getText().toString()));
-        SaveHealthActivity.saveMedUnit(getApplicationContext(),(int)spMedicationDosage.getSelectedItemId());
-        if(!etBodyTemperature.getText().toString().trim().isEmpty())
-            SaveHealthActivity.saveTemperature(getApplicationContext(),Float.parseFloat(etBodyTemperature.getText().toString()));
-        if((useCelsiusUnit && spBodyTemperature.getSelectedItemId() != 0) || (!useCelsiusUnit && spBodyTemperature.getSelectedItemId() != 1)){
-            SaveHealthActivity.saveTempUnit(getApplicationContext(),(int)spBodyTemperature.getSelectedItemId());
-            tempUnitChanged = true;
-        }
-        if(!etSystolic.getText().toString().trim().isEmpty())
-            SaveHealthActivity.saveSystolic(getApplicationContext(),Float.parseFloat(etSystolic.getText().toString()));
-        if(!etDiastolic.getText().toString().trim().isEmpty())
-            SaveHealthActivity.saveDiastolic(getApplicationContext(),Float.parseFloat(etDiastolic.getText().toString()));
-        if(!etHeartRate.getText().toString().isEmpty())
-        SaveHealthActivity.saveHeartRate(getApplicationContext(),Float.parseFloat(etHeartRate.getText().toString()));
-        if(!etLocation.getText().toString().trim().isEmpty())
-            SaveHealthActivity.saveLocation(getApplicationContext(),etLocation.getText().toString());
-        if(!etDescription.getText().toString().trim().isEmpty())
-            SaveHealthActivity.saveDescription(getApplicationContext(),etDescription.getText().toString());
-    }
-
-    public void resetSavedInfoAfterAdd(){
-        SaveHealthActivity.saveTitle(getApplicationContext(), null);
-        SaveHealthActivity.saveWeight(getApplicationContext(), 0);
-        SaveHealthActivity.saveWeightUnit(getApplicationContext(), 0);
-        SaveHealthActivity.savePainIntensity(getApplicationContext(),0);
-        SaveHealthActivity.saveMedName(getApplicationContext(),null);
-        SaveHealthActivity.saveMedDosage(getApplicationContext(),0);
-        SaveHealthActivity.saveMedUnit(getApplicationContext(),15);
-        SaveHealthActivity.saveTemperature(getApplicationContext(),0);
-        SaveHealthActivity.saveTempUnit(getApplicationContext(),0);
-        SaveHealthActivity.saveSystolic(getApplicationContext(),0);
-        SaveHealthActivity.saveDiastolic(getApplicationContext(),0);
-        SaveHealthActivity.saveHeartRate(getApplicationContext(),0);
-        SaveHealthActivity.saveLocation(getApplicationContext(),null);
-        SaveHealthActivity.saveDescription(getApplicationContext(),null);
     }
 
     public ActivityTable addItemInTable(ActivityTable item) throws ExecutionException, InterruptedException {
@@ -755,6 +620,7 @@ public class HealthActivity extends AppCompatActivity
                     tableDefinition.put("diastolic", ColumnDataType.Real);
                     tableDefinition.put("heart_rate", ColumnDataType.Real);
                     tableDefinition.put("bmi", ColumnDataType.Real);
+                    tableDefinition.put("profile_id", ColumnDataType.String);
 
                     localStore.defineTable("ActivityTable", tableDefinition);
 
@@ -831,7 +697,6 @@ public class HealthActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
 
         // This is for camera image
-        // MUST GET FIXED
         Bitmap bitmap = (Bitmap)data.getExtras().get("data");
         imageCameraView.setImageBitmap(bitmap);
 
@@ -897,26 +762,99 @@ public class HealthActivity extends AppCompatActivity
                 dialogInterface.dismiss();
             }
         });
-        // Success dialog when user enters valid input
-        /*AlertDialog.Builder successDialog = new AlertDialog.Builder(this);
-        successDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Intent iList = new Intent(HealthActivity.this, ListActivity.class);
-                startActivity(iList);
-            }
-        });
-        successDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                Intent iList = new Intent(HealthActivity.this, ListActivity.class);
-                startActivity(iList);
-            }
-        });*/
 
-        validateInput();
+        try {
+            //TITLE VALIDATION IN HEALTH ACTIVITY PAGE
+            if(etTitle.getText().toString().trim().isEmpty()){
+                collectErrors+="- Title is empty.\n";
+            }
 
-        if(collectErrors.trim().length() > 0 && heartRateError==true && bodyTemperatureError==true && systolicError==true && diastolicError==true) {
+            //WEIGHT VALIDATION IN HEALTH ACTIVITY PAGE
+            if(etWeight.getText().toString().trim().isEmpty()){
+                collectErrors+="- Weight is empty.\n";
+            }
+            else if(spWeight.getSelectedItem().toString().equals("lbs") && Float.valueOf(etWeight.getText().toString()) < 7.7){
+                collectErrors+="- Please enter a valid weight.\n";
+            }
+            else if(spWeight.getSelectedItem().toString().equals("kg") && Float.valueOf(etWeight.getText().toString()) < 3.5){
+                collectErrors+="- Please enter a valid weight.\n";
+            }
+
+            //HEALTH DESCRIPTION VALIDATION FOR HEALTH ACTIVITY PAGE
+            if(etDescription.getText().toString().trim().isEmpty()){
+                collectErrors+="- Medical description is empty.\n";
+            }
+
+            //BODY TEMPERATURE VALIDATION IN HEALTH ACTIVITY PAGE
+            if(Float.valueOf(etBodyTemperature.getText().toString()) == 0){
+                bodyTemperatureError = true;
+                collectErrors+="- Body temperature must not be 0.\n";
+            } else if (Float.valueOf(etBodyTemperature.getText().toString()) < 35 && spBodyTemperature.getSelectedItem().toString().equals("degrees Celsius")) {
+                bodyTemperatureError = true;
+                collectErrors+="- Please enter a valid body temperature.\n";
+            } else if (Float.valueOf(etBodyTemperature.getText().toString()) < 95 && spBodyTemperature.getSelectedItem().toString().equals("degrees Fahrenheit")) {
+                bodyTemperatureError = true;
+                collectErrors+="- Please enter a valid body temperature.\n";
+            } else {
+                bodyTemperatureError = false; // no error will trigger if body temperature input is empty or valid
+            }
+
+            //SYSTOLIC PRESSURE VALIDATION IN HEALTH ACTIVITY PAGE
+            if(Float.valueOf(etSystolic.getText().toString()) < 90){
+                systolicError = true;
+                collectErrors+="- Systolic pressure must not be less than 90.\n";
+            }
+            else if(Float.valueOf(etSystolic.getText().toString()) > 250){
+                systolicError = true;
+                collectErrors+="- Systolic pressure must not be greater than 250.\n";
+            }
+            else if(!etSystolic.getText().toString().trim().isEmpty() && etDiastolic.getText().toString().trim().isEmpty()){
+                systolicError = true;
+                collectErrors+="- Diastolic pressure must not be empty while systolic pressure is filled.\n";
+            }
+            else{
+                systolicError = false; // no error will trigger if systolic and diastolic inputs are empty or valid
+            }
+
+            //DIASTOLIC PRESSURE VALIDATION IN HEALTH ACTIVITY PAGE
+            if(Float.valueOf(etDiastolic.getText().toString()) < 60){
+                diastolicError = true;
+                collectErrors+="- Diastolic pressure must not be less than 60.\n";
+            }
+            else if(Float.valueOf(etDiastolic.getText().toString()) > 140){
+                diastolicError = true;
+                collectErrors+="- Diastolic pressure must not be greater than 140.\n";
+            }
+            else if(etSystolic.getText().toString().trim().isEmpty() && !etDiastolic.getText().toString().trim().isEmpty()){
+                diastolicError = true;
+                collectErrors+="- Systolic pressure must not be empty while diastolic pressure is filled.\n";
+            }
+            else {
+                diastolicError = false; // no error will trigger if diastolic and systolic inputs are empty or valid
+            }
+
+            //HEART RATE VALIDATION IN HEALTH ACTIVITY PAGE
+            if(Float.valueOf(etHeartRate.getText().toString()) < 20 && Float.valueOf(etHeartRate.getText().toString()) > 0){
+                heartRateError = true;
+                collectErrors+="- Heart rate is not valid.\n";
+
+            }
+            else if(Float.valueOf(etHeartRate.getText().toString()) == 0 && !etHeartRate.getText().toString().trim().isEmpty()){
+                heartRateError = true;
+                collectErrors+="- Heart rate must not be 0.\n";
+            }
+            else {
+                heartRateError = false; // no error will trigger if heart rate input is empty or valid
+            }
+        }
+        catch (Exception ex){
+            areAllInputsValid = false;
+            errorDialog.setMessage("Please enter a valid input.");
+        }
+
+        Log.d("collectError", collectErrors);
+
+        if(collectErrors.trim().length() > 0) {
             errorDialog.setTitle("Error")
                     .setMessage("Health activity is not complete due to the following errors:\n\n" + collectErrors)
                     .show();
@@ -924,14 +862,15 @@ public class HealthActivity extends AppCompatActivity
             areAllInputsValid = false; //All inputs will not be saved if one or more inputs are not valid
         }
         else{
-            areAllInputsValid = true; //All inputs can be saved if they are valid
+            areAllInputsValid = true;
         }
 
         if(areAllInputsValid){
             String activityId = UpdateHealthActivity.getActivityId(getApplicationContext());
             String activityTitle = etTitle.getText().toString();
             int painIntensity = (int)(spPainIntensity.getSelectedItemId()+1);
-            float bTempCels, bTempFahr;
+            float bTempCels = 0;
+            float bTempFahr = 0;
             if(spBodyTemperature.getSelectedItemId() == 0){
                 if(etBodyTemperature.getText().toString().isEmpty()){
                     bTempCels = -1;
@@ -942,7 +881,7 @@ public class HealthActivity extends AppCompatActivity
                     bTempFahr = convertCelsiusToFahrenheit(Float.parseFloat(etBodyTemperature.getText().toString()));
                 }
             }
-            else{
+            else if(spBodyTemperature.getSelectedItemId() == 1){
                 if(etBodyTemperature.getText().toString().isEmpty()){
                     bTempFahr = -1;
                     bTempCels = -1;
@@ -969,7 +908,6 @@ public class HealthActivity extends AppCompatActivity
             else{
                 medBrand = etMedicationBrand.getText().toString();
             }
-            // Will deal with MEDICATION DOSAGE later
             float systolic, diastolic, heartRate;
             if(etSystolic.getText().toString().isEmpty())
                 systolic = -1;
@@ -988,9 +926,11 @@ public class HealthActivity extends AppCompatActivity
                 location = null;
             else
                 location = etLocation.getText().toString();
+            float heightInMeters = AccountStatus.getHeightM(getApplicationContext());
+            float bmi = calculateBmi(weightKg, heightInMeters);
             UpdateActivityTask updateActivityTask = new UpdateActivityTask(activityId,activityTitle,
                     painIntensity, bTempCels, bTempFahr, activityDesc, weightLbs, weightKg, medBrand,
-                    systolic, diastolic, heartRate, location);
+                    systolic, diastolic, heartRate, location, bmi);
             updateActivityTask.execute("");
 
             resetUpdateHealthActivity();
@@ -1061,14 +1001,13 @@ public class HealthActivity extends AppCompatActivity
 
         private final String mActivityId, mActivityTitle, mMedBrand, mLocation, mDescription;
         private final int mPainIntensity;
-        private final float mTempCels, mTempFahr, mWeightLbs, mWeightKg, mSystolic, mDiastolic, mHeartRate;
-        // NEED TO DEAL WITH MEDICATION DOSAGE
+        private final float mTempCels, mTempFahr, mWeightLbs, mWeightKg, mSystolic, mDiastolic, mHeartRate, mBmi;
         String updateMsg = "";
         Boolean isSuccess = false;
 
         UpdateActivityTask(String activityId, String activityTitle, int painIntensity, float tempCels,
                            float tempFahr, String desc, float weightLbs, float weightKg, String medBrand,
-                           float systolic, float diastolic, float heartRate, String location){
+                           float systolic, float diastolic, float heartRate, String location, float bmi){
             mActivityId = activityId;
             mActivityTitle = activityTitle;
             mPainIntensity = painIntensity;
@@ -1078,11 +1017,11 @@ public class HealthActivity extends AppCompatActivity
             mWeightLbs = weightLbs;
             mWeightKg = weightKg;
             mMedBrand = medBrand;
-            // NEED TO DEAL WITH MEDICATION DOSAGE
             mSystolic = systolic;
             mDiastolic = diastolic;
             mHeartRate = heartRate;
             mLocation = location;
+            mBmi = bmi;
         }
 
         protected void onPreExecute(){
@@ -1136,7 +1075,7 @@ public class HealthActivity extends AppCompatActivity
                     String queryUpdateTitle = "activity_title=\'" + mActivityTitle + "\',";
                     String queryUpdatePint = "pain_intensity=\'" + mPainIntensity + "\',";
                     String queryUpdateTempCels = "bodytemperature_celsius=\'" + mTempCels + "\',";
-                    String queryUpdateTempFahr = "bodytemperature_fahrenheit=\'" + mTempCels + "\',";
+                    String queryUpdateTempFahr = "bodytemperature_fahrenheit=\'" + mTempFahr + "\',";
                     String queryUpdateDesc = "activity_description=\'" + mDescription + "\',";
                     String queryUpdateWeightLbs = "weight_lbs=\'" + mWeightLbs + "\',";
                     String queryUpdateWeightKg = "weight_kg=\'" + mWeightKg + "\',";
@@ -1149,6 +1088,7 @@ public class HealthActivity extends AppCompatActivity
                     String queryUpdateSystolic = "systolic=\'" + mSystolic + "\',";
                     String queryUpdateDiastolic = "diastolic=\'" + mDiastolic + "\',";
                     String queryUpdateHeartRate = "heart_rate=\'" + mHeartRate + "\',";
+                    String queryUpdateBmi = "bmi=\'" + mBmi + "\',";
                     String queryUpdateLocation;
                     if(mLocation!=null)
                         queryUpdateLocation = "activity_location=\'" + mLocation + "\'"; // Last entry for UPDATE statement
@@ -1160,7 +1100,7 @@ public class HealthActivity extends AppCompatActivity
                     String updateActivityQuery = queryUpdate + queryUpdateTitle + queryUpdatePint +
                             queryUpdateTempCels + queryUpdateTempFahr + queryUpdateDesc + queryUpdateWeightLbs +
                             queryUpdateWeightKg + queryUpdateMedBrand + queryUpdateSystolic + queryUpdateDiastolic +
-                            queryUpdateHeartRate + queryUpdateLocation + queryWhereId;
+                            queryUpdateHeartRate + queryUpdateBmi + queryUpdateLocation + queryWhereId;
 
                     Statement updateActivity = con.createStatement();
                     updateActivity.executeUpdate(updateActivityQuery);
@@ -1175,35 +1115,6 @@ public class HealthActivity extends AppCompatActivity
             }
             return updateMsg;
         }
-
-        /*@Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
-        }*/
-
-        /*@Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }*/
     }
 
     public Connection connectionClass(){
@@ -1213,7 +1124,6 @@ public class HealthActivity extends AppCompatActivity
         String connectionURL = null;
         try{
             Class.forName("net.sourceforge.jtds.jdbc.Driver");
-            //connectionURL = "jdbc:jtds:sqlserver://medellapp.database.windows.net:1433;database=MedellaData;user=MedellaAdmin@medellapp;password=C0ntrolHe@lth;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
             connectionURL = "jdbc:jtds:sqlserver://medellapp.database.windows.net:1433;DatabaseName=MedellaData;user=MedellaAdmin@medellapp;password=C0ntrolHe@lth;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
             connection = DriverManager.getConnection(connectionURL);
         } catch (ClassNotFoundException e) {
@@ -1268,8 +1178,8 @@ public class HealthActivity extends AppCompatActivity
         //DRAWER NAVIGATION IN HOME PAGE
         if (id == R.id.nav_amHome) {
             resetUpdateHealthActivity();
-            Intent iHome = new Intent(this, HomeActivity.class);
-            startActivity(iHome);
+            Intent iAccountInfo = new Intent(this, AccountInfoActivity.class);
+            startActivity(iAccountInfo);
         } else if (id == R.id.nav_amActivity) {
             //Intent is not needed as the Health Activity button leads to this page
         } else if (id == R.id.nav_amList) {
@@ -1287,7 +1197,17 @@ public class HealthActivity extends AppCompatActivity
             startActivity(iSettings);
         }
         else if (id == R.id.nav_amLogout) {
-            //Logout is not available at this moment
+            MedellaOptions.setDefaultWeight(getApplicationContext(), 0);
+            MedellaOptions.setPreferredWeightUnit(getApplicationContext(), true);
+            MedellaOptions.setPreferredBodyTemperatureUnit(getApplicationContext(), true);
+            MedellaOptions.setDefaultWeightEnabled(getApplicationContext(), false);
+            AccountStatus.setLogin(getApplicationContext(),false);
+            AccountStatus.setProfileName(getApplicationContext(),null);
+            AccountStatus.setProfileId(getApplicationContext(),null);
+            AccountStatus.setEmail(getApplicationContext(),null);
+            AccountStatus.setHeightM(getApplicationContext(),0);
+            Intent iLogin = new Intent(this, LoginActivity.class);
+            startActivity(iLogin);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

@@ -52,23 +52,12 @@ public class ActivityTable {
 
     @com.google.gson.annotations.SerializedName("updatedAt")
     private String mUpdatedAt;
-
-    @com.google.gson.annotations.SerializedName("deleted")
-    private boolean mDeleted;
-
-    /**
-     * Activity id
-     * NEEDS CONFIGURATION AND RESEARCH
-     */
-    @com.google.gson.annotations.SerializedName("activity_id")
-    private float mActivityId;
-
     /**
      * Profile id
      * NEEDS CONFIGURATION AND RESEARCH
      */
     @com.google.gson.annotations.SerializedName("profile_id")
-    private float mProfileId;
+    private String mProfileId;
 
     @com.google.gson.annotations.SerializedName("id")
     private String mId;
@@ -83,7 +72,7 @@ public class ActivityTable {
                          float weightLbs, float weightKg, float bmi,
                          String medBrand, String medDosage,
                          float systolic, float diastolic,
-                         float hrate, String id) {
+                         float hrate, String id, String profileId) {
         this.setActivityTitle(title);
         this.setPainIntensity(painLevel);
         this.setBodyTemperatureCelsius(temperatureCelsius);
@@ -99,6 +88,7 @@ public class ActivityTable {
         this.setDiastolic(diastolic);
         this.setHeartRate(hrate);
         this.setId(id);
+        this.setProfileId(profileId);
     }
 
     public String getActivityTitle(){
@@ -135,8 +125,8 @@ public class ActivityTable {
     public final void setSystolic(float systolic){ mSystolic = systolic; }
     public float getDiastolic(){ return mDiastolic; }
     public final void setDiastolic(float diastolic){ mDiastolic = diastolic; }
-    //Activity id here
-    //Profile id here
+    public String getProfileId(){ return mProfileId; }
+    public final void setProfileId(String profileId){ mProfileId = profileId; }
     public float getHeartRate(){ return mHeartRate; }
     public final void setHeartRate(float heartRate){ mHeartRate = heartRate; }
     public float getBmi(){ return mBmi; }
@@ -149,8 +139,6 @@ public class ActivityTable {
     }
     public String getCreatedAt(){ return mCreatedAt; }
     public String getUpdatedAt(){ return mUpdatedAt; }
-    public boolean isDeleted(){ return mDeleted; }
-    public final void setDelete(boolean deleted){ mDeleted = deleted; }
 
     @Override
     public boolean equals(Object o) {

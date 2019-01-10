@@ -31,10 +31,11 @@ import com.github.mikephil.charting.formatter.IFillFormatter;
 import com.github.mikephil.charting.interfaces.dataprovider.LineDataProvider;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.Utils;
-import com.medella.android.MedellaOptions;
+import com.medella.android.AccountStatus;
 import com.medella.android.R;
-import com.medella.android.ResultsGraphOptions;
 import com.medella.android.list.ResultsCollection;
+import com.medella.android.options.MedellaOptions;
+import com.medella.android.options.ResultsGraphOptions;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -101,7 +102,6 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
         TextView tvBmiResult = findViewById(R.id.txtBmiResult);
         TextView tvBmiDifference = findViewById(R.id.txtBmiDifference);
         tvBmiResult.setText(String.valueOf(bmiAverage));
-        // COLORING FOR BMI AVERAGE NOT FINISHED YET - START
         if(bmiAverage > 18 && bmiAverage <= 25){
             tvBmiResult.setTextColor(Color.parseColor("#3ebc70"));
         }
@@ -354,9 +354,6 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
             heartRateValues.add(new Entry(i, heartRateCollection.get(i)));
         }
 
-        /** ------------!!!!!!!!!!!!!!!!!!!!!!----------------- */
-        /** ------------- GRAPH PART - START ------------------ */
-
         resultsLineChart = findViewById(R.id.lineChart);
         rgOption = ResultsGraphOptions.getResultsGraphOption(getApplicationContext());
 
@@ -492,46 +489,6 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
         Legend legend = resultsLineChart.getLegend();
         legend.setForm(Legend.LegendForm.LINE);
 
-        /*
-        ArrayList<String> xAXES = new ArrayList<>();
-        ArrayList<Entry> yAXES_1 = new ArrayList<>();
-        ArrayList<Entry> yAXES_2 = new ArrayList<>();
-        float x = 0;
-        float x1 = 0;
-        double xAll = 0;
-        int numDataPoints = 30;
-        for(int i=0;i<numDataPoints;i++){
-            if(x%7 != 0){
-                x = x + 5;
-                x1 = x*2/3;
-            }
-            else{
-                x = x-(x+(i-3));
-                x1 = x1 + 5;
-            }
-            xAll = xAll + 1;
-            yAXES_1.add(new Entry(x,i));
-            yAXES_2.add(new Entry(x1,i));
-            xAXES.add(i, String.valueOf(xAll));
-        }
-        String[] xaxes = new String[xAXES.size()];
-        for(int i=0;i<xAXES.size();i++){
-            xaxes[i] = xAXES.get(i).toString();
-        }
-        ArrayList<ILineDataSet> lineDataSets = new ArrayList<>();
-        LineDataSet lineDataSet1 = new LineDataSet(yAXES_1, "lab1");
-        lineDataSet1.setDrawCircles(false);
-        lineDataSet1.setColor(Color.BLUE);
-        LineDataSet lineDataSet2 = new LineDataSet(yAXES_2, "lab2");
-        lineDataSet2.setDrawCircles(false);
-        lineDataSet2.setColor(Color.RED);
-        lineDataSets.add(lineDataSet1);
-        lineDataSets.add(lineDataSet2);
-        resultsLineChart.setData(new LineData(lineDataSets));
-        */
-        /** ------------!!!!!!!!!!!!!!!!!!!!!!----------------- */
-        /** ------------- GRAPH PART - END ------------------ */
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -572,14 +529,11 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
 
         Intent iShare = new Intent(Intent.ACTION_SEND);
         iShare.setType("text/plain");
-
-        //String shareBody = showBmi + showPint + showWeight + showBtemp + showSystolic + showDiastolic + showHrate; //Not complete? - subject does not work because of update?
-        String shareBody = "Your body here"; //shareBody does not show up - possibly due to update?
-        //String shareSub  = "My Overall Health Results from Medella"; //Not complete? - Concatenate user's name
-        String shareSub = showBmi + showPint + showWeight + showBtemp + showSystolic + showDiastolic + showHrate; //shareSub acts as a body instead of subject - possibly due to update?
+        String shareSub  = "My Overall Health Results from Medella";
+        String shareBody = showBmi + showPint + showWeight + showBtemp + showSystolic + showDiastolic + showHrate;
 
         iShare.putExtra(Intent.EXTRA_TEXT, shareBody);
-        iShare.putExtra(Intent.EXTRA_TEXT, shareSub);
+        iShare.putExtra(Intent.EXTRA_SUBJECT, shareSub);
         startActivity(Intent.createChooser(iShare, "Share your health results via"));
     }
 
@@ -623,8 +577,8 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
 
         //DRAWER NAVIGATION IN HOME PAGE
         if (id == R.id.nav_amHome) {
-            Intent iHome = new Intent(this, HomeActivity.class);
-            startActivity(iHome);
+            Intent iAccountInfo = new Intent(this, AccountInfoActivity.class);
+            startActivity(iAccountInfo);
         } else if (id == R.id.nav_amActivity) {
             Intent iHealth = new Intent(this, HealthActivity.class);
             startActivity(iHealth);
@@ -642,7 +596,17 @@ public class ResultsActivity extends AppCompatActivity implements NavigationView
             startActivity(iSettings);
         }
         else if (id == R.id.nav_amLogout) {
-            //Logout is not available at this moment
+            MedellaOptions.setDefaultWeight(getApplicationContext(), 0);
+            MedellaOptions.setPreferredWeightUnit(getApplicationContext(), true);
+            MedellaOptions.setPreferredBodyTemperatureUnit(getApplicationContext(), true);
+            MedellaOptions.setDefaultWeightEnabled(getApplicationContext(), false);
+            AccountStatus.setLogin(getApplicationContext(),false);
+            AccountStatus.setProfileName(getApplicationContext(),null);
+            AccountStatus.setProfileId(getApplicationContext(),null);
+            AccountStatus.setEmail(getApplicationContext(),null);
+            AccountStatus.setHeightM(getApplicationContext(),0);
+            Intent iLogin = new Intent(this, LoginActivity.class);
+            startActivity(iLogin);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

@@ -1,4 +1,4 @@
-package com.medella.android;
+package com.medella.android.options;
 
 import android.content.Context;
 import android.content.SharedPreferences;

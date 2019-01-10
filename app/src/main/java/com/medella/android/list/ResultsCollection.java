@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ResultsCollection {
@@ -243,7 +244,14 @@ public class ResultsCollection {
     private static List<Float> diastolicList;
     public static List<Float> getDiastolicList(){ return diastolicList; }
     public static void setDiastolicList(List<Float> diasList){
-        diastolicList = diasList;
+        if(diasList.size() > 0) {
+            diastolicList = diasList;
+        }
+        else{
+            List<Float> tempList = new ArrayList<>();
+            tempList.add(Float.valueOf(1));
+            diastolicList = tempList;
+        }
     }
 
     /**

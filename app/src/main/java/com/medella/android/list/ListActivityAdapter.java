@@ -25,8 +25,6 @@ import com.medella.android.UpdateHealthActivity;
 import com.medella.android.activities.HealthActivity;
 import com.medella.android.activities.ListActivity;
 
-import org.w3c.dom.Text;
-
 public class ListActivityAdapter extends ArrayAdapter<ActivityTable> {
 
     private static final String TAG = "ListActivityAdapter";
@@ -65,7 +63,6 @@ public class ListActivityAdapter extends ArrayAdapter<ActivityTable> {
             ActivityViewHolder activityViewHolder;
 
             if (row == null) {
-                //LayoutInflater inflater = LayoutInflater.from(mContext);
                 LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
                 row = inflater.inflate(mResource, parent, false);
                 activityViewHolder = new ActivityViewHolder();
@@ -181,7 +178,7 @@ public class ListActivityAdapter extends ArrayAdapter<ActivityTable> {
             String acPainInt = "Pain Intensity: " + String.valueOf(currentItem.getPainIntensity()) + "\n";
             activityDetails.append(acPainInt);
             if (currentMedBrand != null && currentMedDosage != null) {
-                acMedication = "Medication: " + currentItem.getMedicationBrand() + " " + currentItem.getMedicationDosage() + "\n";
+                acMedication = "Medication: " + currentItem.getMedicationBrand() + " (" + currentItem.getMedicationDosage() + ")\n";
                 activityDetails.append(acMedication);
             }
             if (currentTempCels > 0 || currentTempFahr > 0) {
@@ -228,7 +225,7 @@ public class ListActivityAdapter extends ArrayAdapter<ActivityTable> {
             activityViewHolder.tvDateAdded.setText("Created: " + addedDate + addedTime);
             activityViewHolder.tvDateUpdated.setText("Updated: " + updatedDate + updatedTime);
 
-            /** When the user taps and holds a card view on ListActivity*/
+            /** When the user taps and holds a card view on ListActivity */
             activityViewHolder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -329,15 +326,26 @@ public class ListActivityAdapter extends ArrayAdapter<ActivityTable> {
 
     public float resultsAverage(List<Float> resultsList){
         float sum = 0;
-        for(float result : resultsList){
-            sum += result;
+        if(resultsList.size() > 0) {
+            for (float result : resultsList) {
+                sum += result;
+            }
+            return sum / resultsList.size();
         }
-        return sum/resultsList.size();
+        else{
+            return sum;
+        }
     }
 
-    public float resultsDifference(List<Float> resultsList){
-        float latest = resultsList.get(0);
-        float penultimate = resultsList.get(1);
-        return latest-penultimate;
+    public float resultsDifference(List<Float> resultsList) {
+        if(resultsList.size() > 1) {
+            float latest, penultimate;
+            latest = resultsList.get(0);
+            penultimate = resultsList.get(1);
+            return latest - penultimate;
+        }
+        else{
+            return 0;
+        }
     }
 }

@@ -390,8 +390,6 @@ public class ProfileActivity extends AppCompatActivity {
             return Double.valueOf(feetDecimal.substring(0, feetDecimal.indexOf(".")));
         }
         Double ftinInches_in(Double in){
-            //String feetDecimal = String.valueOf(in/12);
-            //Double wholeInches =  12.00 * Double.valueOf(feetDecimal.substring(0, feetDecimal.indexOf(".")));
             Double wholeInches = ftinInches_ft(in) * 12;
             return in - wholeInches;
         }
@@ -418,8 +416,7 @@ public class ProfileActivity extends AppCompatActivity {
         boolean emptyFirstAnswer = securityAnswer1.getText().toString().trim().isEmpty();
         boolean emptySecondAnswer = securityAnswer2.getText().toString().trim().isEmpty();
         boolean emptyThirdAnswer = securityAnswer3.getText().toString().trim().isEmpty();
-        boolean emptyBirthdate; //MUST FIND BIRTHDATE VALIDATION--need to be boolean
-        boolean emptyHeight = heightInput.getText().toString().trim().isEmpty(); //CONFIGURE HEIGHT
+        boolean emptyHeight = heightInput.getText().toString().trim().isEmpty();
         boolean emptyFeet = feetInput.getText().toString().trim().isEmpty();
         boolean emptyInches = inchesInput.getText().toString().trim().isEmpty();
 
@@ -486,19 +483,6 @@ public class ProfileActivity extends AppCompatActivity {
             mHeight2Inches = ftin_in;
             mBirthdate = birthdate;
         }
-
-        /*@Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }*/
 
         protected void onPreExecute(){
             registerProgress.setVisibility(View.VISIBLE);
@@ -596,35 +580,6 @@ public class ProfileActivity extends AppCompatActivity {
             }
             return registerMsg;
         }
-
-        /*@Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
-        }*/
-
-        /*@Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }*/
     }
 
     public Connection connectionClass(){
@@ -634,7 +589,6 @@ public class ProfileActivity extends AppCompatActivity {
         String connectionURL = null;
         try{
             Class.forName("net.sourceforge.jtds.jdbc.Driver");
-            //connectionURL = "jdbc:jtds:sqlserver://medellapp.database.windows.net:1433;database=MedellaData;user=MedellaAdmin@medellapp;password=C0ntrolHe@lth;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
             connectionURL = "jdbc:jtds:sqlserver://medellapp.database.windows.net:1433;DatabaseName=MedellaData;user=MedellaAdmin@medellapp;password=C0ntrolHe@lth;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
             connection = DriverManager.getConnection(connectionURL);
         } catch (ClassNotFoundException e) {

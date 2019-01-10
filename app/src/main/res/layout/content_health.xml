@@ -62,7 +62,7 @@
             android:layout_below="@+id/txtTitle"
             android:ems="10"
             android:hint="Add weight number here"
-            android:inputType="number"
+            android:inputType="numberDecimal"
             android:selectAllOnFocus="true"
             android:textAlignment="center"
             android:textSize="12sp" />
@@ -344,12 +344,14 @@
             android:layout_alignStart="@+id/btnLocation"
             android:layout_below="@+id/btnLocation"
             android:onClick="cameraClick"
+            android:visibility="invisible"
             app:srcCompat="@drawable/ic_menu_camera" />
 
         <ImageView
             android:id="@+id/cameraImage"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
+            android:visibility="gone"
             android:layout_weight="9" />
 
     </RelativeLayout>

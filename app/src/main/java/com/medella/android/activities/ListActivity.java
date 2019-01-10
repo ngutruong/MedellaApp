@@ -11,22 +11,27 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
+import com.medella.android.AccountStatus;
 import com.medella.android.R;
 import com.medella.android.list.ActivityTable;
 import com.medella.android.list.ListActivityAdapter;
+import com.medella.android.options.MedellaOptions;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
-import com.microsoft.windowsazure.mobileservices.MobileServiceException;
 import com.microsoft.windowsazure.mobileservices.http.NextServiceFilterCallback;
 import com.microsoft.windowsazure.mobileservices.http.OkHttpClientFactory;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilter;
@@ -36,14 +41,11 @@ import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
 import com.microsoft.windowsazure.mobileservices.table.query.QueryOrder;
 import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncContext;
 import com.microsoft.windowsazure.mobileservices.table.sync.localstore.ColumnDataType;
-import com.microsoft.windowsazure.mobileservices.table.sync.localstore.MobileServiceLocalStoreException;
 import com.microsoft.windowsazure.mobileservices.table.sync.localstore.SQLiteLocalStore;
 import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.SimpleSyncHandler;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +78,14 @@ public class ListActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view_list);
         navigationView.setNavigationItemSelectedListener(this);
+        View headerView = navigationView.getHeaderView(0);
+        TextView navHeaderName = headerView.findViewById(R.id.navHeaderName);
+        if(AccountStatus.getProfileName(getApplicationContext()) != null)
+            navHeaderName.setText(AccountStatus.getProfileName(getApplicationContext()));
+        else
+            navHeaderName.setText("Name missing");
+
+        EditText searchFilter = findViewById(R.id.etSearch);
 
         mProgressBar = findViewById(R.id.loadListProgressBar);
 
@@ -95,8 +105,8 @@ public class ListActivity extends AppCompatActivity
                 @Override
                 public OkHttpClient createOkHttpClient() {
                     OkHttpClient client = new OkHttpClient();
-                    client.setReadTimeout(20, TimeUnit.SECONDS);
-                    client.setWriteTimeout(20, TimeUnit.SECONDS);
+                    client.setReadTimeout(60, TimeUnit.SECONDS);
+                    client.setWriteTimeout(60, TimeUnit.SECONDS);
                     return client;
                 }
             });
@@ -116,6 +126,23 @@ public class ListActivity extends AppCompatActivity
 
             // Load the items from the Mobile Service
             refreshItemsFromTable();
+
+            searchFilter.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    (ListActivity.this).mAdapter.getFilter().filter(s);
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
 
         } catch (MalformedURLException e) {
             createAndShowDialog(new Exception("There was an error creating the Mobile Service. Verify the URL"), "Error");
@@ -161,8 +188,8 @@ public class ListActivity extends AppCompatActivity
     }
 
     private List<ActivityTable> refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException {
-        //return mActivityTable.where().field("deleted").eq(val(false)).orderBy("createdAt", QueryOrder.Descending).execute().get();
-        return mActivityTable.orderBy("createdAt", QueryOrder.Descending).execute().get();
+        //return mActivityTable.orderBy("createdAt", QueryOrder.Descending).execute().get();
+        return mActivityTable.where().field("profile_id").eq(AccountStatus.getProfileId(getApplicationContext())).orderBy("createdAt", QueryOrder.Descending).execute().get();
     }
 
     //Offline Sync
@@ -209,6 +236,7 @@ public class ListActivity extends AppCompatActivity
                     tableDefinition.put("diastolic", ColumnDataType.Real);
                     tableDefinition.put("heart_rate", ColumnDataType.Real);
                     tableDefinition.put("bmi", ColumnDataType.Real);
+                    tableDefinition.put("profile_id", ColumnDataType.String);
 
                     localStore.defineTable("ActivityTable", tableDefinition);
 
@@ -292,9 +320,9 @@ public class ListActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+        } //else {
+            //super.onBackPressed();
+        //}
     }
 
     @Override
@@ -326,7 +354,8 @@ public class ListActivity extends AppCompatActivity
 
         //DRAWER NAVIGATION IN HOME PAGE
         if (id == R.id.nav_amHome) {
-            Intent iHome = new Intent(this, HomeActivity.class);
+            //Intent iHome = new Intent(this, HomeActivity.class);
+            Intent iHome = new Intent(this, AccountInfoActivity.class);
             startActivity(iHome);
         } else if (id == R.id.nav_amActivity) {
             Intent iHealth = new Intent(this, HealthActivity.class);
@@ -344,7 +373,17 @@ public class ListActivity extends AppCompatActivity
             startActivity(iSettings);
         }
         else if (id == R.id.nav_amLogout) {
-            //Logout is not available at this moment
+            MedellaOptions.setDefaultWeight(getApplicationContext(), 0);
+            MedellaOptions.setPreferredWeightUnit(getApplicationContext(), true);
+            MedellaOptions.setPreferredBodyTemperatureUnit(getApplicationContext(), true);
+            MedellaOptions.setDefaultWeightEnabled(getApplicationContext(), false);
+            AccountStatus.setLogin(getApplicationContext(),false);
+            AccountStatus.setProfileName(getApplicationContext(),null);
+            AccountStatus.setProfileId(getApplicationContext(),null);
+            AccountStatus.setEmail(getApplicationContext(),null);
+            AccountStatus.setHeightM(getApplicationContext(),0);
+            Intent iLogin = new Intent(this, LoginActivity.class);
+            startActivity(iLogin);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -361,10 +400,6 @@ public class ListActivity extends AppCompatActivity
         if (mClient == null) {
             return;
         }
-
-        // Set the item as completed and update it in the table
-        // FOR deleteHealthActivity, DON'T NEED EXTRA LINE OF CODE; use it for reference
-        //item.setDelete(true);
 
         AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>(){
             @Override
@@ -387,10 +422,6 @@ public class ListActivity extends AppCompatActivity
 
         runAsyncTask(task);
 
-    }
-
-    public void updateItemInTable(ActivityTable item) throws ExecutionException, InterruptedException {
-        mActivityTable.update(item).get();
     }
 
     public void deleteItemInTable(ActivityTable item) {

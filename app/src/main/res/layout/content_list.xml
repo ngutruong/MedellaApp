@@ -30,6 +30,15 @@
             android:layout_height="20dp"
             android:id="@+id/loadListProgressBar"/>
 
+        <EditText
+            android:id="@+id/etSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Search by activity title"
+            android:inputType="textPersonName"
+            android:textSize="12sp" />
+
         <Button
             android:id="@+id/btnAddActivity"
             android:layout_width="match_parent"
